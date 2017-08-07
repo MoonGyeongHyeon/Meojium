@@ -1,14 +1,18 @@
 package com.moon.meojium.ui.museum;
 
+import android.content.Context;
+import android.content.Intent;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.moon.meojium.R;
 import com.moon.meojium.model.museum.Museum;
+import com.moon.meojium.ui.museumdetail.DetailActivity;
 
 import java.util.List;
 
@@ -21,9 +25,11 @@ import butterknife.ButterKnife;
 
 public class MuseumRecyclerViewAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
     private List<Museum> museumList;
+    private Context context;
 
-    public MuseumRecyclerViewAdapter(List<Museum> museumList) {
+    public MuseumRecyclerViewAdapter(List<Museum> museumList, Context context) {
         this.museumList = museumList;
+        this.context = context;
     }
 
     @Override
@@ -49,16 +55,26 @@ public class MuseumRecyclerViewAdapter extends RecyclerView.Adapter<RecyclerView
         TextView nameTextView;
         @BindView(R.id.text_view_museum_address)
         TextView addressTextView;
+        @BindView(R.id.relativelayout_museum_container)
+        RelativeLayout container;
 
         public ViewHolder(View itemView) {
             super(itemView);
             ButterKnife.bind(this, itemView);
         }
 
-        public void bindView(Museum museum) {
+        public void bindView(final Museum museum) {
             thumbImageView.setImageResource(museum.getImage());
             nameTextView.setText(museum.getName());
             addressTextView.setText(museum.getAddress());
+            container.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    Intent intent = new Intent(context, DetailActivity.class);
+                    intent.putExtra("id", String.valueOf(museum.getId()));
+                    context.startActivity(intent);
+                }
+            });
         }
     }
 }

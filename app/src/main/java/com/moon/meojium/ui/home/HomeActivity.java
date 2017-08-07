@@ -24,7 +24,7 @@ import butterknife.ButterKnife;
 
 public class HomeActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
-    @BindView(R.id.toolbar_main)
+    @BindView(R.id.toolbar)
     Toolbar toolbar;
     @BindView(R.id.drawerlayout)
     DrawerLayout drawerLayout;
@@ -43,6 +43,7 @@ public class HomeActivity extends AppCompatActivity
     }
 
     private void initToolbar() {
+        toolbar.setTitle("머지엄");
         setSupportActionBar(toolbar);
     }
 
