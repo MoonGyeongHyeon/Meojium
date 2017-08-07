@@ -1,4 +1,4 @@
-package com.moon.meojium.ui.museumlist;
+package com.moon.meojium.ui.home;
 
 import android.os.Bundle;
 import android.support.annotation.NonNull;
@@ -9,46 +9,58 @@ import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 
 import com.moon.meojium.R;
+import com.moon.meojium.ui.museum.MuseumFragment;
+
+import butterknife.BindView;
+import butterknife.ButterKnife;
 
 /**
  * Created by moon on 2017. 8. 6..
  */
 
-public class MuseumListActivity extends AppCompatActivity
+public class HomeActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
-    private Toolbar toolbar;
-    private DrawerLayout drawerLayout;
-    private NavigationView navigationView;
+    @BindView(R.id.toolbar_main)
+    Toolbar toolbar;
+    @BindView(R.id.drawerlayout)
+    DrawerLayout drawerLayout;
+    @BindView(R.id.navigationview)
+    NavigationView navigationView;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_museum_list);
+        setContentView(R.layout.activity_home);
+        ButterKnife.bind(this);
 
         initToolbar();
         initDrawerLayout();
+        initMuseumList();
     }
 
     private void initToolbar() {
-        toolbar = (Toolbar) findViewById(R.id.toolbar_main);
         setSupportActionBar(toolbar);
     }
 
     private void initDrawerLayout() {
-        drawerLayout = (DrawerLayout) findViewById(R.id.drawerlayout);
         ActionBarDrawerToggle toggle =
                 new ActionBarDrawerToggle(this, drawerLayout, toolbar, R.string.drawer_open, R.string.drawer_close);
 
         drawerLayout.addDrawerListener(toggle);
         toggle.syncState();
 
-        navigationView = (NavigationView) findViewById(R.id.navigationview);
         navigationView.setNavigationItemSelectedListener(this);
+    }
+
+    private void initMuseumList() {
+        getSupportFragmentManager()
+                .beginTransaction()
+                .replace(R.id.framelayout_museum_list_container, new MuseumFragment())
+                .commit();
     }
 
     @Override
@@ -69,8 +81,6 @@ public class MuseumListActivity extends AppCompatActivity
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        // TODO: 각 버튼에 해당하는 이벤트 세팅
-
         switch (item.getItemId()) {
             case R.id.action_filter:
                 break;
@@ -82,7 +92,6 @@ public class MuseumListActivity extends AppCompatActivity
 
     @Override
     public boolean onNavigationItemSelected(@NonNull MenuItem item) {
-        // TODO: 각 버튼에 해당하는 이벤트 세팅
         switch (item.getItemId()) {
             case R.id.navigation_home:
                 break;

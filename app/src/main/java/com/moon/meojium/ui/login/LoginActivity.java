@@ -8,16 +8,19 @@ import com.moon.meojium.R;
 import com.moon.meojium.ui.login.naver.NaverLogin;
 import com.nhn.android.naverlogin.ui.view.OAuthLoginButton;
 
+import butterknife.BindView;
+import butterknife.ButterKnife;
+
 public class LoginActivity extends AppCompatActivity {
-    private OAuthLoginButton oAuthLoginButton;
+    @BindView(R.id.button_login_naver_id)
+    OAuthLoginButton oAuthLoginButton;
     private NaverLogin naverLogin;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
-
-        // TODO: 카카오 로그인, 구글 로그인 구현.
+        ButterKnife.bind(this);
 
         initLoginButton();
     }
@@ -27,7 +30,6 @@ public class LoginActivity extends AppCompatActivity {
     }
 
     private void initNaverLoginButton() {
-        oAuthLoginButton = (OAuthLoginButton) findViewById(R.id.button_login_naver_id);
         naverLogin = new NaverLogin(this);
         naverLogin.initLoginButton(oAuthLoginButton);
 

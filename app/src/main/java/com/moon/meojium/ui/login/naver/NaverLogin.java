@@ -6,7 +6,7 @@ import android.content.Intent;
 import android.os.AsyncTask;
 import android.util.Log;
 
-import com.moon.meojium.ui.museumlist.MuseumListActivity;
+import com.moon.meojium.ui.home.HomeActivity;
 import com.nhn.android.naverlogin.OAuthLogin;
 import com.nhn.android.naverlogin.OAuthLoginHandler;
 import com.nhn.android.naverlogin.data.OAuthLoginState;
@@ -44,7 +44,7 @@ public class NaverLogin {
 
                 // TODO: SharedPreferences에 토큰 추가하고 DB에 user정보 삽입.
 
-                Intent intent = new Intent(context, MuseumListActivity.class);
+                Intent intent = new Intent(context, HomeActivity.class);
                 intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK);
                 intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
                 context.startActivity(intent);
