@@ -17,6 +17,8 @@ public class LoginActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
 
+        // TODO: 카카오 로그인, 구글 로그인 구현.
+
         initLoginButton();
     }
 

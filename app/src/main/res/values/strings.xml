@@ -1,3 +1,9 @@
 <resources>
-    <string name="app_name">Meojium</string>
+    <string name="app_name">머지엄</string>
+    <string name="drawer_open">Drawer Open</string>
+    <string name="drawer_close">Drawer Close</string>
+    <string name="navigation_home">홈</string>
+    <string name="navigation_favorite_museum">관심 박물관</string>
+    <string name="navigation_setting">설정</string>
+    <string name="navigation_logout">로그아웃</string>
 </resources>
