@@ -49,11 +49,11 @@ public class MuseumRecyclerViewAdapter extends RecyclerView.Adapter<RecyclerView
     }
 
     class ViewHolder extends RecyclerView.ViewHolder {
-        @BindView(R.id.image_view_museum_thumb)
+        @BindView(R.id.imageview_museum_thumb)
         ImageView thumbImageView;
-        @BindView(R.id.text_view_museum_name)
+        @BindView(R.id.textview_museum_name)
         TextView nameTextView;
-        @BindView(R.id.text_view_museum_address)
+        @BindView(R.id.textview_museum_address)
         TextView addressTextView;
         @BindView(R.id.relativelayout_museum_container)
         RelativeLayout container;

@@ -1,7 +1,5 @@
 package com.moon.meojium.model.museum;
 
-import android.graphics.Bitmap;
-
 /**
  * Created by moon on 2017. 8. 3..
  */
@@ -9,7 +7,7 @@ import android.graphics.Bitmap;
 public class Museum {
     private int id;
     private String name;
-    private String content;
+    private String intro;
     private int image;
     private String address;
     private String latitude;
@@ -36,12 +34,12 @@ public class Museum {
         this.name = name;
     }
 
-    public String getContent() {
-        return content;
+    public String getIntro() {
+        return intro;
     }
 
-    public void setContent(String content) {
-        this.content = content;
+    public void setIntro(String intro) {
+        this.intro = intro;
     }
 
     public int getImage() {

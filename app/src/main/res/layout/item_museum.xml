@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <android.support.v7.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
-    android:orientation="vertical"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:layout_margin="16dp">
+    android:layout_margin="16dp"
+    android:orientation="vertical">
 
     <RelativeLayout
         android:id="@+id/relativelayout_museum_container"
@@ -11,33 +11,33 @@
         android:layout_height="wrap_content">
 
         <ImageView
-            android:id="@+id/image_view_museum_thumb"
+            android:id="@+id/imageview_museum_thumb"
             android:layout_width="match_parent"
             android:layout_height="200dp"
             android:scaleType="fitXY"
             android:src="@drawable/img_seokjangni" />
 
         <TextView
-            android:id="@+id/text_view_museum_name"
+            android:id="@+id/textview_museum_name"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_below="@id/image_view_museum_thumb"
+            android:layout_below="@id/imageview_museum_thumb"
+            android:layout_margin="8dp"
             android:text="석장리 박물관"
             android:textSize="17sp"
-            android:textStyle="bold"
-            android:layout_margin="8dp"/>
+            android:textStyle="bold" />
 
         <TextView
-            android:id="@+id/text_view_museum_address"
+            android:id="@+id/textview_museum_address"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="충청남도 공주시 금벽로 990"
-            android:layout_below="@id/text_view_museum_name"
-            android:layout_marginStart="8dp"
-            android:layout_marginLeft="8dp"
-            android:layout_marginEnd="8dp"
-            android:layout_marginRight="8dp"
+            android:layout_below="@id/textview_museum_name"
             android:layout_marginBottom="8dp"
+            android:layout_marginEnd="8dp"
+            android:layout_marginLeft="8dp"
+            android:layout_marginRight="8dp"
+            android:layout_marginStart="8dp"
+            android:text="충청남도 공주시 금벽로 990"
             android:textSize="14sp" />
 
     </RelativeLayout>

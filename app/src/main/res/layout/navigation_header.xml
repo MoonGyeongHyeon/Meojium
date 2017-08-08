@@ -7,14 +7,14 @@
     <ImageView
         android:layout_width="match_parent"
         android:layout_height="180dp"
-        android:src="@drawable/ic_museum"
-        android:scaleType="center"/>
+        android:scaleType="center"
+        android:src="@drawable/ic_museum" />
 
     <TextView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:gravity="center"
         android:text="경현님 환영합니다!"
-        android:textSize="23sp"/>
+        android:textSize="23sp" />
 
 </LinearLayout>

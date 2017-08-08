@@ -41,7 +41,6 @@ public class MuseumFragment extends Fragment {
 
         MuseumRecyclerViewAdapter adapter = new MuseumRecyclerViewAdapter(museumList, getContext());
         recyclerView.setAdapter(adapter);
-
         RecyclerView.LayoutManager manager = new LinearLayoutManager(getContext());
         recyclerView.setLayoutManager(manager);
     }
@@ -52,7 +51,7 @@ public class MuseumFragment extends Fragment {
         Museum museum = new Museum();
         museum.setId(1);
         museum.setName("석장리 박물관");
-        museum.setContent("이 박물관은 석장리 박물관입니다.");
+        museum.setIntro("이 박물관은 석장리 박물관입니다.");
         museum.setImage(R.drawable.img_seokjangni);
         museum.setAddress("충청남도 공주시 금벽로 990");
         museum.setBusinessHours("10:00 ~ 18:00");
@@ -66,7 +65,7 @@ public class MuseumFragment extends Fragment {
         museum = new Museum();
         museum.setId(2);
         museum.setName("석장리 박물관2");
-        museum.setContent("이 박물관은 석장리 박물관입니다.");
+        museum.setIntro("이 박물관은 석장리 박물관입니다.");
         museum.setImage(R.drawable.img_seokjangni);
         museum.setAddress("충청남도 공주시 금벽로 990");
         museum.setBusinessHours("10:00 ~ 18:00");
@@ -80,7 +79,7 @@ public class MuseumFragment extends Fragment {
         museum = new Museum();
         museum.setId(3);
         museum.setName("석장리 박물관3");
-        museum.setContent("이 박물관은 석장리 박물관입니다.");
+        museum.setIntro("이 박물관은 석장리 박물관입니다.");
         museum.setImage(R.drawable.img_seokjangni);
         museum.setAddress("충청남도 공주시 금벽로 990");
         museum.setBusinessHours("10:00 ~ 18:00");
