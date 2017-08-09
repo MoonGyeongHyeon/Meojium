@@ -3,25 +3,33 @@ package com.moon.meojium.ui.museumdetail;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.MenuItem;
 import android.view.MotionEvent;
 import android.view.View;
+import android.widget.Button;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.gordonwong.materialsheetfab.MaterialSheetFab;
 import com.moon.meojium.R;
 import com.moon.meojium.base.NaverAPI;
 import com.moon.meojium.model.museum.Museum;
 import com.moon.meojium.model.review.Review;
+import com.moon.meojium.model.story.Story;
 import com.nhn.android.maps.NMapContext;
 import com.nhn.android.maps.NMapView;
 import com.nhn.android.maps.overlay.NMapPOIdata;
 import com.nhn.android.mapviewer.overlay.NMapOverlayManager;
 import com.nhn.android.mapviewer.overlay.NMapPOIdataOverlay;
+
+import java.util.ArrayList;
+import java.util.List;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -34,7 +42,7 @@ import butterknife.OnTouch;
 public class DetailActivity extends AppCompatActivity
         implements NaverAPI {
 
-    @BindView(R.id.toolbar)
+    @BindView(R.id.include_detail_toolbar)
     Toolbar toolbar;
     @BindView(R.id.imageview_detail_thumb)
     ImageView thumbImageView;
@@ -74,6 +82,14 @@ public class DetailActivity extends AppCompatActivity
     TextView reviewContentTextView3;
     @BindView(R.id.mapview_detail)
     NMapView mapView;
+    @BindView(R.id.fab)
+    Fab fab;
+    @BindView(R.id.fab_sheet)
+    View sheetView;
+    @BindView(R.id.fab_overlay)
+    View overlayView;
+    @BindView(R.id.fab_sheet_container)
+    LinearLayout sheetContainer;
 
     @OnTouch(R.id.mapview_detail)
     public boolean onTouch(View view, MotionEvent motionEvent) {
@@ -92,6 +108,8 @@ public class DetailActivity extends AppCompatActivity
     private int id;
     private Review review1, review2, review3;
     private NMapContext mapContext;
+    private MaterialSheetFab materialSheetFab;
+    private List<Story> storyList;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -102,7 +120,7 @@ public class DetailActivity extends AppCompatActivity
         Intent intent = getIntent();
 
         if (intent != null) {
-            Log.d("Meojium", intent.getStringExtra("id"));
+            Log.d("Meojium/Detail", "Museum id: " + intent.getStringExtra("id"));
             id = Integer.parseInt(intent.getStringExtra("id"));
         } else {
             Toast.makeText(this, "일시적인 오류가 발생했습니다.", Toast.LENGTH_SHORT).show();
@@ -110,19 +128,24 @@ public class DetailActivity extends AppCompatActivity
         }
 
         initToolbar();
+        initData();
 
-        initMuseumData();
         updateMuseumTextView();
-
-        initReviewData();
         updateReviewData();
 
         initMapView();
+        initFloatingActionButton();
     }
 
     private void initToolbar() {
         setSupportActionBar(toolbar);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+    }
+
+    private void initData() {
+        initMuseumData();
+        initReviewData();
+        initStoryData();
     }
 
     private void initMuseumData() {
@@ -140,19 +163,6 @@ public class DetailActivity extends AppCompatActivity
         museum.setTel("041-123-4567");
         museum.setLatitude(36.447573);
         museum.setLongitude(127.189654);
-    }
-
-
-    private void updateMuseumTextView() {
-        thumbImageView.setImageResource(museum.getImage());
-        nameTextView.setText(museum.getName());
-        addressTextView.setText(museum.getAddress());
-        businessHourTextView.setText(museum.getBusinessHours());
-        dayOffTextView.setText(museum.getDayOff());
-        feeTextView.setText(museum.getFee());
-        telTextView.setText(museum.getTel());
-        homepageTextView.setText(museum.getHomepage());
-        introTextView.setText(museum.getIntro());
     }
 
     private void initReviewData() {
@@ -173,6 +183,37 @@ public class DetailActivity extends AppCompatActivity
         review3.setNickname("히히");
         review3.setContent("1등");
         review3.setRegisteredDate("2017-07-21");
+    }
+
+    private void initStoryData() {
+        storyList = new ArrayList<>();
+
+        Story story = new Story();
+        story.setId(1);
+        story.setStoryName("알쓸신잡 6회 - 선사인의 불");
+        storyList.add(story);
+
+        story = new Story();
+        story.setId(2);
+        story.setStoryName("파른 손보기 선생 기념관");
+        storyList.add(story);
+
+        story = new Story();
+        story.setId(3);
+        story.setStoryName("설립 취지");
+        storyList.add(story);
+    }
+
+    private void updateMuseumTextView() {
+        thumbImageView.setImageResource(museum.getImage());
+        nameTextView.setText(museum.getName());
+        addressTextView.setText(museum.getAddress());
+        businessHourTextView.setText(museum.getBusinessHours());
+        dayOffTextView.setText(museum.getDayOff());
+        feeTextView.setText(museum.getFee());
+        telTextView.setText(museum.getTel());
+        homepageTextView.setText(museum.getHomepage());
+        introTextView.setText(museum.getIntro());
     }
 
     private void updateReviewData() {
@@ -221,6 +262,31 @@ public class DetailActivity extends AppCompatActivity
         poIdataOverlay.selectPOIitem(0, true);
     }
 
+    private void initFloatingActionButton() {
+        materialSheetFab = new MaterialSheetFab<>(fab, sheetView, overlayView,
+                android.R.color.white, R.color.colorAccent);
+
+        addButtonToSheet();
+    }
+
+    private void addButtonToSheet() {
+        for (int i = 0; i < 3; i++) {
+            final Story story = storyList.get(i);
+
+            Button button = new Button(this);
+            button.setText(story.getStoryName());
+            button.setBackgroundColor(ContextCompat.getColor(this, android.R.color.white));
+            button.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    Log.d("Meojium/Detail", "Clicked story id: " + String.valueOf(story.getId()));
+                    materialSheetFab.hideSheet();
+                }
+            });
+            sheetContainer.addView(button);
+        }
+    }
+
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
@@ -259,5 +325,14 @@ public class DetailActivity extends AppCompatActivity
     protected void onDestroy() {
         super.onDestroy();
         mapContext.onDestroy();
+    }
+
+    @Override
+    public void onBackPressed() {
+        if (materialSheetFab.isSheetVisible()) {
+            materialSheetFab.hideSheet();
+        } else {
+            super.onBackPressed();
+        }
     }
 }
