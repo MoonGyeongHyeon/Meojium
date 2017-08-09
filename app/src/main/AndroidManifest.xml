@@ -28,6 +28,7 @@
 
         <activity android:name=".ui.home.HomeActivity" />
         <activity android:name=".ui.museumdetail.DetailActivity" />
+        <activity android:name=".ui.story.StoryActivity" />
     </application>
 
 </manifest>

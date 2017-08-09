@@ -22,6 +22,7 @@ import com.moon.meojium.base.NaverAPI;
 import com.moon.meojium.model.museum.Museum;
 import com.moon.meojium.model.review.Review;
 import com.moon.meojium.model.story.Story;
+import com.moon.meojium.ui.story.StoryActivity;
 import com.nhn.android.maps.NMapContext;
 import com.nhn.android.maps.NMapView;
 import com.nhn.android.maps.overlay.NMapPOIdata;
@@ -119,13 +120,15 @@ public class DetailActivity extends AppCompatActivity
 
         Intent intent = getIntent();
 
-        if (intent != null) {
-            Log.d("Meojium/Detail", "Museum id: " + intent.getStringExtra("id"));
+        try {
             id = Integer.parseInt(intent.getStringExtra("id"));
-        } else {
+        } catch (Exception e) {
+            e.printStackTrace();
             Toast.makeText(this, "일시적인 오류가 발생했습니다.", Toast.LENGTH_SHORT).show();
             onBackPressed();
         }
+
+        Log.d("Meojium/Detail", "Museum id: " + id);
 
         initToolbar();
         initData();
@@ -190,17 +193,17 @@ public class DetailActivity extends AppCompatActivity
 
         Story story = new Story();
         story.setId(1);
-        story.setStoryName("알쓸신잡 6회 - 선사인의 불");
+        story.setTitle("알쓸신잡 6회 - 선사인의 불");
         storyList.add(story);
 
         story = new Story();
         story.setId(2);
-        story.setStoryName("파른 손보기 선생 기념관");
+        story.setTitle("파른 손보기 선생 기념관");
         storyList.add(story);
 
         story = new Story();
         story.setId(3);
-        story.setStoryName("설립 취지");
+        story.setTitle("설립 취지");
         storyList.add(story);
     }
 
@@ -274,13 +277,16 @@ public class DetailActivity extends AppCompatActivity
             final Story story = storyList.get(i);
 
             Button button = new Button(this);
-            button.setText(story.getStoryName());
+            button.setText(story.getTitle());
             button.setBackgroundColor(ContextCompat.getColor(this, android.R.color.white));
             button.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
-                    Log.d("Meojium/Detail", "Clicked story id: " + String.valueOf(story.getId()));
                     materialSheetFab.hideSheet();
+
+                    Intent intent = new Intent(DetailActivity.this, StoryActivity.class);
+                    intent.putExtra("id", String.valueOf(story.getId()));
+                    startActivity(intent);
                 }
             });
             sheetContainer.addView(button);
@@ -329,10 +335,13 @@ public class DetailActivity extends AppCompatActivity
 
     @Override
     public void onBackPressed() {
-        if (materialSheetFab.isSheetVisible()) {
-            materialSheetFab.hideSheet();
-        } else {
-            super.onBackPressed();
+        if (materialSheetFab != null) {
+            if (materialSheetFab.isSheetVisible()) {
+                materialSheetFab.hideSheet();
+                return;
+            }
         }
+
+        super.onBackPressed();
     }
 }

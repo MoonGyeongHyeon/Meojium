@@ -6,7 +6,7 @@ package com.moon.meojium.model.story;
 
 public class Story {
     private int id;
-    private String storyName;
+    private String title;
 
     public int getId() {
         return id;
@@ -16,11 +16,11 @@ public class Story {
         this.id = id;
     }
 
-    public String getStoryName() {
-        return storyName;
+    public String getTitle() {
+        return title;
     }
 
-    public void setStoryName(String storyName) {
-        this.storyName = storyName;
+    public void setTitle(String title) {
+        this.title = title;
     }
 }
