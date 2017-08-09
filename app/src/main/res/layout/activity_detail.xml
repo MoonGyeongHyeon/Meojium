@@ -306,9 +306,9 @@
                     android:id="@+id/imageview_detail_review_image1"
                     android:layout_width="48dp"
                     android:layout_height="56dp"
-                    android:layout_marginLeft="32dp"
-                    android:layout_marginStart="32dp"
                     android:layout_below="@id/textview_detail_review_label"
+                    android:layout_marginLeft="24dp"
+                    android:layout_marginStart="24dp"
                     android:layout_marginTop="8dp"
                     android:src="@drawable/ic_user" />
 
@@ -317,6 +317,8 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_alignTop="@id/imageview_detail_review_image1"
+                    android:layout_marginLeft="8dp"
+                    android:layout_marginStart="8dp"
                     android:layout_toEndOf="@id/imageview_detail_review_image1"
                     android:layout_toRightOf="@id/imageview_detail_review_image1"
                     tools:text="송중기" />
@@ -356,17 +358,17 @@
                     android:id="@+id/textview_detail_review_user_nickname2"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
+                    android:layout_alignLeft="@id/textview_detail_review_user_nickname1"
+                    android:layout_alignStart="@id/textview_detail_review_user_nickname1"
                     android:layout_alignTop="@id/imageview_detail_review_image2"
-                    android:layout_toEndOf="@id/imageview_detail_review_image2"
-                    android:layout_toRightOf="@id/imageview_detail_review_image2"
                     tools:text="송혜교" />
 
                 <TextView
                     android:id="@+id/textview_detail_review_registered_date2"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_alignRight="@id/textview_detail_review_registered_date1"
                     android:layout_alignEnd="@id/textview_detail_review_registered_date1"
+                    android:layout_alignRight="@id/textview_detail_review_registered_date1"
                     android:layout_alignTop="@id/textview_detail_review_user_nickname2"
                     tools:text="2017-07-23" />
 
@@ -394,17 +396,18 @@
                     android:id="@+id/textview_detail_review_user_nickname3"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
+                    android:layout_alignLeft="@id/textview_detail_review_user_nickname1"
+
+                    android:layout_alignStart="@id/textview_detail_review_user_nickname1"
                     android:layout_alignTop="@id/imageview_detail_review_image3"
-                    android:layout_toEndOf="@id/imageview_detail_review_image3"
-                    android:layout_toRightOf="@id/imageview_detail_review_image3"
                     tools:text="히히" />
 
                 <TextView
                     android:id="@+id/textview_detail_review_registered_date3"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_alignRight="@id/textview_detail_review_registered_date1"
                     android:layout_alignEnd="@id/textview_detail_review_registered_date1"
+                    android:layout_alignRight="@id/textview_detail_review_registered_date1"
                     android:layout_alignTop="@id/textview_detail_review_user_nickname3"
                     tools:text="2017-07-21" />
 
@@ -439,13 +442,12 @@
                 android:text="@string/detail_map_label"
                 android:textSize="22sp" />
 
-            <FrameLayout
-                android:id="@+id/framelayout_detail_map_container"
+            <com.nhn.android.maps.NMapView
+                android:id="@+id/mapview_detail"
                 android:layout_width="match_parent"
-                android:layout_height="240dp"
+                android:layout_height="280dp"
                 android:layout_below="@id/textview_detail_map_label"
-                android:layout_margin="32dp"
-                android:background="@color/colorPrimary" />
+                android:layout_margin="16dp" />
 
         </RelativeLayout>
 

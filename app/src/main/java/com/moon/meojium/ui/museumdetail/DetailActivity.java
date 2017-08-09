@@ -7,22 +7,33 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.MenuItem;
+import android.view.MotionEvent;
+import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import com.moon.meojium.R;
+import com.moon.meojium.base.NaverAPI;
 import com.moon.meojium.model.museum.Museum;
 import com.moon.meojium.model.review.Review;
+import com.nhn.android.maps.NMapContext;
+import com.nhn.android.maps.NMapView;
+import com.nhn.android.maps.overlay.NMapPOIdata;
+import com.nhn.android.mapviewer.overlay.NMapOverlayManager;
+import com.nhn.android.mapviewer.overlay.NMapPOIdataOverlay;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
+import butterknife.OnTouch;
 
 /**
  * Created by moon on 2017. 8. 7..
  */
 
-public class DetailActivity extends AppCompatActivity {
+public class DetailActivity extends AppCompatActivity
+        implements NaverAPI {
+
     @BindView(R.id.toolbar)
     Toolbar toolbar;
     @BindView(R.id.imageview_detail_thumb)
@@ -61,10 +72,26 @@ public class DetailActivity extends AppCompatActivity {
     TextView reviewRegisteredDateTextView3;
     @BindView(R.id.textview_detail_review_content3)
     TextView reviewContentTextView3;
+    @BindView(R.id.mapview_detail)
+    NMapView mapView;
+
+    @OnTouch(R.id.mapview_detail)
+    public boolean onTouch(View view, MotionEvent motionEvent) {
+        switch (motionEvent.getAction()) {
+            case MotionEvent.ACTION_DOWN:
+                view.getParent().requestDisallowInterceptTouchEvent(true);
+                break;
+            case MotionEvent.ACTION_UP:
+                view.getParent().requestDisallowInterceptTouchEvent(false);
+                break;
+        }
+        return false;
+    }
 
     private Museum museum;
     private int id;
     private Review review1, review2, review3;
+    private NMapContext mapContext;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -89,6 +116,8 @@ public class DetailActivity extends AppCompatActivity {
 
         initReviewData();
         updateReviewData();
+
+        initMapView();
     }
 
     private void initToolbar() {
@@ -109,6 +138,8 @@ public class DetailActivity extends AppCompatActivity {
         museum.setFee("어린이: 800, 청소년: 1000, 성인: 1300");
         museum.setHomepage("http://naver.com");
         museum.setTel("041-123-4567");
+        museum.setLatitude(36.447573);
+        museum.setLongitude(127.189654);
     }
 
 
@@ -158,6 +189,38 @@ public class DetailActivity extends AppCompatActivity {
         reviewContentTextView3.setText(review3.getContent());
     }
 
+    private void initMapView() {
+        mapContext = new NMapContext(this);
+        mapContext.onCreate();
+
+        mapView.setClientId(CLIENT_ID);
+        mapView.setClickable(true);
+        mapView.setEnabled(true);
+        mapView.setFocusable(true);
+        mapView.setFocusableInTouchMode(true);
+
+        mapContext.setupMapView(mapView);
+
+        mapView.getMapController().setZoomLevel(13);
+
+        addMarker();
+    }
+
+    private void addMarker() {
+        NMapViewerResourceProvider provider = new NMapViewerResourceProvider(this);
+
+        NMapPOIdata poIdata = new NMapPOIdata(1, provider, true);
+
+        poIdata.beginPOIdata(1);
+        poIdata.addPOIitem(museum.getLongitude(), museum.getLatitude(), museum.getName(), NMapPOIflagType.PIN, null);
+        poIdata.endPOIdata();
+
+        NMapOverlayManager manager = new NMapOverlayManager(this, mapView, provider);
+
+        NMapPOIdataOverlay poIdataOverlay = manager.createPOIdataOverlay(poIdata, null);
+        poIdataOverlay.selectPOIitem(0, true);
+    }
+
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
@@ -166,5 +229,35 @@ public class DetailActivity extends AppCompatActivity {
                 break;
         }
         return super.onOptionsItemSelected(item);
+    }
+
+    @Override
+    protected void onStart() {
+        super.onStart();
+        mapContext.onStart();
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        mapContext.onResume();
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        mapContext.onPause();
+    }
+
+    @Override
+    protected void onStop() {
+        super.onStop();
+        mapContext.onStop();
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        mapContext.onDestroy();
     }
 }

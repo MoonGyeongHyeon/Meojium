@@ -6,6 +6,7 @@ import android.content.Intent;
 import android.os.AsyncTask;
 import android.util.Log;
 
+import com.moon.meojium.base.NaverAPI;
 import com.moon.meojium.ui.home.HomeActivity;
 import com.nhn.android.naverlogin.OAuthLogin;
 import com.nhn.android.naverlogin.OAuthLoginHandler;
@@ -21,9 +22,7 @@ import java.util.concurrent.ExecutionException;
  * Created by moon on 2017. 8. 4..
  */
 
-public class NaverLogin {
-    private static String OAUTH_CLIENT_ID = "zp_U6QNm3sWr4V1O7Xa5";
-    private static String OAUTH_CLIENT_SECRET = "wCzTb1divC";
+public class NaverLogin implements NaverAPI {
     private static String OAUTH_CLIENT_NAME = "네이버 아이디로 로그인";
 
     private OAuthLogin oAuthLoginInstance;
@@ -33,7 +32,7 @@ public class NaverLogin {
         this.context = context;
 
         oAuthLoginInstance = OAuthLogin.getInstance();
-        oAuthLoginInstance.init(context, OAUTH_CLIENT_ID, OAUTH_CLIENT_SECRET, OAUTH_CLIENT_NAME);
+        oAuthLoginInstance.init(context, CLIENT_ID, CLIENT_SECRET, OAUTH_CLIENT_NAME);
     }
 
     private OAuthLoginHandler oAuthLoginHandler = new OAuthLoginHandler() {
