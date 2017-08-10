@@ -31,11 +31,15 @@ public class HomeActivity extends AppCompatActivity
     @BindView(R.id.navigationview)
     NavigationView navigationView;
 
+    private BackPressCloseHandler backPressCloseHandler;
+
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_home);
         ButterKnife.bind(this);
+
+        backPressCloseHandler = new BackPressCloseHandler(this);
 
         initToolbar();
         initDrawerLayout();
@@ -69,7 +73,7 @@ public class HomeActivity extends AppCompatActivity
         if (drawerLayout.isDrawerOpen(GravityCompat.START)) {
             drawerLayout.closeDrawer(GravityCompat.START);
         } else {
-            super.onBackPressed();
+            backPressCloseHandler.onBackPressed();
         }
     }
 
