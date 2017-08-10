@@ -108,7 +108,6 @@ public class DetailActivity extends AppCompatActivity
     }
 
     private Museum museum;
-    private int id;
     private Review review1, review2, review3;
     private NMapContext mapContext;
     private MaterialSheetFab materialSheetFab;
@@ -123,14 +122,13 @@ public class DetailActivity extends AppCompatActivity
         Intent intent = getIntent();
 
         try {
-            id = Integer.parseInt(intent.getStringExtra("id"));
+            museum = Parcels.unwrap(intent.getParcelableExtra("museum"));
+            Log.d("Meojium/Detail", "Museum id: " + museum.getId());
         } catch (Exception e) {
             e.printStackTrace();
             Toast.makeText(this, "일시적인 오류가 발생했습니다.", Toast.LENGTH_SHORT).show();
             onBackPressed();
         }
-
-        Log.d("Meojium/Detail", "Museum id: " + id);
 
         initToolbar();
         initData();
@@ -154,13 +152,8 @@ public class DetailActivity extends AppCompatActivity
     }
 
     private void initMuseumData() {
-        museum = new Museum();
-
-        museum.setId(id);
-        museum.setName("석장리 박물관3");
         museum.setIntro("이 박물관은 석장리 박물관입니다.");
         museum.setImage(R.drawable.img_seokjangni);
-        museum.setAddress("충청남도 공주시 금벽로 990");
         museum.setBusinessHours("10:00 ~ 18:00");
         museum.setDayOff("매주 월요일");
         museum.setFee("어린이: 800, 청소년: 1000, 성인: 1300");

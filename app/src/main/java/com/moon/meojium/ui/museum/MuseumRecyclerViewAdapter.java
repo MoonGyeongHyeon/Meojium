@@ -14,6 +14,8 @@ import com.moon.meojium.R;
 import com.moon.meojium.model.museum.Museum;
 import com.moon.meojium.ui.museumdetail.DetailActivity;
 
+import org.parceler.Parcels;
+
 import java.util.List;
 
 import butterknife.BindView;
@@ -71,7 +73,7 @@ public class MuseumRecyclerViewAdapter extends RecyclerView.Adapter<RecyclerView
                 @Override
                 public void onClick(View view) {
                     Intent intent = new Intent(context, DetailActivity.class);
-                    intent.putExtra("id", String.valueOf(museum.getId()));
+                    intent.putExtra("museum", Parcels.wrap(museum));
                     context.startActivity(intent);
                 }
             });

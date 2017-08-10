@@ -1,9 +1,12 @@
 package com.moon.meojium.model.museum;
 
+import org.parceler.Parcel;
+
 /**
  * Created by moon on 2017. 8. 3..
  */
 
+@Parcel
 public class Museum {
     private int id;
     private String name;
