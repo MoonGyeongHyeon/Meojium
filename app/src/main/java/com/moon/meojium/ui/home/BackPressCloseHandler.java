@@ -3,6 +3,8 @@ package com.moon.meojium.ui.home;
 import android.app.Activity;
 import android.widget.Toast;
 
+import es.dmoral.toasty.Toasty;
+
 /**
  * Created by moon on 2017. 8. 10..
  */
@@ -30,8 +32,7 @@ public class BackPressCloseHandler {
     }
 
     public void showGuide() {
-        toast = Toast.makeText(activity,
-                "\'뒤로\' 버튼을 한번 더 누르시면 종료됩니다.", Toast.LENGTH_SHORT);
+        toast = Toasty.info(activity,  "\'뒤로\' 버튼을 한번 더 누르시면 종료됩니다.");
         toast.show();
     }
 }

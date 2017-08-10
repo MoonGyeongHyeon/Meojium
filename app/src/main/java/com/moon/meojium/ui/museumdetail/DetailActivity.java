@@ -14,7 +14,6 @@ import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.gordonwong.materialsheetfab.MaterialSheetFab;
 import com.moon.meojium.R;
@@ -37,6 +36,7 @@ import java.util.List;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnTouch;
+import es.dmoral.toasty.Toasty;
 
 /**
  * Created by moon on 2017. 8. 7..
@@ -126,7 +126,7 @@ public class DetailActivity extends AppCompatActivity
             Log.d("Meojium/Detail", "Museum id: " + museum.getId());
         } catch (Exception e) {
             e.printStackTrace();
-            Toast.makeText(this, "일시적인 오류가 발생했습니다.", Toast.LENGTH_SHORT).show();
+            Toasty.info(this, "일시적인 오류가 발생했습니다.").show();
             onBackPressed();
         }
 

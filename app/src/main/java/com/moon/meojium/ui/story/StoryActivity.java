@@ -10,7 +10,6 @@ import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.MenuItem;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.moon.meojium.R;
 import com.moon.meojium.model.story.Story;
@@ -23,6 +22,7 @@ import java.util.List;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
+import es.dmoral.toasty.Toasty;
 
 /**
  * Created by moon on 2017. 8. 9..
@@ -55,7 +55,7 @@ public class StoryActivity extends AppCompatActivity {
             Log.d("Meojium/Detail", "Story id: " + story.getTitle());
         } catch (Exception e) {
             e.printStackTrace();
-            Toast.makeText(this, "일시적인 오류가 발생했습니다.", Toast.LENGTH_SHORT).show();
+            Toasty.info(this, "일시적인 오류가 발생했습니다.").show();
             onBackPressed();
         }
 
