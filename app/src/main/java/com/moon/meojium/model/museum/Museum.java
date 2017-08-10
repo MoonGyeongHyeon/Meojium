@@ -8,18 +8,18 @@ import org.parceler.Parcel;
 
 @Parcel
 public class Museum {
-    private int id;
-    private String name;
-    private String intro;
-    private int image;
-    private String address;
-    private double latitude;
-    private double longitude;
-    private String businessHours;
-    private String dayOff;
-    private String fee;
-    private String homepage;
-    private String tel;
+    int id;
+    String name;
+    String intro;
+    int image;
+    String address;
+    double latitude;
+    double longitude;
+    String businessHours;
+    String dayOff;
+    String fee;
+    String homepage;
+    String tel;
 
     public int getId() {
         return id;

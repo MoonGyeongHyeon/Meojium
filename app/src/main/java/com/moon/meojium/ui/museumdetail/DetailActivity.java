@@ -11,6 +11,7 @@ import android.view.MenuItem;
 import android.view.MotionEvent;
 import android.view.View;
 import android.widget.Button;
+import android.widget.CheckBox;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
@@ -35,6 +36,7 @@ import java.util.List;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
+import butterknife.OnClick;
 import butterknife.OnTouch;
 import es.dmoral.toasty.Toasty;
 
@@ -65,6 +67,10 @@ public class DetailActivity extends AppCompatActivity
     TextView homepageTextView;
     @BindView(R.id.textview_detail_intro)
     TextView introTextView;
+    @BindView(R.id.checkbox_detail_favorite)
+    CheckBox favoriteCheckBox;
+    @BindView(R.id.checkbox_detail_stamp)
+    CheckBox stampCheckBox;
     @BindView(R.id.textview_detail_review_user_nickname1)
     TextView reviewNicknameTextView1;
     @BindView(R.id.textview_detail_review_registered_date1)
@@ -105,6 +111,24 @@ public class DetailActivity extends AppCompatActivity
                 break;
         }
         return false;
+    }
+
+    @OnClick(R.id.relativelayout_detail_favorite_container)
+    public void onClickFavorite(View view) {
+        if (favoriteCheckBox.isChecked()) {
+            favoriteCheckBox.setChecked(false);
+        } else {
+            favoriteCheckBox.setChecked(true);
+        }
+    }
+
+    @OnClick(R.id.relativelayout_detail_stamp_container)
+    public void onClickStamp(View view) {
+        if (stampCheckBox.isChecked()) {
+            stampCheckBox.setChecked(false);
+        } else {
+            stampCheckBox.setChecked(true);
+        }
     }
 
     private Museum museum;

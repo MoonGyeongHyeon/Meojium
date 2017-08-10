@@ -190,7 +190,6 @@
                 android:layout_width="match_parent"
                 android:layout_height="2dp"
                 android:layout_below="@id/textview_detail_homepage"
-                android:layout_marginBottom="16dp"
                 android:layout_marginTop="16dp"
                 android:background="@color/lineColor" />
 
@@ -199,61 +198,80 @@
                 android:layout_width="80dp"
                 android:layout_height="60dp"
                 android:layout_below="@id/detail_next_line2"
-                android:layout_centerHorizontal="true" />
+                android:layout_centerHorizontal="true"
+                android:layout_marginTop="16dp" />
 
-            <ImageView
-                android:id="@+id/imageview_detail_favorite"
-                android:layout_width="40dp"
-                android:layout_height="32dp"
-                android:layout_alignTop="@id/detail_divider"
+            <RelativeLayout
+                android:id="@+id/relativelayout_detail_favorite_container"
+                android:layout_width="80dp"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/detail_next_line2"
                 android:layout_toLeftOf="@id/detail_divider"
                 android:layout_toStartOf="@id/detail_divider"
-                android:scaleType="fitXY"
-                android:src="@drawable/ic_favorite" />
-
-            <TextView
-                android:id="@+id/textview_detail_favorite_label"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_alignEnd="@id/imageview_detail_favorite"
-                android:layout_alignLeft="@id/imageview_detail_favorite"
-                android:layout_alignRight="@id/imageview_detail_favorite"
-                android:layout_alignStart="@id/imageview_detail_favorite"
-                android:layout_below="@id/imageview_detail_favorite"
                 android:gravity="center"
-                android:text="@string/detail_favorite_label"
-                android:textSize="12sp" />
+                android:paddingBottom="16dp"
+                android:paddingTop="16dp">
 
-            <ImageView
-                android:id="@+id/imageview_detail_stamp"
-                android:layout_width="40dp"
-                android:layout_height="32dp"
-                android:layout_alignTop="@id/detail_divider"
+                <CheckBox
+                    android:id="@+id/checkbox_detail_favorite"
+                    android:layout_width="40dp"
+                    android:layout_height="32dp"
+                    android:background="@drawable/selector_detail_favorite"
+                    android:button="@android:color/transparent" />
+
+                <TextView
+                    android:id="@+id/textview_detail_favorite_label"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignEnd="@id/checkbox_detail_favorite"
+                    android:layout_alignLeft="@id/checkbox_detail_favorite"
+                    android:layout_alignRight="@id/checkbox_detail_favorite"
+                    android:layout_alignStart="@id/checkbox_detail_favorite"
+                    android:layout_below="@id/checkbox_detail_favorite"
+                    android:gravity="center"
+                    android:text="@string/detail_favorite_label"
+                    android:textSize="12sp" />
+
+            </RelativeLayout>
+
+            <RelativeLayout
+                android:id="@+id/relativelayout_detail_stamp_container"
+                android:layout_width="80dp"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/detail_next_line2"
                 android:layout_toEndOf="@id/detail_divider"
                 android:layout_toRightOf="@id/detail_divider"
-                android:scaleType="fitXY"
-                android:src="@drawable/ic_stamp" />
-
-            <TextView
-                android:id="@+id/textview_detail_stamp_label"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_alignEnd="@id/imageview_detail_stamp"
-                android:layout_alignLeft="@id/imageview_detail_stamp"
-                android:layout_alignRight="@id/imageview_detail_stamp"
-                android:layout_alignStart="@id/imageview_detail_stamp"
-                android:layout_below="@id/imageview_detail_stamp"
                 android:gravity="center"
-                android:text="@string/detail_stamp_label"
-                android:textSize="12sp" />
+                android:paddingBottom="16dp"
+                android:paddingTop="16dp">
+
+                <CheckBox
+                    android:id="@+id/checkbox_detail_stamp"
+                    android:layout_width="40dp"
+                    android:layout_height="32dp"
+                    android:background="@drawable/selector_detail_stamp"
+                    android:button="@android:color/transparent" />
+
+                <TextView
+                    android:id="@+id/textview_detail_stamp_label"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignEnd="@id/checkbox_detail_stamp"
+                    android:layout_alignLeft="@id/checkbox_detail_stamp"
+                    android:layout_alignRight="@id/checkbox_detail_stamp"
+                    android:layout_alignStart="@id/checkbox_detail_stamp"
+                    android:layout_below="@id/checkbox_detail_stamp"
+                    android:gravity="center"
+                    android:text="@string/detail_stamp_label"
+                    android:textSize="12sp" />
+            </RelativeLayout>
 
             <View
                 android:id="@+id/detail_next_line3"
                 android:layout_width="match_parent"
                 android:layout_height="2dp"
-                android:layout_below="@id/textview_detail_stamp_label"
+                android:layout_below="@id/relativelayout_detail_stamp_container"
                 android:layout_marginBottom="16dp"
-                android:layout_marginTop="16dp"
                 android:background="@color/lineColor" />
 
             <TextView
