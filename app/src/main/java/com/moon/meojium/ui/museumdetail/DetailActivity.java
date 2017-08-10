@@ -29,6 +29,8 @@ import com.nhn.android.maps.overlay.NMapPOIdata;
 import com.nhn.android.mapviewer.overlay.NMapOverlayManager;
 import com.nhn.android.mapviewer.overlay.NMapPOIdataOverlay;
 
+import org.parceler.Parcels;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -273,9 +275,7 @@ public class DetailActivity extends AppCompatActivity
     }
 
     private void addButtonToSheet() {
-        for (int i = 0; i < 3; i++) {
-            final Story story = storyList.get(i);
-
+        for (final Story story : storyList) {
             Button button = new Button(this);
             button.setText(story.getTitle());
             button.setBackgroundColor(ContextCompat.getColor(this, android.R.color.white));
@@ -285,7 +285,7 @@ public class DetailActivity extends AppCompatActivity
                     materialSheetFab.hideSheet();
 
                     Intent intent = new Intent(DetailActivity.this, StoryActivity.class);
-                    intent.putExtra("id", String.valueOf(story.getId()));
+                    intent.putExtra("story", Parcels.wrap(story));
                     startActivity(intent);
                 }
             });

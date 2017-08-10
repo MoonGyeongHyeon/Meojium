@@ -1,20 +1,22 @@
 package com.moon.meojium.model.story;
 
+import org.parceler.Parcel;
+
 /**
  * Created by moon on 2017. 8. 3..
  */
 
+@Parcel
 public class StoryContent {
-    private String imageURL;
-    private String content;
-    private int priority;
+    int image;
+    String content;
 
-    public String getImageURL() {
-        return imageURL;
+    public int getImage() {
+        return image;
     }
 
-    public void setImageURL(String imageURL) {
-        this.imageURL = imageURL;
+    public void setImage(int image) {
+        this.image = image;
     }
 
     public String getContent() {
@@ -23,13 +25,5 @@ public class StoryContent {
 
     public void setContent(String content) {
         this.content = content;
-    }
-
-    public int getPriority() {
-        return priority;
-    }
-
-    public void setPriority(int priority) {
-        this.priority = priority;
     }
 }
