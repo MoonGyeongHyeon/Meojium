@@ -1,5 +1,6 @@
 package com.moon.meojium.ui.home;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -15,16 +16,19 @@ import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
 
 import com.moon.meojium.R;
 import com.moon.meojium.model.museum.Museum;
 import com.moon.meojium.model.story.Story;
+import com.moon.meojium.ui.nearby.NearbyActivity;
 
 import java.util.ArrayList;
 import java.util.List;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
+import butterknife.OnClick;
 import es.dmoral.toasty.Toasty;
 
 /**
@@ -45,6 +49,12 @@ public class HomeActivity extends AppCompatActivity
     ViewPager historyMuseumViewPager;
     @BindView(R.id.recyclerview_home_tasting)
     RecyclerView tastingRecyclerView;
+
+    @OnClick(R.id.imageview_home_nearby)
+    public void onClick(View view) {
+        Intent intent = new Intent(this, NearbyActivity.class);
+        startActivity(intent);
+    }
 
 
     private BackPressCloseHandler backPressCloseHandler;
