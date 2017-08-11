@@ -22,7 +22,7 @@ import butterknife.ButterKnife;
  * Created by moon on 2017. 8. 7..
  */
 
-public class MuseumFragment extends Fragment {
+public class MuseumRecyclerViewFragment extends Fragment {
     @BindView(R.id.recyclerview_museum)
     RecyclerView recyclerView;
 
@@ -42,7 +42,7 @@ public class MuseumFragment extends Fragment {
 
         MuseumRecyclerViewAdapter adapter = new MuseumRecyclerViewAdapter(museumList, getContext());
         recyclerView.setAdapter(adapter);
-        RecyclerView.LayoutManager manager = new LinearLayoutManager(getContext());
+        RecyclerView.LayoutManager manager = new LinearLayoutManager(getContext(), LinearLayoutManager.VERTICAL, false);
         recyclerView.setLayoutManager(manager);
     }
 

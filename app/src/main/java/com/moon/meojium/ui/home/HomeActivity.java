@@ -6,6 +6,7 @@ import android.support.annotation.Nullable;
 import android.support.design.widget.NavigationView;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.view.GravityCompat;
+import android.support.v4.view.ViewPager;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
@@ -14,7 +15,11 @@ import android.view.Menu;
 import android.view.MenuItem;
 
 import com.moon.meojium.R;
-import com.moon.meojium.ui.museum.MuseumFragment;
+import com.moon.meojium.model.museum.Museum;
+import com.moon.meojium.ui.museum.MuseumViewPagerAdapter;
+
+import java.util.ArrayList;
+import java.util.List;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -32,8 +37,11 @@ public class HomeActivity extends AppCompatActivity
     DrawerLayout drawerLayout;
     @BindView(R.id.navigationview)
     NavigationView navigationView;
+    @BindView(R.id.viewpager_home_popular_museum)
+    ViewPager popularMuseumViewPager;
 
     private BackPressCloseHandler backPressCloseHandler;
+    private List<Museum> popularMuseumList;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -47,7 +55,9 @@ public class HomeActivity extends AppCompatActivity
 
         initToolbar();
         initDrawerLayout();
-        initMuseumList();
+
+        createPopularMuseumDummyData();
+        initPopularMuseumViewPager();
     }
 
     private void initToastyConfig() {
@@ -70,11 +80,56 @@ public class HomeActivity extends AppCompatActivity
         navigationView.setNavigationItemSelectedListener(this);
     }
 
-    private void initMuseumList() {
-        getSupportFragmentManager()
-                .beginTransaction()
-                .replace(R.id.framelayout_museum_list_container, new MuseumFragment())
-                .commit();
+    private void createPopularMuseumDummyData() {
+        popularMuseumList = new ArrayList<>();
+
+        Museum museum = new Museum();
+        museum.setId(1);
+        museum.setName("인기있는 석장리 박물관");
+        museum.setImage(R.drawable.img_seokjangni);
+        museum.setAddress("충청남도 공주시 금벽로 990");
+        popularMuseumList.add(museum);
+
+        museum = new Museum();
+        museum.setId(2);
+        museum.setName("인기있는 석장리 박물관2");
+        museum.setImage(R.drawable.img_seokjangni);
+        museum.setAddress("충청남도 공주시 금벽로 990");
+        popularMuseumList.add(museum);
+
+        museum = new Museum();
+        museum.setId(3);
+        museum.setName("인기있는 석장리 박물관3");
+        museum.setImage(R.drawable.img_seokjangni);
+        museum.setAddress("충청남도 공주시 금벽로 990");
+        popularMuseumList.add(museum);
+
+        museum = new Museum();
+        museum.setId(4);
+        museum.setName("인기있는 석장리 박물관4");
+        museum.setImage(R.drawable.img_seokjangni);
+        museum.setAddress("충청남도 공주시 금벽로 990");
+        popularMuseumList.add(museum);
+
+        museum = new Museum();
+        museum.setId(5);
+        museum.setName("인기있는 석장리 박물관5");
+        museum.setImage(R.drawable.img_seokjangni);
+        museum.setAddress("충청남도 공주시 금벽로 990");
+        popularMuseumList.add(museum);
+
+        museum = new Museum();
+        museum.setId(6);
+        museum.setName("인기있는 석장리 박물관6");
+        museum.setImage(R.drawable.img_seokjangni);
+        museum.setAddress("충청남도 공주시 금벽로 990");
+        popularMuseumList.add(museum);
+    }
+
+    private void initPopularMuseumViewPager() {
+        MuseumViewPagerAdapter adapter = new MuseumViewPagerAdapter(getSupportFragmentManager(), popularMuseumList);
+        popularMuseumViewPager.setAdapter(adapter);
+        popularMuseumViewPager.setPageMargin(32);
     }
 
     @Override

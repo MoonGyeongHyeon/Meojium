@@ -2,13 +2,28 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical">
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:orientation="vertical" >
 
     <include layout="@layout/toolbar" />
 
-    <FrameLayout
-        android:id="@+id/framelayout_museum_list_container"
+    <TextView
+        android:text="@string/home_popular"
         android:layout_width="match_parent"
-        android:layout_height="match_parent" />
+        android:layout_height="wrap_content"
+        android:textSize="20sp"
+        android:textStyle="bold"
+        android:layout_margin="16dp"/>
+
+    <android.support.v4.view.ViewPager
+        android:id="@+id/viewpager_home_popular_museum"
+        android:layout_width="match_parent"
+        android:layout_height="280dp" />
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="2dp"
+        android:layout_marginTop="16dp"
+        android:background="@color/lineColor" />
 
 </LinearLayout>
