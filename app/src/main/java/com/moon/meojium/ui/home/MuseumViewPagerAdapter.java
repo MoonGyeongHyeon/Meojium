@@ -1,4 +1,4 @@
-package com.moon.meojium.ui.museum;
+package com.moon.meojium.ui.home;
 
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;

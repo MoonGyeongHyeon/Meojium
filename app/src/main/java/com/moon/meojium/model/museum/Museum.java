@@ -1,6 +1,10 @@
 package com.moon.meojium.model.museum;
 
+import com.moon.meojium.model.story.Story;
+
 import org.parceler.Parcel;
+
+import java.util.List;
 
 /**
  * Created by moon on 2017. 8. 3..
@@ -20,6 +24,7 @@ public class Museum {
     String fee;
     String homepage;
     String tel;
+    List<Story> storyList;
 
     public int getId() {
         return id;
@@ -115,5 +120,13 @@ public class Museum {
 
     public void setTel(String tel) {
         this.tel = tel;
+    }
+
+    public List<Story> getStoryList() {
+        return storyList;
+    }
+
+    public void setStoryList(List<Story> storyList) {
+        this.storyList = storyList;
     }
 }

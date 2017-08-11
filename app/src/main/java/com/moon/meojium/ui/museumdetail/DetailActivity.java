@@ -135,7 +135,6 @@ public class DetailActivity extends AppCompatActivity
     private Review review1, review2, review3;
     private NMapContext mapContext;
     private MaterialSheetFab materialSheetFab;
-    private List<Story> storyList;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -147,6 +146,14 @@ public class DetailActivity extends AppCompatActivity
 
         try {
             museum = Parcels.unwrap(intent.getParcelableExtra("museum"));
+
+            if (intent.getBooleanExtra("cascade", false)) {
+                Intent cascadeIntent = new Intent(this, StoryActivity.class);
+                cascadeIntent.putExtra("museum", Parcels.wrap(museum));
+                cascadeIntent.putExtra("cascade", true);
+                startActivity(cascadeIntent);
+            }
+
             Log.d("Meojium/Detail", "Museum id: " + museum.getId());
         } catch (Exception e) {
             e.printStackTrace();
@@ -208,7 +215,7 @@ public class DetailActivity extends AppCompatActivity
     }
 
     private void initStoryData() {
-        storyList = new ArrayList<>();
+        List<Story> storyList = new ArrayList<>();
 
         Story story = new Story();
         story.setId(1);
@@ -224,6 +231,8 @@ public class DetailActivity extends AppCompatActivity
         story.setId(3);
         story.setTitle("설립 취지");
         storyList.add(story);
+
+        museum.setStoryList(storyList);
     }
 
     private void updateMuseumTextView() {
@@ -292,7 +301,7 @@ public class DetailActivity extends AppCompatActivity
     }
 
     private void addButtonToSheet() {
-        for (final Story story : storyList) {
+        for (final Story story : museum.getStoryList()) {
             Button button = new Button(this);
             button.setText(story.getTitle());
             button.setBackgroundColor(ContextCompat.getColor(this, android.R.color.white));

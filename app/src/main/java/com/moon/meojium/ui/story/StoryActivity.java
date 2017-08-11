@@ -12,6 +12,7 @@ import android.view.MenuItem;
 import android.widget.TextView;
 
 import com.moon.meojium.R;
+import com.moon.meojium.model.museum.Museum;
 import com.moon.meojium.model.story.Story;
 import com.moon.meojium.model.story.StoryContent;
 
@@ -49,7 +50,12 @@ public class StoryActivity extends AppCompatActivity {
         Intent intent = getIntent();
 
         try {
-            story = Parcels.unwrap(intent.getParcelableExtra("story"));
+            if (intent.getBooleanExtra("cascade", false)) {
+                Museum museum = Parcels.unwrap(intent.getParcelableExtra("museum"));
+                story = museum.getStoryList().get(0);
+            } else {
+                story = Parcels.unwrap(intent.getParcelableExtra("story"));
+            }
 
             Log.d("Meojium/Detail", "Story id: " + story.getId());
             Log.d("Meojium/Detail", "Story id: " + story.getTitle());
