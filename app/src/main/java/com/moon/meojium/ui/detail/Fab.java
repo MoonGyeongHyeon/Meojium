@@ -1,4 +1,4 @@
-package com.moon.meojium.ui.museumdetail;
+package com.moon.meojium.ui.detail;
 
 import android.content.Context;
 import android.support.design.widget.FloatingActionButton;

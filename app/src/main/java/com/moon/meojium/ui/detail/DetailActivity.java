@@ -1,4 +1,4 @@
-package com.moon.meojium.ui.museumdetail;
+package com.moon.meojium.ui.detail;
 
 import android.content.Intent;
 import android.os.Bundle;

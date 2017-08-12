@@ -36,7 +36,7 @@
         </activity>
 
         <activity android:name=".ui.home.HomeActivity" />
-        <activity android:name=".ui.museumdetail.DetailActivity" />
+        <activity android:name=".ui.detail.DetailActivity" />
         <activity android:name=".ui.story.StoryActivity" />
         <activity android:name=".ui.nearby.NearbyActivity" />
     </application>

@@ -1,4 +1,4 @@
-package com.moon.meojium.ui.museumdetail;
+package com.moon.meojium.ui.detail;
 
 /**
  * Created by moon on 2017. 7. 31..

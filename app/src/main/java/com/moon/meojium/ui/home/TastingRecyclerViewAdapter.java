@@ -13,7 +13,7 @@ import android.widget.TextView;
 import com.moon.meojium.R;
 import com.moon.meojium.model.museum.Museum;
 import com.moon.meojium.model.story.Story;
-import com.moon.meojium.ui.museumdetail.DetailActivity;
+import com.moon.meojium.ui.detail.DetailActivity;
 
 import org.parceler.Parcels;
 
