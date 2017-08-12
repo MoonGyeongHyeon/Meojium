@@ -172,6 +172,7 @@ public class DetailActivity extends AppCompatActivity
     }
 
     private void initToolbar() {
+        toolbar.setTitle(museum.getName());
         setSupportActionBar(toolbar);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
     }

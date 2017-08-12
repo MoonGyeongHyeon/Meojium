@@ -73,6 +73,7 @@ public class StoryActivity extends AppCompatActivity {
     }
 
     private void initToolbar() {
+        toolbar.setTitle(story.getTitle());
         setSupportActionBar(toolbar);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
     }

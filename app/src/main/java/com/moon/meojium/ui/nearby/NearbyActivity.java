@@ -63,6 +63,7 @@ public class NearbyActivity extends AppCompatActivity
     }
 
     private void initToolbar() {
+        toolbar.setTitle("주변 박물관");
         setSupportActionBar(toolbar);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
     }
