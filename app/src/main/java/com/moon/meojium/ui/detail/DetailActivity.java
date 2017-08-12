@@ -18,6 +18,7 @@ import android.widget.TextView;
 
 import com.gordonwong.materialsheetfab.MaterialSheetFab;
 import com.moon.meojium.R;
+import com.moon.meojium.base.FrescoImageViewer;
 import com.moon.meojium.base.NaverAPI;
 import com.moon.meojium.model.museum.Museum;
 import com.moon.meojium.model.review.Review;
@@ -28,6 +29,7 @@ import com.nhn.android.maps.NMapView;
 import com.nhn.android.maps.overlay.NMapPOIdata;
 import com.nhn.android.mapviewer.overlay.NMapOverlayManager;
 import com.nhn.android.mapviewer.overlay.NMapPOIdataOverlay;
+import com.stfalcon.frescoimageviewer.ImageViewer;
 
 import org.parceler.Parcels;
 
@@ -45,7 +47,7 @@ import es.dmoral.toasty.Toasty;
  */
 
 public class DetailActivity extends AppCompatActivity
-        implements NaverAPI {
+        implements NaverAPI, FrescoImageViewer {
 
     @BindView(R.id.include_detail_toolbar)
     Toolbar toolbar;
@@ -129,6 +131,11 @@ public class DetailActivity extends AppCompatActivity
         } else {
             stampCheckBox.setChecked(true);
         }
+    }
+
+    @OnClick(R.id.imageview_detail_thumb)
+    public void onClickThumb(View view) {
+        showPicker();
     }
 
     private Museum museum;
@@ -328,6 +335,24 @@ public class DetailActivity extends AppCompatActivity
                 break;
         }
         return super.onOptionsItemSelected(item);
+    }
+
+    @Override
+    public void showPicker() {
+        new ImageViewer.Builder<>(this, getImageUrlList())
+                .setStartPosition(0)
+                .show();
+    }
+
+    public List<String> getImageUrlList() {
+        List<String> list = new ArrayList<>();
+
+        list.add("http://cfile8.uf.tistory.com/image/161360154C8E90341F6BB2");
+        list.add("http://cfile23.uf.tistory.com/image/27379D3352BD1C171FC82D");
+        list.add("http://bbkk.kr/d/t/3/3550_%EC%B6%A9%EB%82%A8%EA%B3%B5%EC%A3%BC%EC%8B%9C%EC%84%9D%EC%9E%A5%EB%A6%AC%EB%B0%95%EB%AC%BC%EA%B4%80%EB%9F%AC%EB%B8%94%EB%A6%AC%EC%B9%98%EB%A0%B9%EB%A7%98%EA%B4%80077.jpg");
+        list.add("http://cfile232.uf.daum.net/image/0110DA425109DA6E27FF70");
+
+        return list;
     }
 
     @Override

@@ -7,6 +7,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.MenuItem;
 
+import com.moon.meojium.base.FrescoImageViewer;
 import com.moon.meojium.base.ImageOverlayView;
 import com.moon.meojium.model.museum.Museum;
 import com.moon.meojium.model.story.Story;
@@ -24,7 +25,8 @@ import es.dmoral.toasty.Toasty;
  */
 
 public class StoryActivity extends AppCompatActivity
-        implements ImageViewer.OnDismissListener {
+        implements ImageViewer.OnDismissListener,
+        FrescoImageViewer {
     private Story story;
     private List<String> imageUrlList, contentList;
     private ImageOverlayView overlayView;
@@ -57,7 +59,8 @@ public class StoryActivity extends AppCompatActivity
         showPicker();
     }
 
-    private void showPicker() {
+    @Override
+    public void showPicker() {
         ImageViewer.Builder builder = new ImageViewer.Builder<>(this, imageUrlList)
                 .setStartPosition(0);
 
