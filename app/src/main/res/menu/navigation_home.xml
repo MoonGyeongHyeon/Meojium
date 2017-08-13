@@ -8,13 +8,13 @@
             android:icon="@drawable/ic_home"
             android:title="@string/navigation_home" />
         <item
-            android:id="@+id/navigation_favorite_museum"
-            android:checkable="true"
-            android:icon="@drawable/ic_favorite_museum"
-            android:title="@string/navigation_favorite_museum" />
+            android:id="@+id/navigation_interested_museum"
+            android:checkable="false"
+            android:icon="@drawable/ic_interested_museum"
+            android:title="@string/navigation_interested_museum" />
         <item
             android:id="@+id/navigation_setting"
-            android:checkable="true"
+            android:checkable="false"
             android:icon="@drawable/ic_setting"
             android:title="@string/navigation_setting" />
     </group>

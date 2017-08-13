@@ -24,6 +24,7 @@ import com.moon.meojium.R;
 import com.moon.meojium.base.util.SharedPreferencesService;
 import com.moon.meojium.model.museum.Museum;
 import com.moon.meojium.model.story.Story;
+import com.moon.meojium.ui.interested.InterestedActivity;
 import com.moon.meojium.ui.login.LoginActivity;
 import com.moon.meojium.ui.login.naver.NaverLogin;
 import com.moon.meojium.ui.nearby.NearbyActivity;
@@ -315,7 +316,9 @@ public class HomeActivity extends AppCompatActivity
         switch (item.getItemId()) {
             case R.id.navigation_home:
                 break;
-            case R.id.navigation_favorite_museum:
+            case R.id.navigation_interested_museum:
+                Intent interestedIntent = new Intent(this, InterestedActivity.class);
+                startActivity(interestedIntent);
                 break;
             case R.id.navigation_setting:
                 break;
@@ -336,9 +339,9 @@ public class HomeActivity extends AppCompatActivity
 
                 sharedPreferencesService.removeData("token", "tokenType", "username");
 
-                Intent intent = new Intent(this, LoginActivity.class);
-                intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
-                startActivity(intent);
+                Intent logoutIntent = new Intent(this, LoginActivity.class);
+                logoutIntent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
+                startActivity(logoutIntent);
 
                 break;
         }

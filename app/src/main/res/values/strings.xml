@@ -4,7 +4,7 @@
     <string name="drawer_open">Drawer Open</string>
     <string name="drawer_close">Drawer Close</string>
     <string name="navigation_home">홈</string>
-    <string name="navigation_favorite_museum">관심 박물관</string>
+    <string name="navigation_interested_museum">관심 박물관</string>
     <string name="navigation_setting">설정</string>
     <string name="navigation_logout">로그아웃</string>
     <string name="all_time_exhibit">상설전시</string>
