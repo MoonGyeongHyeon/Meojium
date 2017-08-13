@@ -14,13 +14,18 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.TextView;
 
 import com.moon.meojium.R;
+import com.moon.meojium.base.util.SharedPreferencesService;
 import com.moon.meojium.model.museum.Museum;
 import com.moon.meojium.model.story.Story;
+import com.moon.meojium.ui.login.LoginActivity;
+import com.moon.meojium.ui.login.naver.NaverLogin;
 import com.moon.meojium.ui.nearby.NearbyActivity;
 
 import java.util.ArrayList;
@@ -56,11 +61,12 @@ public class HomeActivity extends AppCompatActivity
         startActivity(intent);
     }
 
-
+    private TextView usernameTextView;
     private BackPressCloseHandler backPressCloseHandler;
     private List<Museum> popularMuseumList;
     private List<Museum> historyMuseumList;
     private List<Museum> tastingMuseumList;
+    private SharedPreferencesService sharedPreferencesService;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -71,6 +77,7 @@ public class HomeActivity extends AppCompatActivity
         backPressCloseHandler = new BackPressCloseHandler(this);
 
         initToastyConfig();
+        initSharedPreferences();
 
         initToolbar();
         initDrawerLayout();
@@ -90,6 +97,10 @@ public class HomeActivity extends AppCompatActivity
         config.setInfoColor(ContextCompat.getColor(this, R.color.colorPrimary)).apply();
     }
 
+    private void initSharedPreferences() {
+        sharedPreferencesService = SharedPreferencesService.getInstance();
+    }
+
     private void initToolbar() {
         toolbar.setTitle("머지엄");
         setSupportActionBar(toolbar);
@@ -103,6 +114,12 @@ public class HomeActivity extends AppCompatActivity
         toggle.syncState();
 
         navigationView.setNavigationItemSelectedListener(this);
+
+        View header = navigationView.getHeaderView(0);
+        usernameTextView = header.findViewById(R.id.textview_navigation_username);
+
+        usernameTextView.setText(String.format(getResources().getString(R.string.navigation_username),
+                sharedPreferencesService.getStringData("username")));
     }
 
     private void createPopularMuseumDummyData() {
@@ -303,6 +320,26 @@ public class HomeActivity extends AppCompatActivity
             case R.id.navigation_setting:
                 break;
             case R.id.navigation_logout:
+                Log.d("Meojium/Home", "Try Logout");
+
+                String tokenType = sharedPreferencesService.getStringData("tokenType");
+
+                Log.d("Meojium/Home", "Token Type: " + tokenType);
+                Log.d("Meojium/Home", "Username: " + sharedPreferencesService.getStringData("username"));
+
+                switch (tokenType) {
+                    case NaverLogin.TOKEN_TYPE:
+                        NaverLogin naverLogin = NaverLogin.getInstance();
+                        naverLogin.logout();
+                        break;
+                }
+
+                sharedPreferencesService.removeData("token", "tokenType", "username");
+
+                Intent intent = new Intent(this, LoginActivity.class);
+                intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
+                startActivity(intent);
+
                 break;
         }
 

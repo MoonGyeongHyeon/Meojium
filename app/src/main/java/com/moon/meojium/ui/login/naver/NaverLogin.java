@@ -7,6 +7,7 @@ import android.os.AsyncTask;
 import android.util.Log;
 
 import com.moon.meojium.base.NaverAPI;
+import com.moon.meojium.base.util.SharedPreferencesService;
 import com.moon.meojium.ui.home.HomeActivity;
 import com.nhn.android.naverlogin.OAuthLogin;
 import com.nhn.android.naverlogin.OAuthLoginHandler;
@@ -23,12 +24,29 @@ import java.util.concurrent.ExecutionException;
  */
 
 public class NaverLogin implements NaverAPI {
-    private static String OAUTH_CLIENT_NAME = "네이버 아이디로 로그인";
+    public static final String TOKEN_TYPE = "Naver";
+    private static final String OAUTH_CLIENT_NAME = "네이버 아이디로 로그인";
+
+    private static NaverLogin naverLogin;
 
     private OAuthLogin oAuthLoginInstance;
     private Context context;
 
-    public NaverLogin(Context context) {
+    public static NaverLogin getInstance() {
+        if (naverLogin == null) {
+            synchronized (NaverLogin.class) {
+                if (naverLogin == null) {
+                    naverLogin = new NaverLogin();
+                }
+            }
+        }
+        return naverLogin;
+    }
+
+    private NaverLogin() {
+    }
+
+    public void init(Context context) {
         this.context = context;
 
         oAuthLoginInstance = OAuthLogin.getInstance();
@@ -41,7 +59,10 @@ public class NaverLogin implements NaverAPI {
             if (success) {
                 Log.d("Meojium/NaverLogin", "Naver login is successful");
 
-                // TODO: SharedPreferences에 토큰 추가하고 DB에 user정보 삽입.
+                SharedPreferencesService service = SharedPreferencesService.getInstance();
+                service.putData("token", oAuthLoginInstance.getAccessToken(context));
+                service.putData("tokenType", TOKEN_TYPE);
+                service.putData("username", requestUserNickname());
 
                 Intent intent = new Intent(context, HomeActivity.class);
                 intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK);
@@ -96,8 +117,6 @@ public class NaverLogin implements NaverAPI {
                 JSONObject root = new JSONObject(body);
                 JSONObject jo = root.getJSONObject("response");
                 nickname = jo.getString("nickname");
-
-                Log.d("Meojium/NaverLogin", "Nickname: " + nickname);
             } catch (JSONException e) {
                 e.printStackTrace();
             }

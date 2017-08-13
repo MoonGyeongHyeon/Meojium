@@ -2,9 +2,11 @@ package com.moon.meojium.ui.login;
 
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
 import android.view.View;
 
 import com.moon.meojium.R;
+import com.moon.meojium.base.util.SharedPreferencesService;
 import com.moon.meojium.ui.login.naver.NaverLogin;
 import com.nhn.android.naverlogin.ui.view.OAuthLoginButton;
 
@@ -15,6 +17,7 @@ public class LoginActivity extends AppCompatActivity {
     @BindView(R.id.button_login_naver_id)
     OAuthLoginButton oAuthLoginButton;
     private NaverLogin naverLogin;
+    private SharedPreferencesService sharedPreferencesService;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -22,7 +25,14 @@ public class LoginActivity extends AppCompatActivity {
         setContentView(R.layout.activity_login);
         ButterKnife.bind(this);
 
+        initSharedPreferencesService();
         initLoginButton();
+
+        checkLogin();
+    }
+
+    private void initSharedPreferencesService() {
+        sharedPreferencesService = SharedPreferencesService.getInstance();
     }
 
     private void initLoginButton() {
@@ -30,7 +40,9 @@ public class LoginActivity extends AppCompatActivity {
     }
 
     private void initNaverLoginButton() {
-        naverLogin = new NaverLogin(this);
+        naverLogin = NaverLogin.getInstance();
+        naverLogin.init(this);
+
         naverLogin.initLoginButton(oAuthLoginButton);
 
         oAuthLoginButton.setOnClickListener(new View.OnClickListener() {
@@ -39,6 +51,20 @@ public class LoginActivity extends AppCompatActivity {
                 naverLogin.startNaverLoginActivity(LoginActivity.this);
             }
         });
+    }
 
+    private void checkLogin() {
+        String token = sharedPreferencesService.getStringData("token");
+        if (!token.equals("")) {
+            String tokenType = sharedPreferencesService.getStringData("tokenType");
+
+            Log.d("Meojium/Login", tokenType + " Already Login");
+
+            switch (tokenType) {
+                case NaverLogin.TOKEN_TYPE:
+                    naverLogin.startNaverLoginActivity(LoginActivity.this);
+                    break;
+            }
+        }
     }
 }
