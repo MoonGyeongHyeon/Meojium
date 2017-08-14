@@ -308,6 +308,7 @@ public class HomeActivity extends AppCompatActivity
                 break;
             case R.id.action_search:
                 Intent searchIntent = new Intent(this, SearchActivity.class);
+                searchIntent.addFlags(Intent.FLAG_ACTIVITY_NO_HISTORY);
                 startActivity(searchIntent);
                 break;
         }

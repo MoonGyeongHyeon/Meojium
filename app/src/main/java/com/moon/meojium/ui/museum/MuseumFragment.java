@@ -5,7 +5,6 @@ import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -52,8 +51,6 @@ public class MuseumFragment extends Fragment {
         Bundle bundle = getArguments();
 
         museumList = Parcels.unwrap(bundle.getParcelable("museumList"));
-
-        Log.d("Meojium/Test", "Test: " + museumList.get(0).getName());
 
         MuseumRecyclerViewAdapter adapter = new MuseumRecyclerViewAdapter(museumList, getContext());
         recyclerView.setAdapter(adapter);

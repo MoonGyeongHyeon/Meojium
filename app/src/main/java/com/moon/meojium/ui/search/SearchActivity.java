@@ -1,12 +1,12 @@
 package com.moon.meojium.ui.search;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
-import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.ImageView;
@@ -105,7 +105,7 @@ public class SearchActivity extends AppCompatActivity
     }
 
     private void initRecyclerView() {
-        SearchRecyclerViewAdapter adapter = new SearchRecyclerViewAdapter(searchLogList);
+        SearchRecyclerViewAdapter adapter = new SearchRecyclerViewAdapter(searchLogList, this);
         recyclerView.setAdapter(adapter);
         RecyclerView.LayoutManager manager = new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false);
         recyclerView.setLayoutManager(manager);
@@ -129,7 +129,10 @@ public class SearchActivity extends AppCompatActivity
 
     @Override
     public boolean onQueryTextSubmit(String s) {
-        Log.d("Meojium/Search", "Test");
+        Intent intent = new Intent(this, SearchResultActivity.class);
+        intent.putExtra("keyword", s);
+        startActivity(intent);
+
         return true;
     }
 

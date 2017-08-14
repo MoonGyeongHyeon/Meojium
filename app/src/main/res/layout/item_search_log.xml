@@ -1,9 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/relativelayout_search_log_container"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:layout_margin="16dp">
+    android:background="@drawable/ripple_button_click"
+    android:padding="16dp">
 
     <ImageView
         android:id="@+id/imageview_search_log"

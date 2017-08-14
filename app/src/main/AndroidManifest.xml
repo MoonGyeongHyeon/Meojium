@@ -43,6 +43,7 @@
         <activity android:name=".ui.nearby.NearbyActivity" />
         <activity android:name=".ui.interested.InterestedActivity" />
         <activity android:name=".ui.search.SearchActivity" />
+        <activity android:name=".ui.search.SearchResultActivity" />
     </application>
 
 </manifest>
