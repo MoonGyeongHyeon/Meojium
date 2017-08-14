@@ -121,7 +121,7 @@ public class HomeActivity extends AppCompatActivity
         usernameTextView = header.findViewById(R.id.textview_navigation_username);
 
         usernameTextView.setText(String.format(getResources().getString(R.string.navigation_username),
-                sharedPreferencesService.getStringData("username")));
+                sharedPreferencesService.getStringData(SharedPreferencesService.NICKNAME_KEY)));
     }
 
     private void createPopularMuseumDummyData() {
@@ -329,19 +329,21 @@ public class HomeActivity extends AppCompatActivity
             case R.id.navigation_logout:
                 Log.d("Meojium/Home", "Try Logout");
 
-                String tokenType = sharedPreferencesService.getStringData("tokenType");
+                String tokenType = sharedPreferencesService.getStringData(SharedPreferencesService.TOKEN_TYPE_KEY);
 
-                Log.d("Meojium/Home", "Token Type: " + tokenType);
-                Log.d("Meojium/Home", "Username: " + sharedPreferencesService.getStringData("username"));
+                Log.d("Meojium/Home", SharedPreferencesService.TOKEN_TYPE_KEY + ": " + tokenType);
+                Log.d("Meojium/Home", SharedPreferencesService.NICKNAME_KEY+ ": " +
+                        sharedPreferencesService.getStringData(SharedPreferencesService.NICKNAME_KEY));
 
                 switch (tokenType) {
-                    case NaverLogin.TOKEN_TYPE:
+                    case NaverLogin.NAVER_TOKEN_TYPE:
                         NaverLogin naverLogin = NaverLogin.getInstance();
                         naverLogin.logout();
                         break;
                 }
 
-                sharedPreferencesService.removeData("token", "tokenType", "username");
+                sharedPreferencesService.removeData(SharedPreferencesService.TOKEN_KEY,
+                        SharedPreferencesService.TOKEN_TYPE_KEY, SharedPreferencesService.NICKNAME_KEY);
 
                 Intent logoutIntent = new Intent(this, LoginActivity.class);
                 logoutIntent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);

@@ -24,7 +24,7 @@ import java.util.concurrent.ExecutionException;
  */
 
 public class NaverLogin implements NaverAPI {
-    public static final String TOKEN_TYPE = "Naver";
+    public static final String NAVER_TOKEN_TYPE = "Naver";
     private static final String OAUTH_CLIENT_NAME = "네이버 아이디로 로그인";
 
     private static NaverLogin naverLogin;
@@ -60,9 +60,9 @@ public class NaverLogin implements NaverAPI {
                 Log.d("Meojium/NaverLogin", "Naver login is successful");
 
                 SharedPreferencesService service = SharedPreferencesService.getInstance();
-                service.putData("token", oAuthLoginInstance.getAccessToken(context));
-                service.putData("tokenType", TOKEN_TYPE);
-                service.putData("username", requestUserNickname());
+                service.putData(SharedPreferencesService.TOKEN_KEY, oAuthLoginInstance.getAccessToken(context));
+                service.putData(SharedPreferencesService.TOKEN_TYPE_KEY, NAVER_TOKEN_TYPE);
+                service.putData(SharedPreferencesService.NICKNAME_KEY, requestUserNickname());
 
                 Intent intent = new Intent(context, HomeActivity.class);
                 intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK);

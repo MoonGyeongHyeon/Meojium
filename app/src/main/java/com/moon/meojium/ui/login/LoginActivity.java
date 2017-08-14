@@ -54,14 +54,14 @@ public class LoginActivity extends AppCompatActivity {
     }
 
     private void checkLogin() {
-        String token = sharedPreferencesService.getStringData("token");
+        String token = sharedPreferencesService.getStringData(SharedPreferencesService.TOKEN_KEY);
         if (!token.equals("")) {
-            String tokenType = sharedPreferencesService.getStringData("tokenType");
+            String tokenType = sharedPreferencesService.getStringData(SharedPreferencesService.TOKEN_TYPE_KEY);
 
             Log.d("Meojium/Login", tokenType + " Already Login");
 
             switch (tokenType) {
-                case NaverLogin.TOKEN_TYPE:
+                case NaverLogin.NAVER_TOKEN_TYPE:
                     naverLogin.startNaverLoginActivity(LoginActivity.this);
                     break;
             }
