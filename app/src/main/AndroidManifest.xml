@@ -42,6 +42,7 @@
         <activity android:name=".ui.story.StoryActivity" />
         <activity android:name=".ui.nearby.NearbyActivity" />
         <activity android:name=".ui.interested.InterestedActivity" />
+        <activity android:name=".ui.search.SearchActivity" />
     </application>
 
 </manifest>

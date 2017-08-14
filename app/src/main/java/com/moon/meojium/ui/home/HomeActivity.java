@@ -28,6 +28,7 @@ import com.moon.meojium.ui.interested.InterestedActivity;
 import com.moon.meojium.ui.login.LoginActivity;
 import com.moon.meojium.ui.login.naver.NaverLogin;
 import com.moon.meojium.ui.nearby.NearbyActivity;
+import com.moon.meojium.ui.search.SearchActivity;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -306,6 +307,8 @@ public class HomeActivity extends AppCompatActivity
             case R.id.action_filter:
                 break;
             case R.id.action_search:
+                Intent searchIntent = new Intent(this, SearchActivity.class);
+                startActivity(searchIntent);
                 break;
         }
         return super.onOptionsItemSelected(item);
