@@ -3,8 +3,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:layout_margin="16dp"
-    android:orientation="vertical">
+    android:layout_margin="16dp">
 
     <RelativeLayout
         android:id="@+id/relativelayout_museum_container"
@@ -24,7 +23,7 @@
             android:layout_height="wrap_content"
             android:layout_below="@id/imageview_museum_thumb"
             android:layout_margin="8dp"
-            android:textSize="17sp"
+            android:textSize="@dimen/normal_text_size"
             android:textStyle="bold"
             tools:text="석장리 박물관" />
 
@@ -38,7 +37,8 @@
             android:layout_marginLeft="8dp"
             android:layout_marginRight="8dp"
             android:layout_marginStart="8dp"
-            android:textSize="14sp"
+            android:textSize="@dimen/small_text_size"
+            android:textColor="@color/darkGray"
             tools:text="충청남도 공주시 금벽로 990" />
 
     </RelativeLayout>

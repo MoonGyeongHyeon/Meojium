@@ -283,6 +283,8 @@ public class HomeActivity extends AppCompatActivity
 
         RecyclerView.LayoutManager manager = new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false);
         tastingRecyclerView.setLayoutManager(manager);
+
+        tastingRecyclerView.setNestedScrollingEnabled(false);
     }
 
     @Override
@@ -332,7 +334,7 @@ public class HomeActivity extends AppCompatActivity
                 String tokenType = sharedPreferencesService.getStringData(SharedPreferencesService.TOKEN_TYPE_KEY);
 
                 Log.d("Meojium/Home", SharedPreferencesService.TOKEN_TYPE_KEY + ": " + tokenType);
-                Log.d("Meojium/Home", SharedPreferencesService.NICKNAME_KEY+ ": " +
+                Log.d("Meojium/Home", SharedPreferencesService.NICKNAME_KEY + ": " +
                         sharedPreferencesService.getStringData(SharedPreferencesService.NICKNAME_KEY));
 
                 switch (tokenType) {

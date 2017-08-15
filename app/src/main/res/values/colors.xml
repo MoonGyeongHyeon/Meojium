@@ -10,4 +10,5 @@
     <color name="whiteLight">#aaffffff</color>
     <color name="lineColor">#dfdfdf</color>
 
+    <color name="darkGray">#888888</color>
 </resources>
