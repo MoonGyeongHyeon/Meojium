@@ -2,7 +2,6 @@ package com.moon.meojium.ui.login;
 
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
-import android.util.Log;
 import android.view.View;
 
 import com.moon.meojium.R;
@@ -27,8 +26,6 @@ public class LoginActivity extends AppCompatActivity {
 
         initSharedPreferencesService();
         initLoginButton();
-
-        checkLogin();
     }
 
     private void initSharedPreferencesService() {
@@ -50,20 +47,5 @@ public class LoginActivity extends AppCompatActivity {
                 naverLogin.startNaverLoginActivity(LoginActivity.this);
             }
         });
-    }
-
-    private void checkLogin() {
-        String token = sharedPreferencesService.getStringData(SharedPreferencesService.TOKEN_KEY);
-        if (!token.equals("")) {
-            String tokenType = sharedPreferencesService.getStringData(SharedPreferencesService.TOKEN_TYPE_KEY);
-
-            Log.d("Meojium/Login", tokenType + " Already Login");
-
-            switch (tokenType) {
-                case NaverLogin.NAVER_TOKEN_TYPE:
-                    naverLogin.startNaverLoginActivity(LoginActivity.this);
-                    break;
-            }
-        }
     }
 }
