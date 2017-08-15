@@ -40,9 +40,8 @@ public class LoginActivity extends AppCompatActivity {
     }
 
     private void initNaverLoginButton() {
-        naverLogin = NaverLogin.getInstance();
-        naverLogin.init(this);
-
+        naverLogin = new NaverLogin(this);
+        naverLogin.initHandlerListener();
         naverLogin.initLoginButton(oAuthLoginButton);
 
         oAuthLoginButton.setOnClickListener(new View.OnClickListener() {

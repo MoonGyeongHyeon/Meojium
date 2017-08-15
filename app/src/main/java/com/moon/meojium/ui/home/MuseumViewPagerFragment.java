@@ -10,6 +10,7 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.bumptech.glide.Glide;
 import com.moon.meojium.R;
 import com.moon.meojium.model.museum.Museum;
 import com.moon.meojium.ui.detail.DetailActivity;
@@ -38,7 +39,6 @@ public class MuseumViewPagerFragment extends Fragment {
         intent.putExtra("museum", Parcels.wrap(museum));
         startActivity(intent);
     }
-
 
     private Museum museum;
 
@@ -72,7 +72,9 @@ public class MuseumViewPagerFragment extends Fragment {
     }
 
     private void updateView() {
-        thumbImageView.setImageResource(museum.getImage());
+        Glide.with(this)
+                .load(museum.getImage())
+                .into(thumbImageView);
         nameTextView.setText(museum.getName());
         addressTextView.setText(museum.getAddress());
     }

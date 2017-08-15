@@ -10,6 +10,7 @@ import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
+import com.bumptech.glide.Glide;
 import com.moon.meojium.R;
 import com.moon.meojium.model.museum.Museum;
 import com.moon.meojium.model.story.Story;
@@ -71,7 +72,9 @@ public class TastingRecyclerViewAdapter extends RecyclerView.Adapter<TastingRecy
             Story story = museum.getStoryList().get(0);
             nameTextView.setText(museum.getName());
             storyTitleTextView.setText(story.getTitle());
-            thumbImageView.setImageResource(museum.getImage());
+            Glide.with(context)
+                    .load(museum.getImage())
+                    .into(thumbImageView);
             container.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {

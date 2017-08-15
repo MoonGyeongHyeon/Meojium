@@ -18,8 +18,10 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.bumptech.glide.Glide;
 import com.moon.meojium.R;
 import com.moon.meojium.base.util.SharedPreferencesService;
 import com.moon.meojium.model.museum.Museum;
@@ -56,6 +58,8 @@ public class HomeActivity extends AppCompatActivity
     ViewPager historyMuseumViewPager;
     @BindView(R.id.recyclerview_home_tasting)
     RecyclerView tastingRecyclerView;
+    @BindView(R.id.imageview_home_nearby)
+    ImageView nearbyImageView;
 
     @OnClick(R.id.imageview_home_nearby)
     public void onClick(View view) {
@@ -83,6 +87,7 @@ public class HomeActivity extends AppCompatActivity
 
         initToolbar();
         initDrawerLayout();
+        initNearbyImageView();
 
         createPopularMuseumDummyData();
         initPopularMuseumViewPager();
@@ -122,6 +127,12 @@ public class HomeActivity extends AppCompatActivity
 
         usernameTextView.setText(String.format(getResources().getString(R.string.navigation_username),
                 sharedPreferencesService.getStringData(SharedPreferencesService.NICKNAME_KEY)));
+    }
+
+    private void initNearbyImageView() {
+        Glide.with(this)
+                .load(R.drawable.img_nearby_museum)
+                .into(nearbyImageView);
     }
 
     private void createPopularMuseumDummyData() {
@@ -339,7 +350,7 @@ public class HomeActivity extends AppCompatActivity
 
                 switch (tokenType) {
                     case NaverLogin.NAVER_TOKEN_TYPE:
-                        NaverLogin naverLogin = NaverLogin.getInstance();
+                        NaverLogin naverLogin = new NaverLogin(this);
                         naverLogin.logout();
                         break;
                 }

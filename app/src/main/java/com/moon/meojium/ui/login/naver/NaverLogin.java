@@ -27,55 +27,42 @@ public class NaverLogin implements NaverAPI {
     public static final String NAVER_TOKEN_TYPE = "Naver";
     private static final String OAUTH_CLIENT_NAME = "네이버 아이디로 로그인";
 
-    private static NaverLogin naverLogin;
-
     private OAuthLogin oAuthLoginInstance;
     private Context context;
+    private OAuthLoginHandler oAuthLoginHandler;
 
-    public static NaverLogin getInstance() {
-        if (naverLogin == null) {
-            synchronized (NaverLogin.class) {
-                if (naverLogin == null) {
-                    naverLogin = new NaverLogin();
-                }
-            }
-        }
-        return naverLogin;
-    }
-
-    private NaverLogin() {
-    }
-
-    public void init(Context context) {
+    public NaverLogin(Context context) {
         this.context = context;
 
         oAuthLoginInstance = OAuthLogin.getInstance();
         oAuthLoginInstance.init(context, CLIENT_ID, CLIENT_SECRET, OAUTH_CLIENT_NAME);
     }
 
-    private OAuthLoginHandler oAuthLoginHandler = new OAuthLoginHandler() {
-        @Override
-        public void run(boolean success) {
-            if (success) {
-                Log.d("Meojium/NaverLogin", "Naver login is successful");
+    public void initHandlerListener() {
+        oAuthLoginHandler = new OAuthLoginHandler() {
+            @Override
+            public void run(boolean success) {
+                if (success) {
+                    Log.d("Meojium/NaverLogin", "Naver login is successful");
 
-                SharedPreferencesService service = SharedPreferencesService.getInstance();
-                service.putData(SharedPreferencesService.TOKEN_KEY, oAuthLoginInstance.getAccessToken(context));
-                service.putData(SharedPreferencesService.TOKEN_TYPE_KEY, NAVER_TOKEN_TYPE);
-                service.putData(SharedPreferencesService.NICKNAME_KEY, requestUserNickname());
+                    SharedPreferencesService service = SharedPreferencesService.getInstance();
+                    service.putData(SharedPreferencesService.TOKEN_KEY, oAuthLoginInstance.getAccessToken(context));
+                    service.putData(SharedPreferencesService.TOKEN_TYPE_KEY, NAVER_TOKEN_TYPE);
+                    service.putData(SharedPreferencesService.NICKNAME_KEY, requestUserNickname());
 
-                Intent intent = new Intent(context, HomeActivity.class);
-                intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK);
-                intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-                context.startActivity(intent);
+                    Intent intent = new Intent(context, HomeActivity.class);
+                    intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK);
+                    intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                    context.startActivity(intent);
 
-            } else {
-                String errorCode = oAuthLoginInstance.getLastErrorCode(context).getCode();
-                String errorDesc = oAuthLoginInstance.getLastErrorDesc(context);
-                Log.d("Meojium/NaverLogin", "errorCode:" + errorCode + ", errorDesc:" + errorDesc);
+                } else {
+                    String errorCode = oAuthLoginInstance.getLastErrorCode(context).getCode();
+                    String errorDesc = oAuthLoginInstance.getLastErrorDesc(context);
+                    Log.d("Meojium/NaverLogin", "errorCode:" + errorCode + ", errorDesc:" + errorDesc);
+                }
             }
-        }
-    };
+        };
+    }
 
     public void startNaverLoginActivity(Activity activity) {
         oAuthLoginInstance.startOauthLoginActivity(activity, oAuthLoginHandler);

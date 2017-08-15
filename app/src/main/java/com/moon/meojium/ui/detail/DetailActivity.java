@@ -16,6 +16,7 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
+import com.bumptech.glide.Glide;
 import com.gordonwong.materialsheetfab.MaterialSheetFab;
 import com.moon.meojium.R;
 import com.moon.meojium.base.FrescoImageViewer;
@@ -73,6 +74,12 @@ public class DetailActivity extends AppCompatActivity
     CheckBox favoriteCheckBox;
     @BindView(R.id.checkbox_detail_stamp)
     CheckBox stampCheckBox;
+    @BindView(R.id.imageview_detail_review_image1)
+    ImageView reviewImageView1;
+    @BindView(R.id.imageview_detail_review_image2)
+    ImageView reviewImageView2;
+    @BindView(R.id.imageview_detail_review_image3)
+    ImageView reviewImageView3;
     @BindView(R.id.textview_detail_review_user_nickname1)
     TextView reviewNicknameTextView1;
     @BindView(R.id.textview_detail_review_registered_date1)
@@ -244,7 +251,9 @@ public class DetailActivity extends AppCompatActivity
     }
 
     private void updateMuseumTextView() {
-        thumbImageView.setImageResource(museum.getImage());
+        Glide.with(this)
+                .load(museum.getImage())
+                .into(thumbImageView);
         nameTextView.setText(museum.getName());
         addressTextView.setText(museum.getAddress());
         businessHourTextView.setText(museum.getBusinessHours());
@@ -256,14 +265,23 @@ public class DetailActivity extends AppCompatActivity
     }
 
     private void updateReviewData() {
+        Glide.with(this)
+                .load(R.drawable.ic_user)
+                .into(reviewImageView1);
         reviewNicknameTextView1.setText(review1.getNickname());
         reviewRegisteredDateTextView1.setText(review1.getRegisteredDate());
         reviewContentTextView1.setText(review1.getContent());
 
+        Glide.with(this)
+                .load(R.drawable.ic_user)
+                .into(reviewImageView2);
         reviewNicknameTextView2.setText(review2.getNickname());
         reviewRegisteredDateTextView2.setText(review2.getRegisteredDate());
         reviewContentTextView2.setText(review2.getContent());
 
+        Glide.with(this)
+                .load(R.drawable.ic_user)
+                .into(reviewImageView3);
         reviewNicknameTextView3.setText(review3.getNickname());
         reviewRegisteredDateTextView3.setText(review3.getRegisteredDate());
         reviewContentTextView3.setText(review3.getContent());

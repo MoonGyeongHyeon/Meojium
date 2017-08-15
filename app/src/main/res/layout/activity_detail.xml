@@ -329,8 +329,7 @@
                     android:layout_below="@id/textview_detail_review_label"
                     android:layout_marginLeft="24dp"
                     android:layout_marginStart="24dp"
-                    android:layout_marginTop="8dp"
-                    android:src="@drawable/ic_user" />
+                    android:layout_marginTop="8dp" />
 
                 <TextView
                     android:id="@+id/textview_detail_review_user_nickname1"
@@ -371,8 +370,7 @@
                     android:layout_alignLeft="@id/imageview_detail_review_image1"
                     android:layout_alignStart="@id/imageview_detail_review_image1"
                     android:layout_below="@id/imageview_detail_review_image1"
-                    android:layout_marginTop="8dp"
-                    android:src="@drawable/ic_user" />
+                    android:layout_marginTop="8dp" />
 
                 <TextView
                     android:id="@+id/textview_detail_review_user_nickname2"
@@ -409,8 +407,7 @@
                     android:layout_alignLeft="@id/imageview_detail_review_image2"
                     android:layout_alignStart="@id/imageview_detail_review_image2"
                     android:layout_below="@id/imageview_detail_review_image2"
-                    android:layout_marginTop="8dp"
-                    android:src="@drawable/ic_user" />
+                    android:layout_marginTop="8dp" />
 
                 <TextView
                     android:id="@+id/textview_detail_review_user_nickname3"
