@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
@@ -45,7 +46,7 @@
                 android:layout_marginLeft="16dp"
                 android:layout_marginStart="16dp"
                 android:layout_marginTop="8dp"
-                android:textSize="26sp"
+                android:textSize="@dimen/great_text_size"
                 android:textStyle="bold"
                 tools:text="석장리 박물관" />
 
@@ -66,7 +67,7 @@
                 android:layout_alignStart="@id/textview_detail_name"
                 android:layout_below="@id/detail_next_line1"
                 android:text="@string/detail_info_label"
-                android:textSize="22sp" />
+                android:textSize="@dimen/big_text_size" />
 
             <TextView
                 android:id="@+id/textview_detail_address_label"
@@ -230,7 +231,7 @@
                     android:layout_below="@id/checkbox_detail_favorite"
                     android:gravity="center"
                     android:text="@string/detail_favorite_label"
-                    android:textSize="12sp" />
+                    android:textSize="@dimen/small_text_size" />
 
             </RelativeLayout>
 
@@ -263,7 +264,7 @@
                     android:layout_below="@id/checkbox_detail_stamp"
                     android:gravity="center"
                     android:text="@string/detail_stamp_label"
-                    android:textSize="12sp" />
+                    android:textSize="@dimen/small_text_size" />
             </RelativeLayout>
 
             <View
@@ -282,7 +283,7 @@
                 android:layout_alignStart="@id/textview_detail_name"
                 android:layout_below="@id/detail_next_line3"
                 android:text="@string/detail_intro_label"
-                android:textSize="22sp" />
+                android:textSize="@dimen/big_text_size" />
 
             <TextView
                 android:id="@+id/textview_detail_intro"
@@ -293,6 +294,7 @@
                 android:layout_below="@id/textview_detail_intro_label"
                 android:layout_marginEnd="32dp"
                 android:layout_marginRight="32dp"
+                android:textSize="@dimen/normal_text_size"
                 tools:text=" 한국 구석기 유적이 최초로 발견된 곳에 세워진 박물관으로 구석기시대의 정취를 한껏 느낄 수 있고 구석기와 관련된 다양한 교육체험프로그램 진행으로 가족단위의 관람객들이 방문하기에 최적의 장소입니다" />
 
             <View
@@ -300,7 +302,6 @@
                 android:layout_width="match_parent"
                 android:layout_height="2dp"
                 android:layout_below="@id/textview_detail_intro"
-                android:layout_marginBottom="16dp"
                 android:layout_marginTop="16dp"
                 android:background="@color/lineColor" />
 
@@ -308,135 +309,37 @@
                 android:id="@+id/relativelayout_detail_review_container"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_below="@id/detail_next_line4">
+                android:layout_below="@id/detail_next_line4"
+                android:background="@drawable/ripple_button_click"
+                android:paddingBottom="16dp"
+                android:paddingTop="16dp">
 
                 <TextView
                     android:id="@+id/textview_detail_review_label"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_alignParentLeft="true"
-                    android:layout_alignParentStart="true"
-                    android:layout_alignParentTop="true"
                     android:layout_marginLeft="16dp"
                     android:layout_marginStart="16dp"
                     android:text="@string/detail_review_label"
-                    android:textSize="22sp" />
+                    android:textSize="@dimen/big_text_size" />
 
-                <ImageView
-                    android:id="@+id/imageview_detail_review_image1"
-                    android:layout_width="48dp"
-                    android:layout_height="56dp"
+                <android.support.v7.widget.RecyclerView
+                    android:id="@+id/recyclerview_detail_review"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
                     android:layout_below="@id/textview_detail_review_label"
-                    android:layout_marginLeft="24dp"
-                    android:layout_marginStart="24dp"
-                    android:layout_marginTop="8dp" />
-
-                <TextView
-                    android:id="@+id/textview_detail_review_user_nickname1"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_alignTop="@id/imageview_detail_review_image1"
-                    android:layout_marginLeft="8dp"
-                    android:layout_marginStart="8dp"
-                    android:layout_toEndOf="@id/imageview_detail_review_image1"
-                    android:layout_toRightOf="@id/imageview_detail_review_image1"
-                    tools:text="송중기" />
-
-                <TextView
-                    android:id="@+id/textview_detail_review_registered_date1"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_alignParentEnd="true"
-                    android:layout_alignParentRight="true"
-                    android:layout_alignTop="@id/textview_detail_review_user_nickname1"
-                    android:layout_marginEnd="16dp"
-                    android:layout_marginRight="16dp"
-                    tools:text="2017-07-24" />
-
-                <TextView
-                    android:id="@+id/textview_detail_review_content1"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_alignLeft="@id/textview_detail_review_user_nickname1"
-                    android:layout_alignStart="@id/textview_detail_review_user_nickname1"
-                    android:layout_below="@id/textview_detail_review_user_nickname1"
                     android:layout_marginTop="8dp"
-                    tools:text="여기 진짜 좋아요!" />
-
-                <ImageView
-                    android:id="@+id/imageview_detail_review_image2"
-                    android:layout_width="48dp"
-                    android:layout_height="56dp"
-                    android:layout_alignLeft="@id/imageview_detail_review_image1"
-                    android:layout_alignStart="@id/imageview_detail_review_image1"
-                    android:layout_below="@id/imageview_detail_review_image1"
-                    android:layout_marginTop="8dp" />
+                    app:layoutManager="LinearLayoutManager" />
 
                 <TextView
-                    android:id="@+id/textview_detail_review_user_nickname2"
-                    android:layout_width="wrap_content"
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_alignLeft="@id/textview_detail_review_user_nickname1"
-                    android:layout_alignStart="@id/textview_detail_review_user_nickname1"
-                    android:layout_alignTop="@id/imageview_detail_review_image2"
-                    tools:text="송혜교" />
-
-                <TextView
-                    android:id="@+id/textview_detail_review_registered_date2"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_alignEnd="@id/textview_detail_review_registered_date1"
-                    android:layout_alignRight="@id/textview_detail_review_registered_date1"
-                    android:layout_alignTop="@id/textview_detail_review_user_nickname2"
-                    tools:text="2017-07-23" />
-
-                <TextView
-                    android:id="@+id/textview_detail_review_content2"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_alignLeft="@id/textview_detail_review_user_nickname2"
-                    android:layout_alignStart="@id/textview_detail_review_user_nickname2"
-                    android:layout_below="@id/textview_detail_review_user_nickname2"
-                    android:layout_marginTop="8dp"
-                    tools:text="나중에 가봐야징~" />
-
-                <ImageView
-                    android:id="@+id/imageview_detail_review_image3"
-                    android:layout_width="48dp"
-                    android:layout_height="56dp"
-                    android:layout_alignLeft="@id/imageview_detail_review_image2"
-                    android:layout_alignStart="@id/imageview_detail_review_image2"
-                    android:layout_below="@id/imageview_detail_review_image2"
-                    android:layout_marginTop="8dp" />
-
-                <TextView
-                    android:id="@+id/textview_detail_review_user_nickname3"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_alignLeft="@id/textview_detail_review_user_nickname1"
-
-                    android:layout_alignStart="@id/textview_detail_review_user_nickname1"
-                    android:layout_alignTop="@id/imageview_detail_review_image3"
-                    tools:text="히히" />
-
-                <TextView
-                    android:id="@+id/textview_detail_review_registered_date3"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_alignEnd="@id/textview_detail_review_registered_date1"
-                    android:layout_alignRight="@id/textview_detail_review_registered_date1"
-                    android:layout_alignTop="@id/textview_detail_review_user_nickname3"
-                    tools:text="2017-07-21" />
-
-                <TextView
-                    android:id="@+id/textview_detail_review_content3"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_alignLeft="@id/textview_detail_review_user_nickname3"
-                    android:layout_alignStart="@id/textview_detail_review_user_nickname3"
-                    android:layout_below="@id/textview_detail_review_user_nickname3"
-                    android:layout_marginTop="8dp"
-                    tools:text="1등" />
+                    android:layout_below="@id/recyclerview_detail_review"
+                    android:layout_margin="8dp"
+                    android:gravity="center"
+                    android:text="@string/review_all"
+                    android:textColor="@color/colorPrimary"
+                    android:textSize="@dimen/large_text_size" />
 
             </RelativeLayout>
 
@@ -446,7 +349,6 @@
                 android:layout_height="2dp"
                 android:layout_below="@id/relativelayout_detail_review_container"
                 android:layout_marginBottom="16dp"
-                android:layout_marginTop="16dp"
                 android:background="@color/lineColor" />
 
             <TextView
@@ -457,7 +359,7 @@
                 android:layout_alignStart="@id/textview_detail_name"
                 android:layout_below="@id/detail_next_line5"
                 android:text="@string/detail_map_label"
-                android:textSize="22sp" />
+                android:textSize="@dimen/big_text_size" />
 
             <com.nhn.android.maps.NMapView
                 android:id="@+id/mapview_detail"

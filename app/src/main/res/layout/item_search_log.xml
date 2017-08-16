@@ -25,7 +25,7 @@
         android:layout_marginStart="16dp"
         android:layout_toEndOf="@id/imageview_search_log"
         android:layout_toRightOf="@id/imageview_search_log"
-        android:textSize="16sp"
+        android:textSize="@dimen/normal_text_size"
         tools:text="석장리 박물관" />
 
     <TextView
@@ -35,7 +35,7 @@
         android:layout_alignBottom="@id/imageview_search_log"
         android:layout_alignLeft="@id/textview_search_log_keyword"
         android:layout_alignStart="@id/textview_search_log_keyword"
-        android:textSize="12sp"
+        android:textSize="@dimen/small_text_size"
         tools:text="2017-08-14" />
 
 </RelativeLayout>

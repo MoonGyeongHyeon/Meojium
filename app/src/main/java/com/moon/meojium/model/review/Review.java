@@ -9,6 +9,7 @@ public class Review {
     private String nickname;
     private String content;
     private String registeredDate;
+    private boolean isWriter;
 
     public int getId() {
         return id;
@@ -40,5 +41,13 @@ public class Review {
 
     public void setRegisteredDate(String registeredDate) {
         this.registeredDate = registeredDate;
+    }
+
+    public boolean isWriter() {
+        return isWriter;
+    }
+
+    public void setWriter(boolean writer) {
+        isWriter = writer;
     }
 }

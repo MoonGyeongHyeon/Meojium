@@ -5,6 +5,8 @@ import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.MenuItem;
@@ -14,6 +16,7 @@ import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
@@ -24,6 +27,8 @@ import com.moon.meojium.base.NaverAPI;
 import com.moon.meojium.model.museum.Museum;
 import com.moon.meojium.model.review.Review;
 import com.moon.meojium.model.story.Story;
+import com.moon.meojium.ui.reviews.ReviewActivity;
+import com.moon.meojium.ui.reviews.ReviewRecyclerViewAdapter;
 import com.moon.meojium.ui.story.StoryActivity;
 import com.nhn.android.maps.NMapContext;
 import com.nhn.android.maps.NMapView;
@@ -74,30 +79,6 @@ public class DetailActivity extends AppCompatActivity
     CheckBox favoriteCheckBox;
     @BindView(R.id.checkbox_detail_stamp)
     CheckBox stampCheckBox;
-    @BindView(R.id.imageview_detail_review_image1)
-    ImageView reviewImageView1;
-    @BindView(R.id.imageview_detail_review_image2)
-    ImageView reviewImageView2;
-    @BindView(R.id.imageview_detail_review_image3)
-    ImageView reviewImageView3;
-    @BindView(R.id.textview_detail_review_user_nickname1)
-    TextView reviewNicknameTextView1;
-    @BindView(R.id.textview_detail_review_registered_date1)
-    TextView reviewRegisteredDateTextView1;
-    @BindView(R.id.textview_detail_review_content1)
-    TextView reviewContentTextView1;
-    @BindView(R.id.textview_detail_review_user_nickname2)
-    TextView reviewNicknameTextView2;
-    @BindView(R.id.textview_detail_review_registered_date2)
-    TextView reviewRegisteredDateTextView2;
-    @BindView(R.id.textview_detail_review_content2)
-    TextView reviewContentTextView2;
-    @BindView(R.id.textview_detail_review_user_nickname3)
-    TextView reviewNicknameTextView3;
-    @BindView(R.id.textview_detail_review_registered_date3)
-    TextView reviewRegisteredDateTextView3;
-    @BindView(R.id.textview_detail_review_content3)
-    TextView reviewContentTextView3;
     @BindView(R.id.mapview_detail)
     NMapView mapView;
     @BindView(R.id.fab)
@@ -108,6 +89,10 @@ public class DetailActivity extends AppCompatActivity
     View overlayView;
     @BindView(R.id.fab_sheet_container)
     LinearLayout sheetContainer;
+    @BindView(R.id.recyclerview_detail_review)
+    RecyclerView reviewRecyclerView;
+    @BindView(R.id.relativelayout_detail_review_container)
+    RelativeLayout reviewContainer;
 
     @OnTouch(R.id.mapview_detail)
     public boolean onTouch(View view, MotionEvent motionEvent) {
@@ -145,8 +130,15 @@ public class DetailActivity extends AppCompatActivity
         showPicker();
     }
 
+    @OnClick(R.id.relativelayout_detail_review_container)
+    public void onClickReview(View view) {
+        Intent intent = new Intent(this, ReviewActivity.class);
+        intent.putExtra("museum", Parcels.wrap(museum));
+        startActivity(intent);
+    }
+
     private Museum museum;
-    private Review review1, review2, review3;
+    private List<Review> reviewList;
     private NMapContext mapContext;
     private MaterialSheetFab materialSheetFab;
 
@@ -176,10 +168,11 @@ public class DetailActivity extends AppCompatActivity
         }
 
         initToolbar();
-        initData();
+        createDummyData();
+
+        initReviewRecyclerView();
 
         updateMuseumTextView();
-        updateReviewData();
 
         initMapView();
         initFloatingActionButton();
@@ -191,14 +184,14 @@ public class DetailActivity extends AppCompatActivity
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
     }
 
-    private void initData() {
-        initMuseumData();
-        initReviewData();
-        initStoryData();
+    private void createDummyData() {
+        createMuseumData();
+        createReviewData();
+        createStoryData();
     }
 
-    private void initMuseumData() {
-        museum.setIntro("이 박물관은 석장리 박물관입니다.");
+    private void createMuseumData() {
+        museum.setIntro(" 한국 구석기 유적이 최초로 발견된 곳에 세워진 박물관으로 구석기시대의 정취를 한껏 느낄 수 있고 구석기와 관련된 다양한 교육체험프로그램 진행으로 가족단위의 관람객들이 방문하기에 최적의 장소입니다");
         museum.setImage(R.drawable.img_seokjangni);
         museum.setBusinessHours("10:00 ~ 18:00");
         museum.setDayOff("매주 월요일");
@@ -209,27 +202,32 @@ public class DetailActivity extends AppCompatActivity
         museum.setLongitude(127.189654);
     }
 
-    private void initReviewData() {
-        review1 = new Review();
-        review1.setId(1);
-        review1.setNickname("송중기");
-        review1.setContent("여기 진짜 좋아용");
-        review1.setRegisteredDate("2017-07-24");
+    private void createReviewData() {
+        reviewList = new ArrayList<>();
 
-        review2 = new Review();
-        review2.setId(2);
-        review2.setNickname("송혜교");
-        review2.setContent("꼭 가봐야지~~");
-        review2.setRegisteredDate("2017-07-23");
+        Review review = new Review();
+        review.setId(1);
+        review.setNickname("송중기");
+        review.setContent("여기 진짜 좋아용!!!!");
+        review.setRegisteredDate("2017-07-24");
+        reviewList.add(review);
 
-        review3 = new Review();
-        review3.setId(3);
-        review3.setNickname("히히");
-        review3.setContent("1등");
-        review3.setRegisteredDate("2017-07-21");
+        review = new Review();
+        review.setId(2);
+        review.setNickname("송혜교");
+        review.setContent("꼭 가봐야지~~");
+        review.setRegisteredDate("2017-07-23");
+        reviewList.add(review);
+
+        review = new Review();
+        review.setId(3);
+        review.setNickname("히히");
+        review.setContent("1등");
+        review.setRegisteredDate("2017-07-21");
+        reviewList.add(review);
     }
 
-    private void initStoryData() {
+    private void createStoryData() {
         List<Story> storyList = new ArrayList<>();
 
         Story story = new Story();
@@ -250,6 +248,17 @@ public class DetailActivity extends AppCompatActivity
         museum.setStoryList(storyList);
     }
 
+    private void initReviewRecyclerView() {
+        ReviewRecyclerViewAdapter adapter = new ReviewRecyclerViewAdapter(reviewList, this);
+        reviewRecyclerView.setAdapter(adapter);
+
+        RecyclerView.LayoutManager manager = new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false);
+        reviewRecyclerView.setLayoutManager(manager);
+
+        reviewRecyclerView.setNestedScrollingEnabled(false);
+        reviewRecyclerView.setLayoutFrozen(true);
+    }
+
     private void updateMuseumTextView() {
         Glide.with(this)
                 .load(museum.getImage())
@@ -262,29 +271,6 @@ public class DetailActivity extends AppCompatActivity
         telTextView.setText(museum.getTel());
         homepageTextView.setText(museum.getHomepage());
         introTextView.setText(museum.getIntro());
-    }
-
-    private void updateReviewData() {
-        Glide.with(this)
-                .load(R.drawable.ic_user)
-                .into(reviewImageView1);
-        reviewNicknameTextView1.setText(review1.getNickname());
-        reviewRegisteredDateTextView1.setText(review1.getRegisteredDate());
-        reviewContentTextView1.setText(review1.getContent());
-
-        Glide.with(this)
-                .load(R.drawable.ic_user)
-                .into(reviewImageView2);
-        reviewNicknameTextView2.setText(review2.getNickname());
-        reviewRegisteredDateTextView2.setText(review2.getRegisteredDate());
-        reviewContentTextView2.setText(review2.getContent());
-
-        Glide.with(this)
-                .load(R.drawable.ic_user)
-                .into(reviewImageView3);
-        reviewNicknameTextView3.setText(review3.getNickname());
-        reviewRegisteredDateTextView3.setText(review3.getRegisteredDate());
-        reviewContentTextView3.setText(review3.getContent());
     }
 
     private void initMapView() {

@@ -25,7 +25,7 @@
             android:layout_toEndOf="@id/imageview_museum_tasting_thumb"
             android:layout_toRightOf="@id/imageview_museum_tasting_thumb"
             android:gravity="center"
-            android:textSize="18sp"
+            android:textSize="@dimen/large_text_size"
             tools:text="석장리 박물관" />
 
         <TextView
@@ -37,7 +37,7 @@
             android:layout_below="@id/textview_museum_tasting_name"
             android:layout_marginTop="16dp"
             android:gravity="center"
-            android:textSize="15sp"
+            android:textSize="@dimen/normal_text_size"
             android:textStyle="bold"
             tools:text="알쓸신잡 6회 - 선사인의 불" />
 
