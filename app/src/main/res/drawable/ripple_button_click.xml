@@ -2,7 +2,7 @@
     android:color="@color/colorPrimaryOpacity">
     <item>
         <shape android:shape="rectangle">
-            <corners android:radius="5dp" />
+            <corners android:radius="32dp" />
             <solid android:color="@color/whiteLight" />
         </shape>
     </item>
