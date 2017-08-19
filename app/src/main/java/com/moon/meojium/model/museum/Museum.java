@@ -1,5 +1,6 @@
 package com.moon.meojium.model.museum;
 
+import com.google.gson.annotations.SerializedName;
 import com.moon.meojium.model.story.Story;
 
 import org.parceler.Parcel;
@@ -12,19 +13,35 @@ import java.util.List;
 
 @Parcel
 public class Museum {
+    @SerializedName("id")
     int id;
+    @SerializedName("name")
     String name;
+    @SerializedName("intro")
     String intro;
-    int image;
+    @SerializedName("image_path")
+    String imagePath;
+    @SerializedName("address")
     String address;
+    @SerializedName("latitude")
     double latitude;
+    @SerializedName("longitude")
     double longitude;
+    @SerializedName("business_hours")
     String businessHours;
+    @SerializedName("day_off")
     String dayOff;
+    @SerializedName("fee")
     String fee;
+    @SerializedName("homepage")
     String homepage;
+    @SerializedName("tel")
     String tel;
+    @SerializedName("found_date")
+    String foundDate;
     List<Story> storyList;
+
+    int image;
 
     public int getId() {
         return id;
@@ -50,12 +67,12 @@ public class Museum {
         this.intro = intro;
     }
 
-    public int getImage() {
-        return image;
+    public String getImagePath() {
+        return imagePath;
     }
 
-    public void setImage(int image) {
-        this.image = image;
+    public void setImagePath(String imagePath) {
+        this.imagePath = imagePath;
     }
 
     public String getAddress() {
@@ -122,11 +139,27 @@ public class Museum {
         this.tel = tel;
     }
 
+    public String getFoundDate() {
+        return foundDate;
+    }
+
+    public void setFoundDate(String foundDate) {
+        this.foundDate = foundDate;
+    }
+
     public List<Story> getStoryList() {
         return storyList;
     }
 
     public void setStoryList(List<Story> storyList) {
         this.storyList = storyList;
+    }
+
+    public int getImage() {
+        return image;
+    }
+
+    public void setImage(int image) {
+        this.image = image;
     }
 }

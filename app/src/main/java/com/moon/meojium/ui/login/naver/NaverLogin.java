@@ -7,7 +7,9 @@ import android.os.AsyncTask;
 import android.util.Log;
 
 import com.moon.meojium.base.NaverAPI;
+import com.moon.meojium.base.UpdateResult;
 import com.moon.meojium.base.util.SharedPreferencesService;
+import com.moon.meojium.database.dao.UserDao;
 import com.moon.meojium.ui.home.HomeActivity;
 import com.nhn.android.naverlogin.OAuthLogin;
 import com.nhn.android.naverlogin.OAuthLoginHandler;
@@ -18,6 +20,9 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.concurrent.ExecutionException;
+
+import retrofit2.Call;
+import retrofit2.Response;
 
 /**
  * Created by moon on 2017. 8. 4..
@@ -46,9 +51,30 @@ public class NaverLogin implements NaverAPI {
                     Log.d("Meojium/NaverLogin", "Naver login is successful");
 
                     SharedPreferencesService service = SharedPreferencesService.getInstance();
-                    service.putData(SharedPreferencesService.TOKEN_KEY, oAuthLoginInstance.getAccessToken(context));
-                    service.putData(SharedPreferencesService.TOKEN_TYPE_KEY, NAVER_TOKEN_TYPE);
-                    service.putData(SharedPreferencesService.NICKNAME_KEY, requestUserNickname());
+                    service.putData(SharedPreferencesService.KEY_TOKEN, oAuthLoginInstance.getAccessToken(context));
+                    service.putData(SharedPreferencesService.KEY_TOKEN_TYPE, NAVER_TOKEN_TYPE);
+                    service.putData(SharedPreferencesService.KEY_NICKNAME, requestUserNickname());
+
+                    UserDao userDao = UserDao.getInstance();
+                    Call<UpdateResult> call = userDao.addUser(service.getStringData(SharedPreferencesService.KEY_TOKEN),
+                            service.getStringData(SharedPreferencesService.KEY_NICKNAME));
+
+                    call.enqueue(new retrofit2.Callback<UpdateResult>() {
+                        @Override
+                        public void onResponse(Call<UpdateResult> call, Response<UpdateResult> response) {
+                            UpdateResult result = response.body();
+                            if (result.getCode() == UpdateResult.RESULT_OK) {
+                                Log.d("Meojium/Login", "Success Adding User Info");
+                            } else {
+                                Log.d("Meojium/Login", "Fail Adding User Info");
+                            }
+                        }
+
+                        @Override
+                        public void onFailure(Call<UpdateResult> call, Throwable t) {
+                            Log.d("Meojium/Login", "Fail Adding User Info");
+                        }
+                    });
 
                     Intent intent = new Intent(context, HomeActivity.class);
                     intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK);

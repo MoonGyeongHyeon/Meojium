@@ -16,14 +16,17 @@ import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
-import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
 import com.gordonwong.materialsheetfab.MaterialSheetFab;
 import com.moon.meojium.R;
+import com.moon.meojium.base.BaseRetrofitService;
 import com.moon.meojium.base.FrescoImageViewer;
 import com.moon.meojium.base.NaverAPI;
+import com.moon.meojium.database.dao.MuseumDao;
+import com.moon.meojium.database.dao.ReviewDao;
+import com.moon.meojium.database.dao.StoryDao;
 import com.moon.meojium.model.museum.Museum;
 import com.moon.meojium.model.review.Review;
 import com.moon.meojium.model.story.Story;
@@ -47,6 +50,9 @@ import butterknife.ButterKnife;
 import butterknife.OnClick;
 import butterknife.OnTouch;
 import es.dmoral.toasty.Toasty;
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
 
 /**
  * Created by moon on 2017. 8. 7..
@@ -54,6 +60,7 @@ import es.dmoral.toasty.Toasty;
 
 public class DetailActivity extends AppCompatActivity
         implements NaverAPI, FrescoImageViewer {
+    public static final int REQUEST_REVIEW_WRITE = 1;
 
     @BindView(R.id.include_detail_toolbar)
     Toolbar toolbar;
@@ -75,10 +82,16 @@ public class DetailActivity extends AppCompatActivity
     TextView homepageTextView;
     @BindView(R.id.textview_detail_intro)
     TextView introTextView;
+    @BindView(R.id.textview_detail_found_date)
+    TextView foundDateTextView;
     @BindView(R.id.checkbox_detail_favorite)
     CheckBox favoriteCheckBox;
     @BindView(R.id.checkbox_detail_stamp)
     CheckBox stampCheckBox;
+    @BindView(R.id.textview_detail_nothing_review)
+    TextView nothingReviewTextView;
+    @BindView(R.id.textview_detail_review_all)
+    TextView reviewAllTextView;
     @BindView(R.id.mapview_detail)
     NMapView mapView;
     @BindView(R.id.fab)
@@ -91,8 +104,6 @@ public class DetailActivity extends AppCompatActivity
     LinearLayout sheetContainer;
     @BindView(R.id.recyclerview_detail_review)
     RecyclerView reviewRecyclerView;
-    @BindView(R.id.relativelayout_detail_review_container)
-    RelativeLayout reviewContainer;
 
     @OnTouch(R.id.mapview_detail)
     public boolean onTouch(View view, MotionEvent motionEvent) {
@@ -127,20 +138,43 @@ public class DetailActivity extends AppCompatActivity
 
     @OnClick(R.id.imageview_detail_thumb)
     public void onClickThumb(View view) {
-        showPicker();
+        Call<List<String>> call = museumDao.getMuseumImageUrlList(museum.getId());
+        call.enqueue(new Callback<List<String>>() {
+            @Override
+            public void onResponse(Call<List<String>> call, Response<List<String>> response) {
+                List<String> list = response.body();
+                imageUrlList = new ArrayList<>();
+
+                for (String item : list) {
+                    imageUrlList.add(BaseRetrofitService.IMAGE_LOAD_URL + item);
+                }
+
+                showPicker();
+            }
+
+            @Override
+            public void onFailure(Call<List<String>> call, Throwable t) {
+                Toasty.info(DetailActivity.this, "서버 연결에 실패했습니다").show();
+            }
+        });
     }
 
     @OnClick(R.id.relativelayout_detail_review_container)
     public void onClickReview(View view) {
         Intent intent = new Intent(this, ReviewActivity.class);
         intent.putExtra("museum", Parcels.wrap(museum));
-        startActivity(intent);
+        startActivityForResult(intent, REQUEST_REVIEW_WRITE);
     }
 
     private Museum museum;
-    private List<Review> reviewList;
     private NMapContext mapContext;
     private MaterialSheetFab materialSheetFab;
+    private MuseumDao museumDao;
+    private StoryDao storyDao;
+    private ReviewDao reviewDao;
+    private List<String> imageUrlList;
+    private List<Story> storyList;
+    private List<Review> reviewList;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -167,15 +201,17 @@ public class DetailActivity extends AppCompatActivity
             onBackPressed();
         }
 
+        museumDao = MuseumDao.getInstance();
+        storyDao = StoryDao.getInstance();
+        reviewDao = ReviewDao.getInstance();
+
         initToolbar();
-        createDummyData();
-
-        initReviewRecyclerView();
-
-        updateMuseumTextView();
+        requestReviewData();
+        requestStoryData();
 
         initMapView();
-        initFloatingActionButton();
+
+        updateMuseumView();
     }
 
     private void initToolbar() {
@@ -184,68 +220,30 @@ public class DetailActivity extends AppCompatActivity
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
     }
 
-    private void createDummyData() {
-        createMuseumData();
-        createReviewData();
-        createStoryData();
-    }
+    private void requestReviewData() {
+        Call<List<Review>> call = reviewDao.getReviewList(museum.getId());
+        call.enqueue(new Callback<List<Review>>() {
+            @Override
+            public void onResponse(Call<List<Review>> call, Response<List<Review>> response) {
+                reviewList = response.body();
 
-    private void createMuseumData() {
-        museum.setIntro(" 한국 구석기 유적이 최초로 발견된 곳에 세워진 박물관으로 구석기시대의 정취를 한껏 느낄 수 있고 구석기와 관련된 다양한 교육체험프로그램 진행으로 가족단위의 관람객들이 방문하기에 최적의 장소입니다");
-        museum.setImage(R.drawable.img_seokjangni);
-        museum.setBusinessHours("10:00 ~ 18:00");
-        museum.setDayOff("매주 월요일");
-        museum.setFee("어린이: 800, 청소년: 1000, 성인: 1300");
-        museum.setHomepage("http://naver.com");
-        museum.setTel("041-123-4567");
-        museum.setLatitude(36.447573);
-        museum.setLongitude(127.189654);
-    }
+                if (reviewList != null && reviewList.size() != 0) {
+                    reviewRecyclerView.setVisibility(View.VISIBLE);
+                    nothingReviewTextView.setVisibility(View.GONE);
+                    reviewAllTextView.setText(getResources().getString(R.string.review_all));
+                    initReviewRecyclerView();
+                } else {
+                    nothingReviewTextView.setVisibility(View.VISIBLE);
+                    reviewRecyclerView.setVisibility(View.GONE);
+                    reviewAllTextView.setText(getResources().getString(R.string.review_write));
+                }
+            }
 
-    private void createReviewData() {
-        reviewList = new ArrayList<>();
-
-        Review review = new Review();
-        review.setId(1);
-        review.setNickname("송중기");
-        review.setContent("여기 진짜 좋아용!!!!");
-        review.setRegisteredDate("2017-07-24");
-        reviewList.add(review);
-
-        review = new Review();
-        review.setId(2);
-        review.setNickname("송혜교");
-        review.setContent("꼭 가봐야지~~");
-        review.setRegisteredDate("2017-07-23");
-        reviewList.add(review);
-
-        review = new Review();
-        review.setId(3);
-        review.setNickname("히히");
-        review.setContent("1등");
-        review.setRegisteredDate("2017-07-21");
-        reviewList.add(review);
-    }
-
-    private void createStoryData() {
-        List<Story> storyList = new ArrayList<>();
-
-        Story story = new Story();
-        story.setId(1);
-        story.setTitle("알쓸신잡 6회 - 선사인의 불");
-        storyList.add(story);
-
-        story = new Story();
-        story.setId(2);
-        story.setTitle("파른 손보기 선생 기념관");
-        storyList.add(story);
-
-        story = new Story();
-        story.setId(3);
-        story.setTitle("설립 취지");
-        storyList.add(story);
-
-        museum.setStoryList(storyList);
+            @Override
+            public void onFailure(Call<List<Review>> call, Throwable t) {
+                Toasty.info(DetailActivity.this, "서버 연결에 실패했습니다").show();
+            }
+        });
     }
 
     private void initReviewRecyclerView() {
@@ -259,10 +257,61 @@ public class DetailActivity extends AppCompatActivity
         reviewRecyclerView.setLayoutFrozen(true);
     }
 
-    private void updateMuseumTextView() {
+    private void requestStoryData() {
+        Call<List<Story>> call = storyDao.getStoryTitleList(museum.getId());
+        call.enqueue(new Callback<List<Story>>() {
+            @Override
+            public void onResponse(Call<List<Story>> call, Response<List<Story>> response) {
+                storyList = response.body();
+
+                initFloatingActionButton();
+            }
+
+            @Override
+            public void onFailure(Call<List<Story>> call, Throwable t) {
+                Toasty.info(DetailActivity.this, "서버 연결에 실패했습니다").show();
+            }
+        });
+    }
+
+    private void initFloatingActionButton() {
+        materialSheetFab = new MaterialSheetFab<>(fab, sheetView, overlayView,
+                android.R.color.white, R.color.colorAccent);
+
+        addButtonToSheet();
+    }
+
+    private void addButtonToSheet() {
+        if (storyList != null && storyList.size() != 0) {
+            for (final Story story : storyList) {
+                Button button = new Button(this);
+                button.setText(story.getTitle());
+                button.setBackgroundColor(ContextCompat.getColor(this, android.R.color.white));
+                button.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        materialSheetFab.hideSheet();
+
+                        Intent intent = new Intent(DetailActivity.this, StoryActivity.class);
+                        intent.putExtra("story", Parcels.wrap(story));
+                        startActivity(intent);
+                    }
+                });
+                sheetContainer.addView(button);
+            }
+        } else {
+            Button button = new Button(this);
+            button.setText("준비 중입니다.");
+            button.setBackgroundColor(ContextCompat.getColor(this, android.R.color.white));
+            sheetContainer.addView(button);
+        }
+    }
+
+    private void updateMuseumView() {
         Glide.with(this)
-                .load(museum.getImage())
+                .load(BaseRetrofitService.IMAGE_LOAD_URL + museum.getImagePath())
                 .into(thumbImageView);
+
         nameTextView.setText(museum.getName());
         addressTextView.setText(museum.getAddress());
         businessHourTextView.setText(museum.getBusinessHours());
@@ -271,6 +320,7 @@ public class DetailActivity extends AppCompatActivity
         telTextView.setText(museum.getTel());
         homepageTextView.setText(museum.getHomepage());
         introTextView.setText(museum.getIntro());
+        foundDateTextView.setText(museum.getFoundDate());
     }
 
     private void initMapView() {
@@ -305,32 +355,6 @@ public class DetailActivity extends AppCompatActivity
         poIdataOverlay.selectPOIitem(0, true);
     }
 
-    private void initFloatingActionButton() {
-        materialSheetFab = new MaterialSheetFab<>(fab, sheetView, overlayView,
-                android.R.color.white, R.color.colorAccent);
-
-        addButtonToSheet();
-    }
-
-    private void addButtonToSheet() {
-        for (final Story story : museum.getStoryList()) {
-            Button button = new Button(this);
-            button.setText(story.getTitle());
-            button.setBackgroundColor(ContextCompat.getColor(this, android.R.color.white));
-            button.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View view) {
-                    materialSheetFab.hideSheet();
-
-                    Intent intent = new Intent(DetailActivity.this, StoryActivity.class);
-                    intent.putExtra("story", Parcels.wrap(story));
-                    startActivity(intent);
-                }
-            });
-            sheetContainer.addView(button);
-        }
-    }
-
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
@@ -343,20 +367,9 @@ public class DetailActivity extends AppCompatActivity
 
     @Override
     public void showPicker() {
-        new ImageViewer.Builder<>(this, getImageUrlList())
+        new ImageViewer.Builder<>(this, imageUrlList)
                 .setStartPosition(0)
                 .show();
-    }
-
-    public List<String> getImageUrlList() {
-        List<String> list = new ArrayList<>();
-
-        list.add("http://cfile8.uf.tistory.com/image/161360154C8E90341F6BB2");
-        list.add("http://cfile23.uf.tistory.com/image/27379D3352BD1C171FC82D");
-        list.add("http://bbkk.kr/d/t/3/3550_%EC%B6%A9%EB%82%A8%EA%B3%B5%EC%A3%BC%EC%8B%9C%EC%84%9D%EC%9E%A5%EB%A6%AC%EB%B0%95%EB%AC%BC%EA%B4%80%EB%9F%AC%EB%B8%94%EB%A6%AC%EC%B9%98%EB%A0%B9%EB%A7%98%EA%B4%80077.jpg");
-        list.add("http://cfile232.uf.daum.net/image/0110DA425109DA6E27FF70");
-
-        return list;
     }
 
     @Override
@@ -399,5 +412,16 @@ public class DetailActivity extends AppCompatActivity
         }
 
         super.onBackPressed();
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        if (requestCode == REQUEST_REVIEW_WRITE) {
+            if (resultCode == RESULT_OK) {
+                if (data.getBooleanExtra("isUpdated", false)) {
+                    requestReviewData();
+                }
+            }
+        }
     }
 }

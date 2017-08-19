@@ -1,5 +1,7 @@
 package com.moon.meojium.model.story;
 
+import com.google.gson.annotations.SerializedName;
+
 import org.parceler.Parcel;
 
 /**
@@ -8,15 +10,17 @@ import org.parceler.Parcel;
 
 @Parcel
 public class StoryContent {
-    int image;
+    @SerializedName("image_path")
+    String imagePath;
+    @SerializedName("content")
     String content;
 
-    public int getImage() {
-        return image;
+    public String getImagePath() {
+        return imagePath;
     }
 
-    public void setImage(int image) {
-        this.image = image;
+    public void setImagePath(String imagePath) {
+        this.imagePath = imagePath;
     }
 
     public String getContent() {

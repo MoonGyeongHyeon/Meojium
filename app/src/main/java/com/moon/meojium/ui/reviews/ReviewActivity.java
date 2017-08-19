@@ -7,20 +7,32 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.MenuItem;
+import android.view.View;
+import android.widget.EditText;
 
 import com.moon.meojium.R;
+import com.moon.meojium.base.UpdateResult;
+import com.moon.meojium.base.util.SharedPreferencesService;
+import com.moon.meojium.database.dao.ReviewDao;
 import com.moon.meojium.model.museum.Museum;
 import com.moon.meojium.model.review.Review;
 
 import org.parceler.Parcels;
 
-import java.util.ArrayList;
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
+import java.util.Date;
 import java.util.List;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
+import butterknife.OnClick;
 import es.dmoral.toasty.Toasty;
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
 
 /**
  * Created by moon on 2017. 8. 15..
@@ -31,9 +43,58 @@ public class ReviewActivity extends AppCompatActivity {
     Toolbar toolbar;
     @BindView(R.id.recyclerview_review)
     RecyclerView recyclerView;
+    @BindView(R.id.edittext_review_content)
+    EditText contentEditText;
+
+    @OnClick(R.id.textview_review_submit)
+    public void onClick(View view) {
+        final String content = contentEditText.getText().toString();
+        final SharedPreferencesService sharedPreferencesService = SharedPreferencesService.getInstance();
+        Call<UpdateResult> call = reviewDao.writeReview(sharedPreferencesService.getStringData(SharedPreferencesService.KEY_TOKEN),
+                content, museum.getId());
+        call.enqueue(new Callback<UpdateResult>() {
+            @Override
+            public void onResponse(Call<UpdateResult> call, Response<UpdateResult> response) {
+                UpdateResult result = response.body();
+
+                if (result.getCode() == UpdateResult.RESULT_OK) {
+                    Log.d("Meojium/Review", "Success Adding Review");
+                    Review review = new Review();
+                    review.setId(result.getInsertId());
+                    review.setNickname(sharedPreferencesService.getStringData(SharedPreferencesService.KEY_NICKNAME));
+                    review.setContent(content);
+                    review.setWriter(true);
+                    Date date = Calendar.getInstance().getTime();
+                    review.setRegisteredDate(new SimpleDateFormat("yyyy-MM-dd").format(date));
+                    reviewList.add(0, review);
+
+                    adapter.notifyDataSetChanged();
+                    adapter.setUpdated(true);
+
+                    contentEditText.clearFocus();
+                    contentEditText.setText("");
+
+                    startIndex++;
+
+                    initResultIntent();
+                } else {
+                    Log.d("Meojium/Review", "Fail Adding Review");
+                    Toasty.info(ReviewActivity.this, "서버 연결에 실패했습니다").show();
+                }
+            }
+
+            @Override
+            public void onFailure(Call<UpdateResult> call, Throwable t) {
+                Toasty.info(ReviewActivity.this, "서버 연결에 실패했습니다").show();
+            }
+        });
+    }
 
     private List<Review> reviewList;
     private Museum museum;
+    private ReviewDao reviewDao;
+    private int startIndex = 0;
+    private ReviewRecyclerViewAdapter adapter;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -51,54 +112,11 @@ public class ReviewActivity extends AppCompatActivity {
             onBackPressed();
         }
 
-        createDummyData();
+        reviewDao = ReviewDao.getInstance();
 
         initToolbar();
-        initRecyclerView();
-    }
 
-    private void createDummyData() {
-        reviewList = new ArrayList<>();
-
-        Review review = new Review();
-        review.setId(1);
-        review.setNickname("송중기");
-        review.setContent("여기 진짜 좋아용!!!!");
-        review.setRegisteredDate("2017-07-24");
-        review.setWriter(false);
-        reviewList.add(review);
-
-        review = new Review();
-        review.setId(2);
-        review.setNickname("송혜교");
-        review.setContent("꼭 가봐야지~~");
-        review.setRegisteredDate("2017-07-23");
-        review.setWriter(true);
-        reviewList.add(review);
-
-        review = new Review();
-        review.setId(3);
-        review.setNickname("히히");
-        review.setContent("1등");
-        review.setRegisteredDate("2017-07-21");
-        review.setWriter(true);
-        reviewList.add(review);
-
-        review = new Review();
-        review.setId(3);
-        review.setNickname("쿠쿠");
-        review.setContent("0등");
-        review.setRegisteredDate("2017-07-21");
-        review.setWriter(false);
-        reviewList.add(review);
-
-        review = new Review();
-        review.setId(3);
-        review.setNickname("고구마피자");
-        review.setContent("-1등");
-        review.setRegisteredDate("2017-07-20");
-        review.setWriter(false);
-        reviewList.add(review);
+        requestReviewData();
     }
 
     private void initToolbar() {
@@ -107,9 +125,32 @@ public class ReviewActivity extends AppCompatActivity {
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
     }
 
+    private void requestReviewData() {
+        Call<List<Review>> call = reviewDao.getReviewList(museum.getId(), startIndex);
+        call.enqueue(new Callback<List<Review>>() {
+            @Override
+            public void onResponse(Call<List<Review>> call, Response<List<Review>> response) {
+                reviewList = response.body();
+
+                String nickname = SharedPreferencesService.getInstance().getStringData(SharedPreferencesService.KEY_NICKNAME);
+                for (Review review : reviewList) {
+                    if (review.getNickname().equals(nickname)) {
+                        review.setWriter(true);
+                    }
+                }
+
+                initRecyclerView();
+            }
+
+            @Override
+            public void onFailure(Call<List<Review>> call, Throwable t) {
+                Toasty.info(ReviewActivity.this, "서버 연결에 실패했습니다").show();
+            }
+        });
+    }
 
     private void initRecyclerView() {
-        ReviewRecyclerViewAdapter adapter = new ReviewRecyclerViewAdapter(reviewList, this);
+        adapter = new ReviewRecyclerViewAdapter(reviewList, this);
         recyclerView.setAdapter(adapter);
 
         RecyclerView.LayoutManager manager = new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false);
@@ -124,5 +165,18 @@ public class ReviewActivity extends AppCompatActivity {
                 break;
         }
         return super.onOptionsItemSelected(item);
+    }
+
+    @Override
+    public void finish() {
+        initResultIntent();
+
+        super.finish();
+    }
+
+    private void initResultIntent() {
+        Intent intent = new Intent();
+        intent.putExtra("isUpdated", adapter.isUpdated());
+        setResult(RESULT_OK, intent);
     }
 }

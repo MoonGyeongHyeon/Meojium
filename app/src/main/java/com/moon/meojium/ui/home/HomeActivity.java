@@ -24,6 +24,7 @@ import android.widget.TextView;
 import com.bumptech.glide.Glide;
 import com.moon.meojium.R;
 import com.moon.meojium.base.util.SharedPreferencesService;
+import com.moon.meojium.database.dao.MuseumDao;
 import com.moon.meojium.model.museum.Museum;
 import com.moon.meojium.model.story.Story;
 import com.moon.meojium.ui.interested.InterestedActivity;
@@ -39,6 +40,9 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 import es.dmoral.toasty.Toasty;
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
 
 /**
  * Created by moon on 2017. 8. 6..
@@ -73,6 +77,7 @@ public class HomeActivity extends AppCompatActivity
     private List<Museum> historyMuseumList;
     private List<Museum> tastingMuseumList;
     private SharedPreferencesService sharedPreferencesService;
+    private MuseumDao museumDao;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -81,6 +86,7 @@ public class HomeActivity extends AppCompatActivity
         ButterKnife.bind(this);
 
         backPressCloseHandler = new BackPressCloseHandler(this);
+        museumDao = MuseumDao.getInstance();
 
         initToastyConfig();
         initSharedPreferences();
@@ -89,14 +95,11 @@ public class HomeActivity extends AppCompatActivity
         initDrawerLayout();
         initNearbyImageView();
 
-        createPopularMuseumDummyData();
-        initPopularMuseumViewPager();
-
-        createHistoryMuseumDummyData();
-        initHistoryMuseumViewPager();
-
         createTastingMuseumDummyData();
         initTastingMuseumRecyclerView();
+
+        requestPopularMuseumData();
+        requestHistoryMuseumData();
     }
 
     private void initToastyConfig() {
@@ -126,117 +129,13 @@ public class HomeActivity extends AppCompatActivity
         usernameTextView = header.findViewById(R.id.textview_navigation_username);
 
         usernameTextView.setText(String.format(getResources().getString(R.string.navigation_username),
-                sharedPreferencesService.getStringData(SharedPreferencesService.NICKNAME_KEY)));
+                sharedPreferencesService.getStringData(SharedPreferencesService.KEY_NICKNAME)));
     }
 
     private void initNearbyImageView() {
         Glide.with(this)
                 .load(R.drawable.img_nearby_museum)
                 .into(nearbyImageView);
-    }
-
-    private void createPopularMuseumDummyData() {
-        popularMuseumList = new ArrayList<>();
-
-        Museum museum = new Museum();
-        museum.setId(1);
-        museum.setName("인기있는 석장리 박물관");
-        museum.setImage(R.drawable.img_seokjangni);
-        museum.setAddress("충청남도 공주시 금벽로 990");
-        popularMuseumList.add(museum);
-
-        museum = new Museum();
-        museum.setId(2);
-        museum.setName("인기있는 국립 민속 박물관");
-        museum.setImage(R.drawable.img_gookrip_minsok);
-        museum.setAddress("충청남도 공주시 금벽로 990");
-        popularMuseumList.add(museum);
-
-        museum = new Museum();
-        museum.setId(3);
-        museum.setName("인기있는 석장리 박물관3");
-        museum.setImage(R.drawable.img_seokjangni);
-        museum.setAddress("충청남도 공주시 금벽로 990");
-        popularMuseumList.add(museum);
-
-        museum = new Museum();
-        museum.setId(4);
-        museum.setName("인기있는 석장리 박물관4");
-        museum.setImage(R.drawable.img_seokjangni);
-        museum.setAddress("충청남도 공주시 금벽로 990");
-        popularMuseumList.add(museum);
-
-        museum = new Museum();
-        museum.setId(5);
-        museum.setName("인기있는 석장리 박물관5");
-        museum.setImage(R.drawable.img_seokjangni);
-        museum.setAddress("충청남도 공주시 금벽로 990");
-        popularMuseumList.add(museum);
-
-        museum = new Museum();
-        museum.setId(6);
-        museum.setName("인기있는 석장리 박물관6");
-        museum.setImage(R.drawable.img_seokjangni);
-        museum.setAddress("충청남도 공주시 금벽로 990");
-        popularMuseumList.add(museum);
-    }
-
-    private void initPopularMuseumViewPager() {
-        MuseumViewPagerAdapter adapter = new MuseumViewPagerAdapter(getSupportFragmentManager(), popularMuseumList);
-        popularMuseumViewPager.setAdapter(adapter);
-        popularMuseumViewPager.setPageMargin(32);
-    }
-
-    private void createHistoryMuseumDummyData() {
-        historyMuseumList = new ArrayList<>();
-
-        Museum museum = new Museum();
-        museum.setId(111);
-        museum.setName("역사깊은 독립기념관");
-        museum.setImage(R.drawable.img_dokrip);
-        museum.setAddress("충청남도 공주시 금벽로 990");
-        historyMuseumList.add(museum);
-
-        museum = new Museum();
-        museum.setId(222);
-        museum.setName("역사깊은 석장리 박물관2");
-        museum.setImage(R.drawable.img_seokjangni);
-        museum.setAddress("충청남도 공주시 금벽로 990");
-        historyMuseumList.add(museum);
-
-        museum = new Museum();
-        museum.setId(333);
-        museum.setName("역사깊은 석장리 박물관3");
-        museum.setImage(R.drawable.img_seokjangni);
-        museum.setAddress("충청남도 공주시 금벽로 990");
-        historyMuseumList.add(museum);
-
-        museum = new Museum();
-        museum.setId(444);
-        museum.setName("역사깊은 석장리 박물관4");
-        museum.setImage(R.drawable.img_seokjangni);
-        museum.setAddress("충청남도 공주시 금벽로 990");
-        historyMuseumList.add(museum);
-
-        museum = new Museum();
-        museum.setId(555);
-        museum.setName("역사깊은 석장리 박물관5");
-        museum.setImage(R.drawable.img_seokjangni);
-        museum.setAddress("충청남도 공주시 금벽로 990");
-        historyMuseumList.add(museum);
-
-        museum = new Museum();
-        museum.setId(666);
-        museum.setName("역사깊은 석장리 박물관6");
-        museum.setImage(R.drawable.img_seokjangni);
-        museum.setAddress("충청남도 공주시 금벽로 990");
-        historyMuseumList.add(museum);
-    }
-
-    private void initHistoryMuseumViewPager() {
-        MuseumViewPagerAdapter adapter = new MuseumViewPagerAdapter(getSupportFragmentManager(), historyMuseumList);
-        historyMuseumViewPager.setAdapter(adapter);
-        historyMuseumViewPager.setPageMargin(32);
     }
 
     private void createTastingMuseumDummyData() {
@@ -298,6 +197,57 @@ public class HomeActivity extends AppCompatActivity
         tastingRecyclerView.setNestedScrollingEnabled(false);
     }
 
+
+    private void requestPopularMuseumData() {
+        Call<List<Museum>> call = museumDao.getPopularMuseumList();
+        call.enqueue(new Callback<List<Museum>>() {
+            @Override
+            public void onResponse(Call<List<Museum>> call, Response<List<Museum>> response) {
+                Log.d("Meojium/Home", "Success Getting Popular Museum List");
+                popularMuseumList = response.body();
+
+                initPopularMuseumViewPager();
+            }
+
+            @Override
+            public void onFailure(Call<List<Museum>> call, Throwable t) {
+                t.printStackTrace();
+                Toasty.info(HomeActivity.this, "서버 연결에 실패했습니다").show();
+            }
+        });
+    }
+
+    private void initPopularMuseumViewPager() {
+        MuseumViewPagerAdapter adapter = new MuseumViewPagerAdapter(getSupportFragmentManager(), popularMuseumList);
+        popularMuseumViewPager.setAdapter(adapter);
+        popularMuseumViewPager.setPageMargin(32);
+    }
+
+    private void requestHistoryMuseumData() {
+        Call<List<Museum>> call = museumDao.getHistoryMuseumList();
+        call.enqueue(new Callback<List<Museum>>() {
+            @Override
+            public void onResponse(Call<List<Museum>> call, Response<List<Museum>> response) {
+                Log.d("Meojium/Home", "Success Getting History Museum List");
+                historyMuseumList = response.body();
+
+                initHistoryMuseumViewPager();
+            }
+
+            @Override
+            public void onFailure(Call<List<Museum>> call, Throwable t) {
+                t.printStackTrace();
+                Toasty.info(HomeActivity.this, "서버 연결에 실패했습니다").show();
+            }
+        });
+    }
+
+    private void initHistoryMuseumViewPager() {
+        MuseumViewPagerAdapter adapter = new MuseumViewPagerAdapter(getSupportFragmentManager(), historyMuseumList);
+        historyMuseumViewPager.setAdapter(adapter);
+        historyMuseumViewPager.setPageMargin(32);
+    }
+
     @Override
     public void onBackPressed() {
         if (drawerLayout.isDrawerOpen(GravityCompat.START)) {
@@ -342,11 +292,11 @@ public class HomeActivity extends AppCompatActivity
             case R.id.navigation_logout:
                 Log.d("Meojium/Home", "Try Logout");
 
-                String tokenType = sharedPreferencesService.getStringData(SharedPreferencesService.TOKEN_TYPE_KEY);
+                String tokenType = sharedPreferencesService.getStringData(SharedPreferencesService.KEY_TOKEN_TYPE);
 
-                Log.d("Meojium/Home", SharedPreferencesService.TOKEN_TYPE_KEY + ": " + tokenType);
-                Log.d("Meojium/Home", SharedPreferencesService.NICKNAME_KEY + ": " +
-                        sharedPreferencesService.getStringData(SharedPreferencesService.NICKNAME_KEY));
+                Log.d("Meojium/Home", SharedPreferencesService.KEY_TOKEN_TYPE + ": " + tokenType);
+                Log.d("Meojium/Home", SharedPreferencesService.KEY_NICKNAME + ": " +
+                        sharedPreferencesService.getStringData(SharedPreferencesService.KEY_NICKNAME));
 
                 switch (tokenType) {
                     case NaverLogin.NAVER_TOKEN_TYPE:
@@ -355,8 +305,8 @@ public class HomeActivity extends AppCompatActivity
                         break;
                 }
 
-                sharedPreferencesService.removeData(SharedPreferencesService.TOKEN_KEY,
-                        SharedPreferencesService.TOKEN_TYPE_KEY, SharedPreferencesService.NICKNAME_KEY);
+                sharedPreferencesService.removeData(SharedPreferencesService.KEY_TOKEN,
+                        SharedPreferencesService.KEY_TOKEN_TYPE, SharedPreferencesService.KEY_NICKNAME);
 
                 Intent logoutIntent = new Intent(this, LoginActivity.class);
                 logoutIntent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);

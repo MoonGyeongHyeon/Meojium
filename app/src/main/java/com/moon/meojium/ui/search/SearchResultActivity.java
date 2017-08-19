@@ -9,15 +9,18 @@ import android.util.Log;
 import android.view.MenuItem;
 
 import com.moon.meojium.R;
+import com.moon.meojium.database.dao.SearchDao;
 import com.moon.meojium.model.museum.Museum;
 import com.moon.meojium.ui.museum.MuseumFragment;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import es.dmoral.toasty.Toasty;
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
 
 /**
  * Created by moon on 2017. 8. 14..
@@ -29,6 +32,7 @@ public class SearchResultActivity extends AppCompatActivity {
 
     private String keyword;
     private List<Museum> museumList;
+    private SearchDao searchDao;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -47,56 +51,28 @@ public class SearchResultActivity extends AppCompatActivity {
             onBackPressed();
         }
 
-        createSearchResultDummyData();
+        searchDao = SearchDao.getInstance();
 
         initToolbar();
-        initMuseumFragment();
+
+        requestSearchData();
     }
 
-    private void createSearchResultDummyData() {
-        museumList = new ArrayList<>();
+    private void requestSearchData() {
+        Call<List<Museum>> call = searchDao.getMuseumListByKeyword(keyword);
+        call.enqueue(new Callback<List<Museum>>() {
+            @Override
+            public void onResponse(Call<List<Museum>> call, Response<List<Museum>> response) {
+                museumList = response.body();
 
-        Museum museum = new Museum();
-        museum.setId(1001);
-        museum.setName("검색결과 석장리 박물관");
-        museum.setImage(R.drawable.img_seokjangni);
-        museum.setAddress("충청남도 공주시 금벽로 990");
-        museumList.add(museum);
+                initMuseumFragment();
+            }
 
-        museum = new Museum();
-        museum.setId(1002);
-        museum.setName("검색결과 국립 민속 박물관");
-        museum.setImage(R.drawable.img_gookrip_minsok);
-        museum.setAddress("충청남도 공주시 금벽로 990");
-        museumList.add(museum);
-
-        museum = new Museum();
-        museum.setId(1003);
-        museum.setName("검색결과 석장리 박물관3");
-        museum.setImage(R.drawable.img_seokjangni);
-        museum.setAddress("충청남도 공주시 금벽로 990");
-        museumList.add(museum);
-
-        museum = new Museum();
-        museum.setId(1004);
-        museum.setName("검색결과 석장리 박물관4");
-        museum.setImage(R.drawable.img_seokjangni);
-        museum.setAddress("충청남도 공주시 금벽로 990");
-        museumList.add(museum);
-
-        museum = new Museum();
-        museum.setId(1005);
-        museum.setName("검색결과 석장리 박물관5");
-        museum.setImage(R.drawable.img_seokjangni);
-        museum.setAddress("충청남도 공주시 금벽로 990");
-        museumList.add(museum);
-
-        museum = new Museum();
-        museum.setId(1006);
-        museum.setName("검색결과 석장리 박물관6");
-        museum.setImage(R.drawable.img_seokjangni);
-        museum.setAddress("충청남도 공주시 금벽로 990");
-        museumList.add(museum);
+            @Override
+            public void onFailure(Call<List<Museum>> call, Throwable t) {
+                Toasty.info(SearchResultActivity.this, "서버 연결에 실패했습니다").show();
+            }
+        });
     }
 
     private void initToolbar() {

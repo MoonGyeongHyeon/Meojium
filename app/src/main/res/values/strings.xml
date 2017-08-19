@@ -28,7 +28,10 @@
     <string name="hint_search">검색</string>
     <string name="search_log_nothing_data">최근 검색 기록이 없습니다.</string>
     <string name="review_all">전체 리뷰</string>
+    <string name="review_write">리뷰 작성하기</string>
     <string name="info_message">일시적인 오류가 발생했습니다.</string>
     <string name="review_submit">제출</string>
     <string name="hint_review">의견 남기기</string>
+    <string name="detail_found_date_label">설립일자</string>
+    <string name="nothing_review">작성된 리뷰가 없습니다.</string>
 </resources>

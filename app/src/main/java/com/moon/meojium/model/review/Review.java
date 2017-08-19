@@ -1,13 +1,19 @@
 package com.moon.meojium.model.review;
 
+import com.google.gson.annotations.SerializedName;
+
 /**
  * Created by moon on 2017. 8. 3..
  */
 
 public class Review {
+    @SerializedName("id")
     private int id;
+    @SerializedName("nickname")
     private String nickname;
+    @SerializedName("content")
     private String content;
+    @SerializedName("registered_date")
     private String registeredDate;
     private boolean isWriter;
 

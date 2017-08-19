@@ -1,5 +1,7 @@
 package com.moon.meojium.model.story;
 
+import com.google.gson.annotations.SerializedName;
+
 import org.parceler.Parcel;
 
 import java.util.List;
@@ -10,7 +12,9 @@ import java.util.List;
 
 @Parcel
 public class Story {
+    @SerializedName("id")
     int id;
+    @SerializedName("story_title")
     String title;
     List<StoryContent> contentList;
 

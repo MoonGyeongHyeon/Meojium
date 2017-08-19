@@ -7,10 +7,13 @@ import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.MenuItem;
 
+import com.moon.meojium.base.BaseRetrofitService;
 import com.moon.meojium.base.FrescoImageViewer;
 import com.moon.meojium.base.ImageOverlayView;
+import com.moon.meojium.database.dao.StoryContentDao;
 import com.moon.meojium.model.museum.Museum;
 import com.moon.meojium.model.story.Story;
+import com.moon.meojium.model.story.StoryContent;
 import com.stfalcon.frescoimageviewer.ImageViewer;
 
 import org.parceler.Parcels;
@@ -19,6 +22,9 @@ import java.util.ArrayList;
 import java.util.List;
 
 import es.dmoral.toasty.Toasty;
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
 
 /**
  * Created by moon on 2017. 8. 9..
@@ -28,8 +34,10 @@ public class StoryActivity extends AppCompatActivity
         implements ImageViewer.OnDismissListener,
         FrescoImageViewer {
     private Story story;
+    private List<StoryContent> storyContentList;
     private List<String> imageUrlList, contentList;
     private ImageOverlayView overlayView;
+    private StoryContentDao storyContentDao;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -53,10 +61,37 @@ public class StoryActivity extends AppCompatActivity
             onBackPressed();
         }
 
-        imageUrlList = getImageUrlList();
-        contentList = getContentList();
+        storyContentDao = StoryContentDao.getInstance();
 
-        showPicker();
+        requestStoryContentData();
+    }
+
+    private void requestStoryContentData() {
+        Call<List<StoryContent>> call = storyContentDao.getStoryContentList(story.getId());
+        call.enqueue(new Callback<List<StoryContent>>() {
+            @Override
+            public void onResponse(Call<List<StoryContent>> call, Response<List<StoryContent>> response) {
+                storyContentList = response.body();
+
+                splitStoryContentToImageUrlAndContentValue();
+                showPicker();
+            }
+
+            @Override
+            public void onFailure(Call<List<StoryContent>> call, Throwable t) {
+                Toasty.info(StoryActivity.this, "서버 연결에 실패했습니다").show();
+            }
+        });
+    }
+
+    private void splitStoryContentToImageUrlAndContentValue() {
+        imageUrlList = new ArrayList<>();
+        contentList = new ArrayList<>();
+
+        for (StoryContent content : storyContentList) {
+            imageUrlList.add(BaseRetrofitService.IMAGE_LOAD_URL + content.getImagePath());
+            contentList.add(content.getContent());
+        }
     }
 
     @Override
@@ -89,28 +124,6 @@ public class StoryActivity extends AppCompatActivity
                 break;
         }
         return super.onOptionsItemSelected(item);
-    }
-
-    public List<String> getImageUrlList() {
-        List<String> list = new ArrayList<>();
-
-        list.add("http://www.ggilbo.com/news/photo/201605/285380_212898_5959.jpg");
-        list.add("https://mblogthumb-phinf.pstatic.net/MjAxNzAxMDVfMTIy/MDAxNDgzNjE1NzQ3ODc4.ahQHC8GE-oo8POSsvsiDVuvLzKrqRmYOL6AZ-DHkTtcg.vh-GPlxrlxWzSlR3UYMdny7NVFNVAfneZE1kyDTjGlkg.JPEG.aralog1/IMG_2066.JPG?type=w800");
-        list.add("http://img.insight.co.kr/static/2017/04/27/700/358JM6BWGMA13BPYS34Y.jpg");
-        list.add("http://postfiles16.naver.net/MjAxNzA2MTlfNTcg/MDAxNDk3ODM0OTk1MzIy.2idxFdNg3VcPbyDkPxE4dEMLzjZ3IfXxa_eIsv30l7og.3l3levb6eKvW0Yw2usJ9MN5zG6UNP084pju9ZoDtxM8g.JPEG.blogkamco/4.jpg?type=w966");
-
-        return list;
-    }
-
-    public List<String> getContentList() {
-        List<String> list = new ArrayList<>();
-
-        list.add("독립기념관-대한민국 육군 상호협력 업무협약 체결이 2016년 5월 26일에 이루어져, 휴가 중인 육군 병사가 독립 기념관을 방문하면 보상 휴가 1일을 받을 수 있게 되었습니다.");
-        list.add("그 덕분에, 장병들의 자발적인 방문 동기를 생기게 해 독립 기념관엔 군인을 포함해 많은 방문객들로 성화를 이루고 있습니다.");
-        list.add("게다가 2017년 5월, 대상이 육군에서 전군으로 확대됨에 따라 모든 병사가 이 혜택을 누릴 수 있게 되었습니다.");
-        list.add("방문하실 때 휴가증이 없으면 보상 휴가를 받을 수 없으니 잊지 말고 꼭 가져가기!");
-
-        return list;
     }
 
     @Override

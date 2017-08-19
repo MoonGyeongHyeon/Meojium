@@ -8,6 +8,7 @@ import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
+import com.bumptech.glide.Glide;
 import com.moon.meojium.R;
 import com.moon.meojium.model.museum.Museum;
 import com.moon.meojium.ui.detail.DetailActivity;
@@ -40,7 +41,9 @@ public class MuseumViewHolder extends RecyclerView.ViewHolder {
     }
 
     public void bindView(final Museum museum) {
-        thumbImageView.setImageResource(museum.getImage());
+        Glide.with(context)
+                .load(BaseRetrofitService.IMAGE_LOAD_URL + museum.getImagePath())
+                .into(thumbImageView);
         nameTextView.setText(museum.getName());
         addressTextView.setText(museum.getAddress());
         container.setOnClickListener(new View.OnClickListener() {

@@ -7,6 +7,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.ImageView;
@@ -15,13 +16,19 @@ import android.widget.SearchView;
 import android.widget.TextView;
 
 import com.moon.meojium.R;
+import com.moon.meojium.base.UpdateResult;
+import com.moon.meojium.base.util.SharedPreferencesService;
+import com.moon.meojium.database.dao.SearchDao;
 import com.moon.meojium.model.searchlog.SearchLog;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
+import es.dmoral.toasty.Toasty;
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
 
 /**
  * Created by moon on 2017. 8. 14..
@@ -39,6 +46,7 @@ public class SearchActivity extends AppCompatActivity
     TextView nothingDataTextView;
 
     private List<SearchLog> searchLogList;
+    private SearchDao searchDao;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -46,46 +54,12 @@ public class SearchActivity extends AppCompatActivity
         setContentView(R.layout.activity_search);
         ButterKnife.bind(this);
 
-        createSearchLogDummyData();
+        searchDao = SearchDao.getInstance();
 
         initToolbar();
         initSearchView();
-        initRecyclerView();
-        initNothingDataTextView();
-    }
 
-    private void createSearchLogDummyData() {
-        searchLogList = new ArrayList<>();
-
-        SearchLog searchLog = new SearchLog();
-        searchLog.setId(101);
-        searchLog.setKeyword("석장리 박물관");
-        searchLog.setSearchedDate("2017-08-12");
-        searchLogList.add(searchLog);
-
-        searchLog = new SearchLog();
-        searchLog.setId(102);
-        searchLog.setKeyword("부천");
-        searchLog.setSearchedDate("2017-08-11");
-        searchLogList.add(searchLog);
-
-        searchLog = new SearchLog();
-        searchLog.setId(103);
-        searchLog.setKeyword("인천");
-        searchLog.setSearchedDate("2017-08-09");
-        searchLogList.add(searchLog);
-
-        searchLog = new SearchLog();
-        searchLog.setId(104);
-        searchLog.setKeyword("서울");
-        searchLog.setSearchedDate("2017-08-09");
-        searchLogList.add(searchLog);
-
-        searchLog = new SearchLog();
-        searchLog.setId(105);
-        searchLog.setKeyword("독립기념관");
-        searchLog.setSearchedDate("2017-08-08");
-        searchLogList.add(searchLog);
+        requestSearchLogData();
     }
 
     private void initToolbar() {
@@ -117,6 +91,24 @@ public class SearchActivity extends AppCompatActivity
         }
     }
 
+    private void requestSearchLogData() {
+        Call<List<SearchLog>> call = searchDao.getSearchLogList(SharedPreferencesService.getInstance().getStringData(SharedPreferencesService.KEY_TOKEN));
+        call.enqueue(new Callback<List<SearchLog>>() {
+            @Override
+            public void onResponse(Call<List<SearchLog>> call, Response<List<SearchLog>> response) {
+                searchLogList = response.body();
+
+                initRecyclerView();
+                initNothingDataTextView();
+            }
+
+            @Override
+            public void onFailure(Call<List<SearchLog>> call, Throwable t) {
+                Toasty.info(SearchActivity.this, "서버 연결에 실패했습니다").show();
+            }
+        });
+    }
+
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
@@ -129,6 +121,26 @@ public class SearchActivity extends AppCompatActivity
 
     @Override
     public boolean onQueryTextSubmit(String s) {
+        Call<UpdateResult> call = searchDao.addSearchLog(
+                SharedPreferencesService.getInstance().getStringData(SharedPreferencesService.KEY_TOKEN), s);
+        call.enqueue(new Callback<UpdateResult>() {
+            @Override
+            public void onResponse(Call<UpdateResult> call, Response<UpdateResult> response) {
+                UpdateResult result = response.body();
+
+                if (result.getCode() == UpdateResult.RESULT_OK) {
+                    Log.d("Meojium/Search", "Success Adding SearchLog");
+                } else {
+                    Log.d("Meojium/Search", "Fail Adding SearchLog");
+                    Toasty.info(SearchActivity.this, "서버 연결에 실패했습니다").show();
+                }
+            }
+
+            @Override
+            public void onFailure(Call<UpdateResult> call, Throwable t) {
+                Toasty.info(SearchActivity.this, "서버 연결에 실패했습니다").show();
+            }
+        });
         Intent intent = new Intent(this, SearchResultActivity.class);
         intent.putExtra("keyword", s);
         startActivity(intent);

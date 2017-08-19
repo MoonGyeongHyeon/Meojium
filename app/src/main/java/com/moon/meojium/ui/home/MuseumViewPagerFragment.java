@@ -12,6 +12,7 @@ import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
 import com.moon.meojium.R;
+import com.moon.meojium.base.BaseRetrofitService;
 import com.moon.meojium.model.museum.Museum;
 import com.moon.meojium.ui.detail.DetailActivity;
 
@@ -73,7 +74,7 @@ public class MuseumViewPagerFragment extends Fragment {
 
     private void updateView() {
         Glide.with(this)
-                .load(museum.getImage())
+                .load(BaseRetrofitService.IMAGE_LOAD_URL + museum.getImagePath())
                 .into(thumbImageView);
         nameTextView.setText(museum.getName());
         addressTextView.setText(museum.getAddress());

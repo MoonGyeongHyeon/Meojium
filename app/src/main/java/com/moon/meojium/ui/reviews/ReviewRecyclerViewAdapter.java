@@ -5,6 +5,7 @@ import android.content.DialogInterface;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
@@ -14,12 +15,18 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.moon.meojium.R;
+import com.moon.meojium.base.UpdateResult;
+import com.moon.meojium.database.dao.ReviewDao;
 import com.moon.meojium.model.review.Review;
 
 import java.util.List;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
+import es.dmoral.toasty.Toasty;
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
 
 /**
  * Created by moon on 2017. 8. 15..
@@ -28,10 +35,15 @@ import butterknife.ButterKnife;
 public class ReviewRecyclerViewAdapter extends RecyclerView.Adapter<ReviewRecyclerViewAdapter.ViewHolder> {
     private List<Review> reviewList;
     private Context context;
+    private ReviewDao reviewDao;
+    private boolean isUpdated;
 
     public ReviewRecyclerViewAdapter(List<Review> reviewList, Context context) {
         this.reviewList = reviewList;
         this.context = context;
+
+        reviewDao = ReviewDao.getInstance();
+        isUpdated = false;
     }
 
     @Override
@@ -73,7 +85,7 @@ public class ReviewRecyclerViewAdapter extends RecyclerView.Adapter<ReviewRecycl
             });
         }
 
-        private void bindView(Review review) {
+        private void bindView(final Review review) {
             nicknameTextView.setText(review.getNickname());
             contentTextView.setText(review.getContent());
             registeredDateTextView.setText(review.getRegisteredDate());
@@ -88,7 +100,30 @@ public class ReviewRecyclerViewAdapter extends RecyclerView.Adapter<ReviewRecycl
                         .setPositiveButton("확인", new DialogInterface.OnClickListener() {
                             @Override
                             public void onClick(DialogInterface dialogInterface, int i) {
+                                Call<UpdateResult> call = reviewDao.deleteReview(review.getId());
+                                call.enqueue(new Callback<UpdateResult>() {
+                                    @Override
+                                    public void onResponse(Call<UpdateResult> call, Response<UpdateResult> response) {
+                                        UpdateResult result = response.body();
 
+                                        if (result.getCode() == UpdateResult.RESULT_OK) {
+                                            Log.d("Meojium/Review", "Success Deleting Review");
+                                            Toasty.info(context, "리뷰를 삭제했습니다.").show();
+
+                                            reviewList.remove(getAdapterPosition());
+                                            notifyDataSetChanged();
+                                            setUpdated(true);
+                                        } else {
+                                            Log.d("Meojium/Review", "Fail Deleting Review");
+                                            Toasty.info(context, "서버 연결에 실패했습니다").show();
+                                        }
+                                    }
+
+                                    @Override
+                                    public void onFailure(Call<UpdateResult> call, Throwable t) {
+                                        Toasty.info(context, "서버 연결에 실패했습니다").show();
+                                    }
+                                });
                             }
                         })
                         .setNegativeButton("취소", new DialogInterface.OnClickListener() {
@@ -112,5 +147,13 @@ public class ReviewRecyclerViewAdapter extends RecyclerView.Adapter<ReviewRecycl
                 container.setClickable(false);
             }
         }
+    }
+
+    public boolean isUpdated() {
+        return isUpdated;
+    }
+
+    public void setUpdated(boolean updated) {
+        isUpdated = updated;
     }
 }
