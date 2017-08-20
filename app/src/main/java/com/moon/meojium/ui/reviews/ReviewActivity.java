@@ -11,6 +11,7 @@ import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.EditText;
+import android.widget.TextView;
 
 import com.moon.meojium.R;
 import com.moon.meojium.base.UpdateResult;
@@ -45,49 +46,59 @@ public class ReviewActivity extends AppCompatActivity {
     RecyclerView recyclerView;
     @BindView(R.id.edittext_review_content)
     EditText contentEditText;
+    @BindView(R.id.textview_review_submit)
+    TextView submitTextView;
 
     @OnClick(R.id.textview_review_submit)
     public void onClick(View view) {
-        final String content = contentEditText.getText().toString();
-        final SharedPreferencesService sharedPreferencesService = SharedPreferencesService.getInstance();
-        Call<UpdateResult> call = reviewDao.writeReview(sharedPreferencesService.getStringData(SharedPreferencesService.KEY_TOKEN),
-                content, museum.getId());
-        call.enqueue(new Callback<UpdateResult>() {
-            @Override
-            public void onResponse(Call<UpdateResult> call, Response<UpdateResult> response) {
-                UpdateResult result = response.body();
+        if (contentEditText.getText().toString().length() == 0 ) {
+            Toasty.info(ReviewActivity.this, "내용을 입력해주세요.").show();
+        } else {
+            submitTextView.setClickable(false);
+            final String content = contentEditText.getText().toString();
+            final SharedPreferencesService sharedPreferencesService = SharedPreferencesService.getInstance();
+            Call<UpdateResult> call = reviewDao.writeReview(sharedPreferencesService.getStringData(SharedPreferencesService.KEY_TOKEN),
+                    content, museum.getId());
+            call.enqueue(new Callback<UpdateResult>() {
+                @Override
+                public void onResponse(Call<UpdateResult> call, Response<UpdateResult> response) {
+                    UpdateResult result = response.body();
 
-                if (result.getCode() == UpdateResult.RESULT_OK) {
-                    Log.d("Meojium/Review", "Success Adding Review");
-                    Review review = new Review();
-                    review.setId(result.getInsertId());
-                    review.setNickname(sharedPreferencesService.getStringData(SharedPreferencesService.KEY_NICKNAME));
-                    review.setContent(content);
-                    review.setWriter(true);
-                    Date date = Calendar.getInstance().getTime();
-                    review.setRegisteredDate(new SimpleDateFormat("yyyy-MM-dd").format(date));
-                    reviewList.add(0, review);
+                    if (result.getCode() == UpdateResult.RESULT_OK) {
+                        Log.d("Meojium/Review", "Success Adding Review");
+                        Review review = new Review();
+                        review.setId(result.getInsertId());
+                        review.setNickname(sharedPreferencesService.getStringData(SharedPreferencesService.KEY_NICKNAME));
+                        review.setContent(content);
+                        review.setWriter(true);
+                        Date date = Calendar.getInstance().getTime();
+                        review.setRegisteredDate(new SimpleDateFormat("yyyy-MM-dd").format(date));
+                        reviewList.add(0, review);
 
-                    adapter.notifyDataSetChanged();
-                    adapter.setUpdated(true);
+                        adapter.notifyDataSetChanged();
+                        adapter.setUpdated(true);
 
-                    contentEditText.clearFocus();
-                    contentEditText.setText("");
+                        contentEditText.clearFocus();
+                        contentEditText.setText("");
 
-                    startIndex++;
+                        startIndex++;
 
-                    initResultIntent();
-                } else {
-                    Log.d("Meojium/Review", "Fail Adding Review");
+                        submitTextView.setClickable(true);
+
+                        initResultIntent();
+                    } else {
+                        Log.d("Meojium/Review", "Fail Adding Review");
+                        Toasty.info(ReviewActivity.this, "서버 연결에 실패했습니다").show();
+                        submitTextView.setClickable(true);
+                    }
+                }
+
+                @Override
+                public void onFailure(Call<UpdateResult> call, Throwable t) {
                     Toasty.info(ReviewActivity.this, "서버 연결에 실패했습니다").show();
                 }
-            }
-
-            @Override
-            public void onFailure(Call<UpdateResult> call, Throwable t) {
-                Toasty.info(ReviewActivity.this, "서버 연결에 실패했습니다").show();
-            }
-        });
+            });
+        }
     }
 
     private List<Review> reviewList;

@@ -10,10 +10,7 @@ import android.view.MenuItem;
 
 import com.moon.meojium.R;
 import com.moon.meojium.database.dao.SearchDao;
-import com.moon.meojium.model.museum.Museum;
 import com.moon.meojium.ui.museum.MuseumFragment;
-
-import java.util.List;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -28,7 +25,6 @@ public class SearchResultActivity extends AppCompatActivity {
     Toolbar toolbar;
 
     private String keyword;
-    private List<Museum> museumList;
     private SearchDao searchDao;
 
     @Override

@@ -8,6 +8,7 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.TextView;
 
 import com.moon.meojium.R;
 import com.moon.meojium.base.BaseRetrofitService;
@@ -33,6 +34,8 @@ import retrofit2.Response;
 public class MuseumFragment extends Fragment {
     @BindView(R.id.recyclerview_museum)
     RecyclerView recyclerView;
+    @BindView(R.id.textview_nothing_data)
+    TextView nothingDataTextView;
 
     private List<Museum> museumList;
     private BaseRetrofitService dao;
@@ -99,7 +102,7 @@ public class MuseumFragment extends Fragment {
             public void onResponse(Call<List<Museum>> call, Response<List<Museum>> response) {
                 museumList = response.body();
 
-                initRecyclerView();
+                checkDataExisted();
             }
 
             @Override
@@ -117,7 +120,7 @@ public class MuseumFragment extends Fragment {
             public void onResponse(Call<List<Museum>> call, Response<List<Museum>> response) {
                 museumList = response.body();
 
-                initRecyclerView();
+                checkDataExisted();
             }
 
             @Override
@@ -134,7 +137,7 @@ public class MuseumFragment extends Fragment {
             public void onResponse(Call<List<Museum>> call, Response<List<Museum>> response) {
                 museumList = response.body();
 
-                initRecyclerView();
+                checkDataExisted();
             }
 
             @Override
@@ -144,6 +147,16 @@ public class MuseumFragment extends Fragment {
         });
     }
 
+    private void checkDataExisted() {
+        if (museumList.isEmpty()) {
+            nothingDataTextView.setVisibility(View.VISIBLE);
+            recyclerView.setVisibility(View.GONE);
+        } else {
+            nothingDataTextView.setVisibility(View.GONE);
+            recyclerView.setVisibility(View.VISIBLE);
+            initRecyclerView();
+        }
+    }
 
     private void initRecyclerView() {
         MuseumRecyclerViewAdapter adapter = new MuseumRecyclerViewAdapter(museumList, getContext());
