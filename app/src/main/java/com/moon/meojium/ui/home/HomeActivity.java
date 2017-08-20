@@ -88,18 +88,67 @@ public class HomeActivity extends AppCompatActivity
         backPressCloseHandler = new BackPressCloseHandler(this);
         museumDao = MuseumDao.getInstance();
 
+        requestPopularMuseumData();
+        requestHistoryMuseumData();
+
         initToastyConfig();
         initSharedPreferences();
-
         initToolbar();
         initDrawerLayout();
         initNearbyImageView();
 
         createTastingMuseumDummyData();
         initTastingMuseumRecyclerView();
+    }
 
-        requestPopularMuseumData();
-        requestHistoryMuseumData();
+    private void requestPopularMuseumData() {
+        Call<List<Museum>> call = museumDao.getPopularMuseumList();
+        call.enqueue(new Callback<List<Museum>>() {
+            @Override
+            public void onResponse(Call<List<Museum>> call, Response<List<Museum>> response) {
+                Log.d("Meojium/Home", "Success Getting Popular Museum List");
+                popularMuseumList = response.body();
+
+                initPopularMuseumViewPager();
+            }
+
+            @Override
+            public void onFailure(Call<List<Museum>> call, Throwable t) {
+                t.printStackTrace();
+                Toasty.info(HomeActivity.this, "서버 연결에 실패했습니다").show();
+            }
+        });
+    }
+
+    private void initPopularMuseumViewPager() {
+        MuseumViewPagerAdapter adapter = new MuseumViewPagerAdapter(getSupportFragmentManager(), popularMuseumList);
+        popularMuseumViewPager.setAdapter(adapter);
+        popularMuseumViewPager.setPageMargin(32);
+    }
+
+    private void requestHistoryMuseumData() {
+        Call<List<Museum>> call = museumDao.getHistoryMuseumList();
+        call.enqueue(new Callback<List<Museum>>() {
+            @Override
+            public void onResponse(Call<List<Museum>> call, Response<List<Museum>> response) {
+                Log.d("Meojium/Home", "Success Getting History Museum List");
+                historyMuseumList = response.body();
+
+                initHistoryMuseumViewPager();
+            }
+
+            @Override
+            public void onFailure(Call<List<Museum>> call, Throwable t) {
+                t.printStackTrace();
+                Toasty.info(HomeActivity.this, "서버 연결에 실패했습니다").show();
+            }
+        });
+    }
+
+    private void initHistoryMuseumViewPager() {
+        MuseumViewPagerAdapter adapter = new MuseumViewPagerAdapter(getSupportFragmentManager(), historyMuseumList);
+        historyMuseumViewPager.setAdapter(adapter);
+        historyMuseumViewPager.setPageMargin(32);
     }
 
     private void initToastyConfig() {
@@ -195,57 +244,6 @@ public class HomeActivity extends AppCompatActivity
         tastingRecyclerView.setLayoutManager(manager);
 
         tastingRecyclerView.setNestedScrollingEnabled(false);
-    }
-
-
-    private void requestPopularMuseumData() {
-        Call<List<Museum>> call = museumDao.getPopularMuseumList();
-        call.enqueue(new Callback<List<Museum>>() {
-            @Override
-            public void onResponse(Call<List<Museum>> call, Response<List<Museum>> response) {
-                Log.d("Meojium/Home", "Success Getting Popular Museum List");
-                popularMuseumList = response.body();
-
-                initPopularMuseumViewPager();
-            }
-
-            @Override
-            public void onFailure(Call<List<Museum>> call, Throwable t) {
-                t.printStackTrace();
-                Toasty.info(HomeActivity.this, "서버 연결에 실패했습니다").show();
-            }
-        });
-    }
-
-    private void initPopularMuseumViewPager() {
-        MuseumViewPagerAdapter adapter = new MuseumViewPagerAdapter(getSupportFragmentManager(), popularMuseumList);
-        popularMuseumViewPager.setAdapter(adapter);
-        popularMuseumViewPager.setPageMargin(32);
-    }
-
-    private void requestHistoryMuseumData() {
-        Call<List<Museum>> call = museumDao.getHistoryMuseumList();
-        call.enqueue(new Callback<List<Museum>>() {
-            @Override
-            public void onResponse(Call<List<Museum>> call, Response<List<Museum>> response) {
-                Log.d("Meojium/Home", "Success Getting History Museum List");
-                historyMuseumList = response.body();
-
-                initHistoryMuseumViewPager();
-            }
-
-            @Override
-            public void onFailure(Call<List<Museum>> call, Throwable t) {
-                t.printStackTrace();
-                Toasty.info(HomeActivity.this, "서버 연결에 실패했습니다").show();
-            }
-        });
-    }
-
-    private void initHistoryMuseumViewPager() {
-        MuseumViewPagerAdapter adapter = new MuseumViewPagerAdapter(getSupportFragmentManager(), historyMuseumList);
-        historyMuseumViewPager.setAdapter(adapter);
-        historyMuseumViewPager.setPageMargin(32);
     }
 
     @Override

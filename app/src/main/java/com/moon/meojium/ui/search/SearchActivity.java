@@ -56,39 +56,10 @@ public class SearchActivity extends AppCompatActivity
 
         searchDao = SearchDao.getInstance();
 
+        requestSearchLogData();
+
         initToolbar();
         initSearchView();
-
-        requestSearchLogData();
-    }
-
-    private void initToolbar() {
-        toolbar.setTitle("");
-        setSupportActionBar(toolbar);
-        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-    }
-
-    private void initSearchView() {
-        searchView.setIconified(false);
-        searchView.setIconifiedByDefault(false);
-        searchView.setOnQueryTextListener(this);
-
-        int magId = getResources().getIdentifier("android:id/search_mag_icon", null, null);
-        ImageView magImage = searchView.findViewById(magId);
-        magImage.setLayoutParams(new LinearLayout.LayoutParams(0, 0));
-    }
-
-    private void initRecyclerView() {
-        SearchRecyclerViewAdapter adapter = new SearchRecyclerViewAdapter(searchLogList, this);
-        recyclerView.setAdapter(adapter);
-        RecyclerView.LayoutManager manager = new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false);
-        recyclerView.setLayoutManager(manager);
-    }
-
-    private void initNothingDataTextView() {
-        if (searchLogList.size() == 0) {
-            nothingDataTextView.setVisibility(View.VISIBLE);
-        }
     }
 
     private void requestSearchLogData() {
@@ -107,6 +78,35 @@ public class SearchActivity extends AppCompatActivity
                 Toasty.info(SearchActivity.this, "서버 연결에 실패했습니다").show();
             }
         });
+    }
+
+    private void initRecyclerView() {
+        SearchRecyclerViewAdapter adapter = new SearchRecyclerViewAdapter(searchLogList, this);
+        recyclerView.setAdapter(adapter);
+        RecyclerView.LayoutManager manager = new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false);
+        recyclerView.setLayoutManager(manager);
+    }
+
+    private void initNothingDataTextView() {
+        if (searchLogList.size() == 0) {
+            nothingDataTextView.setVisibility(View.VISIBLE);
+        }
+    }
+
+    private void initToolbar() {
+        toolbar.setTitle("");
+        setSupportActionBar(toolbar);
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+    }
+
+    private void initSearchView() {
+        searchView.setIconified(false);
+        searchView.setIconifiedByDefault(false);
+        searchView.setOnQueryTextListener(this);
+
+        int magId = getResources().getIdentifier("android:id/search_mag_icon", null, null);
+        ImageView magImage = searchView.findViewById(magId);
+        magImage.setLayoutParams(new LinearLayout.LayoutParams(0, 0));
     }
 
     @Override

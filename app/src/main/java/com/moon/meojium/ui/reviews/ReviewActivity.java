@@ -114,15 +114,9 @@ public class ReviewActivity extends AppCompatActivity {
 
         reviewDao = ReviewDao.getInstance();
 
-        initToolbar();
-
         requestReviewData();
-    }
 
-    private void initToolbar() {
-        toolbar.setTitle("리뷰 보기");
-        setSupportActionBar(toolbar);
-        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        initToolbar();
     }
 
     private void requestReviewData() {
@@ -155,6 +149,12 @@ public class ReviewActivity extends AppCompatActivity {
 
         RecyclerView.LayoutManager manager = new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false);
         recyclerView.setLayoutManager(manager);
+    }
+
+    private void initToolbar() {
+        toolbar.setTitle("리뷰 보기");
+        setSupportActionBar(toolbar);
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
     }
 
     @Override

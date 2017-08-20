@@ -24,8 +24,12 @@ import com.moon.meojium.R;
 import com.moon.meojium.base.BaseRetrofitService;
 import com.moon.meojium.base.FrescoImageViewer;
 import com.moon.meojium.base.NaverAPI;
+import com.moon.meojium.base.UpdateResult;
+import com.moon.meojium.base.util.SharedPreferencesService;
+import com.moon.meojium.database.dao.FavoriteDao;
 import com.moon.meojium.database.dao.MuseumDao;
 import com.moon.meojium.database.dao.ReviewDao;
+import com.moon.meojium.database.dao.StampDao;
 import com.moon.meojium.database.dao.StoryDao;
 import com.moon.meojium.model.museum.Museum;
 import com.moon.meojium.model.review.Review;
@@ -121,18 +125,97 @@ public class DetailActivity extends AppCompatActivity
     @OnClick(R.id.relativelayout_detail_favorite_container)
     public void onClickFavorite(View view) {
         if (favoriteCheckBox.isChecked()) {
-            favoriteCheckBox.setChecked(false);
+            Call<UpdateResult> call = favoriteDao.deleteFavoriteMuseum(SharedPreferencesService.getInstance().getStringData(SharedPreferencesService.KEY_TOKEN),
+                    museum.getId());
+            call.enqueue(new Callback<UpdateResult>() {
+                @Override
+                public void onResponse(Call<UpdateResult> call, Response<UpdateResult> response) {
+                    UpdateResult result = response.body();
+
+                    if (result.getCode() == UpdateResult.RESULT_OK) {
+                        Log.d("Meojium/Detail", "Success Deleting Favorite Museum");
+                        favoriteCheckBox.setChecked(false);
+                    } else {
+                        Log.d("Meojium/Detail", "Fail Deleting Favorite Museum");
+                        Toasty.info(DetailActivity.this, "서버 연결에 실패했습니다").show();
+                    }
+                }
+
+                @Override
+                public void onFailure(Call<UpdateResult> call, Throwable t) {
+                    Toasty.info(DetailActivity.this, "서버 연결에 실패했습니다").show();
+                }
+            });
         } else {
-            favoriteCheckBox.setChecked(true);
+            Call<UpdateResult> call = favoriteDao.addFavoriteMuseum(SharedPreferencesService.getInstance().getStringData(SharedPreferencesService.KEY_TOKEN),
+                    museum.getId());
+            call.enqueue(new Callback<UpdateResult>() {
+                @Override
+                public void onResponse(Call<UpdateResult> call, Response<UpdateResult> response) {
+                    UpdateResult result = response.body();
+
+                    if (result.getCode() == UpdateResult.RESULT_OK) {
+                        Log.d("Meojium/Detail", "Success Adding Favorite Museum");
+                        favoriteCheckBox.setChecked(true);
+                    } else {
+                        Log.d("Meojium/Detail", "Fail Adding Favorite Museum");
+                        Toasty.info(DetailActivity.this, "서버 연결에 실패했습니다").show();
+                    }
+                }
+
+                @Override
+                public void onFailure(Call<UpdateResult> call, Throwable t) {
+                    Toasty.info(DetailActivity.this, "서버 연결에 실패했습니다").show();
+                }
+            });
         }
     }
 
     @OnClick(R.id.relativelayout_detail_stamp_container)
     public void onClickStamp(View view) {
         if (stampCheckBox.isChecked()) {
-            stampCheckBox.setChecked(false);
+            Call<UpdateResult> call = stampDao.deleteStampMuseum(SharedPreferencesService.getInstance().getStringData(SharedPreferencesService.KEY_TOKEN),
+                    museum.getId());
+            call.enqueue(new Callback<UpdateResult>() {
+                @Override
+                public void onResponse(Call<UpdateResult> call, Response<UpdateResult> response) {
+                    UpdateResult result = response.body();
+                    if (result.getCode() == UpdateResult.RESULT_OK) {
+                        Log.d("Meojium/Detail", "Success Deleting Stamp Museum");
+                        stampCheckBox.setChecked(false);
+                    } else {
+                        Log.d("Meojium/Detail", "Fail Deleting Stamp Museum");
+                        Toasty.info(DetailActivity.this, "서버 연결에 실패했습니다").show();
+                    }
+                }
+
+                @Override
+                public void onFailure(Call<UpdateResult> call, Throwable t) {
+                    Toasty.info(DetailActivity.this, "서버 연결에 실패했습니다").show();
+                }
+            });
         } else {
-            stampCheckBox.setChecked(true);
+            Call<UpdateResult> call = stampDao.addStampMuseum(SharedPreferencesService.getInstance().getStringData(SharedPreferencesService.KEY_TOKEN),
+                    museum.getId());
+            call.enqueue(new Callback<UpdateResult>() {
+                @Override
+                public void onResponse(Call<UpdateResult> call, Response<UpdateResult> response) {
+                    UpdateResult result = response.body();
+
+                    if (result.getCode() == UpdateResult.RESULT_OK) {
+                        Log.d("Meojium/Detail", "Success Adding Stamp Museum");
+                        stampCheckBox.setChecked(true);
+                    } else {
+                        Log.d("Meojium/Detail", "Fail Adding Stamp Museum");
+                        Toasty.info(DetailActivity.this, "서버 연결에 실패했습니다").show();
+                    }
+                }
+
+                @Override
+                public void onFailure(Call<UpdateResult> call, Throwable t) {
+                    Toasty.info(DetailActivity.this, "서버 연결에 실패했습니다").show();
+                }
+            });
         }
     }
 
@@ -172,6 +255,8 @@ public class DetailActivity extends AppCompatActivity
     private MuseumDao museumDao;
     private StoryDao storyDao;
     private ReviewDao reviewDao;
+    private FavoriteDao favoriteDao;
+    private StampDao stampDao;
     private List<String> imageUrlList;
     private List<Story> storyList;
     private List<Review> reviewList;
@@ -204,20 +289,18 @@ public class DetailActivity extends AppCompatActivity
         museumDao = MuseumDao.getInstance();
         storyDao = StoryDao.getInstance();
         reviewDao = ReviewDao.getInstance();
+        favoriteDao = FavoriteDao.getInstance();
+        stampDao = StampDao.getInstance();
 
-        initToolbar();
         requestReviewData();
         requestStoryData();
+        requestFavoriteCheckValue();
+        requestStampCheckValue();
 
+        initToolbar();
         initMapView();
 
         updateMuseumView();
-    }
-
-    private void initToolbar() {
-        toolbar.setTitle(museum.getName());
-        setSupportActionBar(toolbar);
-        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
     }
 
     private void requestReviewData() {
@@ -307,20 +390,68 @@ public class DetailActivity extends AppCompatActivity
         }
     }
 
-    private void updateMuseumView() {
-        Glide.with(this)
-                .load(BaseRetrofitService.IMAGE_LOAD_URL + museum.getImagePath())
-                .into(thumbImageView);
+    private void requestFavoriteCheckValue() {
+        Call<UpdateResult> call = favoriteDao.isCheckedMuseum(SharedPreferencesService.getInstance().getStringData(SharedPreferencesService.KEY_TOKEN),
+                museum.getId());
+        call.enqueue(new Callback<UpdateResult>() {
+            @Override
+            public void onResponse(Call<UpdateResult> call, Response<UpdateResult> response) {
+                UpdateResult result = response.body();
 
-        nameTextView.setText(museum.getName());
-        addressTextView.setText(museum.getAddress());
-        businessHourTextView.setText(museum.getBusinessHours());
-        dayOffTextView.setText(museum.getDayOff());
-        feeTextView.setText(museum.getFee());
-        telTextView.setText(museum.getTel());
-        homepageTextView.setText(museum.getHomepage());
-        introTextView.setText(museum.getIntro());
-        foundDateTextView.setText(museum.getFoundDate());
+                if (result.getCode() == UpdateResult.RESULT_OK) {
+                    Log.d("Meojium/Detail", "Success Checking Favorite Value");
+
+                    if (result.getMsg().equals("Empty")) {
+                        favoriteCheckBox.setChecked(false);
+                    } else {
+                        favoriteCheckBox.setChecked(true);
+                    }
+                } else {
+                    Log.d("Meojium/Detail", "Fail Checking Favorite Value");
+                    Toasty.info(DetailActivity.this, "서버 연결에 실패했습니다").show();
+                }
+            }
+
+            @Override
+            public void onFailure(Call<UpdateResult> call, Throwable t) {
+                Toasty.info(DetailActivity.this, "서버 연결에 실패했습니다").show();
+            }
+        });
+    }
+
+    private void requestStampCheckValue() {
+        Call<UpdateResult> call = stampDao.isCheckedMuseum(SharedPreferencesService.getInstance().getStringData(SharedPreferencesService.KEY_TOKEN),
+                museum.getId());
+        call.enqueue(new Callback<UpdateResult>() {
+            @Override
+            public void onResponse(Call<UpdateResult> call, Response<UpdateResult> response) {
+                UpdateResult result = response.body();
+
+                if (result.getCode() == UpdateResult.RESULT_OK) {
+                    Log.d("Meojium/Detail", "Success Checking Stamp Value");
+
+                    if (result.getMsg().equals("Empty")) {
+                        stampCheckBox.setChecked(false);
+                    } else {
+                        stampCheckBox.setChecked(true);
+                    }
+                } else {
+                    Log.d("Meojium/Detail", "Fail Checking Stamp Value");
+                    Toasty.info(DetailActivity.this, "서버 연결에 실패했습니다").show();
+                }
+            }
+
+            @Override
+            public void onFailure(Call<UpdateResult> call, Throwable t) {
+                Toasty.info(DetailActivity.this, "서버 연결에 실패했습니다").show();
+            }
+        });
+    }
+
+    private void initToolbar() {
+        toolbar.setTitle(museum.getName());
+        setSupportActionBar(toolbar);
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
     }
 
     private void initMapView() {
@@ -353,6 +484,22 @@ public class DetailActivity extends AppCompatActivity
 
         NMapPOIdataOverlay poIdataOverlay = manager.createPOIdataOverlay(poIdata, null);
         poIdataOverlay.selectPOIitem(0, true);
+    }
+
+    private void updateMuseumView() {
+        Glide.with(this)
+                .load(BaseRetrofitService.IMAGE_LOAD_URL + museum.getImagePath())
+                .into(thumbImageView);
+
+        nameTextView.setText(museum.getName());
+        addressTextView.setText(museum.getAddress());
+        businessHourTextView.setText(museum.getBusinessHours());
+        dayOffTextView.setText(museum.getDayOff());
+        feeTextView.setText(museum.getFee());
+        telTextView.setText(museum.getTel());
+        homepageTextView.setText(museum.getHomepage());
+        introTextView.setText(museum.getIntro());
+        foundDateTextView.setText(museum.getFoundDate());
     }
 
     @Override

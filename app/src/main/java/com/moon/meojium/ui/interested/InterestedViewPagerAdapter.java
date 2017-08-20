@@ -4,7 +4,6 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
 
-import com.moon.meojium.model.museum.Museum;
 import com.moon.meojium.ui.museum.MuseumFragment;
 
 import java.util.List;
@@ -14,21 +13,21 @@ import java.util.List;
  */
 
 public class InterestedViewPagerAdapter extends FragmentPagerAdapter {
-    private List<List<Museum>> lists;
+    private List<String> categoryList;
 
-    public InterestedViewPagerAdapter(FragmentManager fm, List<List<Museum>> lists) {
+    public InterestedViewPagerAdapter(FragmentManager fm, List<String> categoryList) {
         super(fm);
-        this.lists = lists;
+        this.categoryList = categoryList;
     }
 
     @Override
     public Fragment getItem(int position) {
-        return MuseumFragment.newInstance(lists.get(position));
+        return MuseumFragment.newInstance(categoryList.get(position));
     }
 
     @Override
     public int getCount() {
-        return lists != null ? lists.size() : 0;
+        return categoryList != null ? categoryList.size() : 0;
     }
 
     @Override

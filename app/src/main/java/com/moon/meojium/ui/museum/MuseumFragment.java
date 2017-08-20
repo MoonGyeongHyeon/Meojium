@@ -10,14 +10,21 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.moon.meojium.R;
+import com.moon.meojium.base.BaseRetrofitService;
+import com.moon.meojium.base.util.SharedPreferencesService;
+import com.moon.meojium.database.dao.FavoriteDao;
+import com.moon.meojium.database.dao.SearchDao;
+import com.moon.meojium.database.dao.StampDao;
 import com.moon.meojium.model.museum.Museum;
-
-import org.parceler.Parcels;
 
 import java.util.List;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
+import es.dmoral.toasty.Toasty;
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
 
 /**
  * Created by moon on 2017. 8. 7..
@@ -28,11 +35,25 @@ public class MuseumFragment extends Fragment {
     RecyclerView recyclerView;
 
     private List<Museum> museumList;
+    private BaseRetrofitService dao;
+    private String category;
+    private String keyword;
+    private int startIndex;
 
-    public static Fragment newInstance(List<Museum> museumList) {
+    public static Fragment newInstance(String category) {
         Fragment fragment = new MuseumFragment();
         Bundle bundle = new Bundle();
-        bundle.putParcelable("museumList", Parcels.wrap(museumList));
+        bundle.putString("category", category);
+        fragment.setArguments(bundle);
+
+        return fragment;
+    }
+
+    public static Fragment newInstance(String category, String keyword) {
+        Fragment fragment = new MuseumFragment();
+        Bundle bundle = new Bundle();
+        bundle.putString("category", category);
+        bundle.putString("keyword", keyword);
         fragment.setArguments(bundle);
 
         return fragment;
@@ -50,11 +71,85 @@ public class MuseumFragment extends Fragment {
 
         Bundle bundle = getArguments();
 
-        museumList = Parcels.unwrap(bundle.getParcelable("museumList"));
+        category = bundle.getString("category");
+        startIndex = 0;
 
+        switch (category) {
+            case "찜목록":
+                dao = FavoriteDao.getInstance();
+                requestFavoriteMuseumData();
+                break;
+            case "다녀왔음":
+                dao = StampDao.getInstance();
+                requestStampMuseumData();
+                break;
+            case "검색":
+                dao = SearchDao.getInstance();
+                keyword = bundle.getString("keyword");
+                requestSearchData();
+                break;
+        }
+    }
+
+    private void requestFavoriteMuseumData() {
+        Call<List<Museum>> call = ((FavoriteDao) dao).getFavoriteMuseumList(SharedPreferencesService.getInstance().getStringData(SharedPreferencesService.KEY_TOKEN),
+                startIndex);
+        call.enqueue(new Callback<List<Museum>>() {
+            @Override
+            public void onResponse(Call<List<Museum>> call, Response<List<Museum>> response) {
+                museumList = response.body();
+
+                initRecyclerView();
+            }
+
+            @Override
+            public void onFailure(Call<List<Museum>> call, Throwable t) {
+                Toasty.info(getContext(), "서버 연결에 실패했습니다").show();
+            }
+        });
+    }
+
+    private void requestStampMuseumData() {
+        Call<List<Museum>> call = ((StampDao) dao).getStampMuseumList(SharedPreferencesService.getInstance().getStringData(SharedPreferencesService.KEY_TOKEN),
+                startIndex);
+        call.enqueue(new Callback<List<Museum>>() {
+            @Override
+            public void onResponse(Call<List<Museum>> call, Response<List<Museum>> response) {
+                museumList = response.body();
+
+                initRecyclerView();
+            }
+
+            @Override
+            public void onFailure(Call<List<Museum>> call, Throwable t) {
+                Toasty.info(getContext(), "서버 연결에 실패했습니다").show();
+            }
+        });
+    }
+
+    private void requestSearchData() {
+        Call<List<Museum>> call = ((SearchDao) dao).getMuseumListByKeyword(keyword);
+        call.enqueue(new Callback<List<Museum>>() {
+            @Override
+            public void onResponse(Call<List<Museum>> call, Response<List<Museum>> response) {
+                museumList = response.body();
+
+                initRecyclerView();
+            }
+
+            @Override
+            public void onFailure(Call<List<Museum>> call, Throwable t) {
+                Toasty.info(getContext(), "서버 연결에 실패했습니다").show();
+            }
+        });
+    }
+
+
+    private void initRecyclerView() {
         MuseumRecyclerViewAdapter adapter = new MuseumRecyclerViewAdapter(museumList, getContext());
         recyclerView.setAdapter(adapter);
         RecyclerView.LayoutManager manager = new LinearLayoutManager(getContext(), LinearLayoutManager.VERTICAL, false);
         recyclerView.setLayoutManager(manager);
     }
+
 }

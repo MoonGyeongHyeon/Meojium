@@ -237,7 +237,8 @@
                     android:layout_width="40dp"
                     android:layout_height="32dp"
                     android:background="@drawable/selector_detail_favorite"
-                    android:button="@android:color/transparent" />
+                    android:button="@android:color/transparent"
+                    android:clickable="false" />
 
                 <TextView
                     android:id="@+id/textview_detail_favorite_label"
@@ -270,7 +271,8 @@
                     android:layout_width="40dp"
                     android:layout_height="32dp"
                     android:background="@drawable/selector_detail_stamp"
-                    android:button="@android:color/transparent" />
+                    android:button="@android:color/transparent"
+                    android:clickable="false" />
 
                 <TextView
                     android:id="@+id/textview_detail_stamp_label"

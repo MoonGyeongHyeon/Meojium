@@ -18,9 +18,6 @@ import java.util.List;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import es.dmoral.toasty.Toasty;
-import retrofit2.Call;
-import retrofit2.Callback;
-import retrofit2.Response;
 
 /**
  * Created by moon on 2017. 8. 14..
@@ -54,25 +51,7 @@ public class SearchResultActivity extends AppCompatActivity {
         searchDao = SearchDao.getInstance();
 
         initToolbar();
-
-        requestSearchData();
-    }
-
-    private void requestSearchData() {
-        Call<List<Museum>> call = searchDao.getMuseumListByKeyword(keyword);
-        call.enqueue(new Callback<List<Museum>>() {
-            @Override
-            public void onResponse(Call<List<Museum>> call, Response<List<Museum>> response) {
-                museumList = response.body();
-
-                initMuseumFragment();
-            }
-
-            @Override
-            public void onFailure(Call<List<Museum>> call, Throwable t) {
-                Toasty.info(SearchResultActivity.this, "서버 연결에 실패했습니다").show();
-            }
-        });
+        initMuseumFragment();
     }
 
     private void initToolbar() {
@@ -82,8 +61,10 @@ public class SearchResultActivity extends AppCompatActivity {
     }
 
     private void initMuseumFragment() {
+        String category = "검색";
+
         getSupportFragmentManager().beginTransaction()
-                .replace(R.id.framelayout_search_result_container, MuseumFragment.newInstance(museumList))
+                .replace(R.id.framelayout_search_result_container, MuseumFragment.newInstance(category, keyword))
                 .commit();
     }
 
