@@ -5,7 +5,6 @@ import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 
 import com.moon.meojium.R;
-import com.moon.meojium.base.util.SharedPreferencesService;
 import com.moon.meojium.ui.login.naver.NaverLogin;
 import com.nhn.android.naverlogin.ui.view.OAuthLoginButton;
 
@@ -16,7 +15,6 @@ public class LoginActivity extends AppCompatActivity {
     @BindView(R.id.button_login_naver_id)
     OAuthLoginButton oAuthLoginButton;
     private NaverLogin naverLogin;
-    private SharedPreferencesService sharedPreferencesService;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -24,12 +22,7 @@ public class LoginActivity extends AppCompatActivity {
         setContentView(R.layout.activity_login);
         ButterKnife.bind(this);
 
-        initSharedPreferencesService();
         initLoginButton();
-    }
-
-    private void initSharedPreferencesService() {
-        sharedPreferencesService = SharedPreferencesService.getInstance();
     }
 
     private void initLoginButton() {

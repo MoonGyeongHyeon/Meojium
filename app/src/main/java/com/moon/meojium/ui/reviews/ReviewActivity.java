@@ -57,7 +57,7 @@ public class ReviewActivity extends AppCompatActivity {
             submitTextView.setClickable(false);
             final String content = contentEditText.getText().toString();
             final SharedPreferencesService sharedPreferencesService = SharedPreferencesService.getInstance();
-            Call<UpdateResult> call = reviewDao.writeReview(sharedPreferencesService.getStringData(SharedPreferencesService.KEY_TOKEN),
+            Call<UpdateResult> call = reviewDao.writeReview(sharedPreferencesService.getStringData(SharedPreferencesService.KEY_ENC_ID),
                     content, museum.getId());
             call.enqueue(new Callback<UpdateResult>() {
                 @Override

@@ -63,7 +63,7 @@ public class SearchActivity extends AppCompatActivity
     }
 
     private void requestSearchLogData() {
-        Call<List<SearchLog>> call = searchDao.getSearchLogList(SharedPreferencesService.getInstance().getStringData(SharedPreferencesService.KEY_TOKEN));
+        Call<List<SearchLog>> call = searchDao.getSearchLogList(SharedPreferencesService.getInstance().getStringData(SharedPreferencesService.KEY_ENC_ID));
         call.enqueue(new Callback<List<SearchLog>>() {
             @Override
             public void onResponse(Call<List<SearchLog>> call, Response<List<SearchLog>> response) {
@@ -122,7 +122,7 @@ public class SearchActivity extends AppCompatActivity
     @Override
     public boolean onQueryTextSubmit(String s) {
         Call<UpdateResult> call = searchDao.addSearchLog(
-                SharedPreferencesService.getInstance().getStringData(SharedPreferencesService.KEY_TOKEN), s);
+                SharedPreferencesService.getInstance().getStringData(SharedPreferencesService.KEY_ENC_ID), s);
         call.enqueue(new Callback<UpdateResult>() {
             @Override
             public void onResponse(Call<UpdateResult> call, Response<UpdateResult> response) {

@@ -39,10 +39,10 @@ public class SplashActivity extends AppCompatActivity {
     }
 
     private void checkLogin() {
-        String token = sharedPreferencesService.getStringData(SharedPreferencesService.KEY_TOKEN);
-        if (!token.equals("")) {
-            String tokenType = sharedPreferencesService.getStringData(SharedPreferencesService.KEY_TOKEN_TYPE);
-
+        String encId = sharedPreferencesService.getStringData(SharedPreferencesService.KEY_ENC_ID);
+        if (!encId.equals("")) {
+            String tokenType = sharedPreferencesService.getStringData(SharedPreferencesService.KEY_TYPE);
+            Log.d("Meojium/Splash", "encId: " + encId);
             Log.d("Meojium/Splash", tokenType + " Already Login");
 
             startActivity(HomeActivity.class);

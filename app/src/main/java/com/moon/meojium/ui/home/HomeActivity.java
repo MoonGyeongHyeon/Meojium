@@ -281,21 +281,21 @@ public class HomeActivity extends AppCompatActivity
             case R.id.navigation_logout:
                 Log.d("Meojium/Home", "Try Logout");
 
-                String tokenType = sharedPreferencesService.getStringData(SharedPreferencesService.KEY_TOKEN_TYPE);
+                String type = sharedPreferencesService.getStringData(SharedPreferencesService.KEY_TYPE);
 
-                Log.d("Meojium/Home", SharedPreferencesService.KEY_TOKEN_TYPE + ": " + tokenType);
+                Log.d("Meojium/Home", SharedPreferencesService.KEY_TYPE + ": " + type);
                 Log.d("Meojium/Home", SharedPreferencesService.KEY_NICKNAME + ": " +
                         sharedPreferencesService.getStringData(SharedPreferencesService.KEY_NICKNAME));
 
-                switch (tokenType) {
-                    case NaverLogin.NAVER_TOKEN_TYPE:
+                switch (type) {
+                    case NaverLogin.NAVER_TYPE:
                         NaverLogin naverLogin = new NaverLogin(this);
                         naverLogin.logout();
                         break;
                 }
 
-                sharedPreferencesService.removeData(SharedPreferencesService.KEY_TOKEN,
-                        SharedPreferencesService.KEY_TOKEN_TYPE, SharedPreferencesService.KEY_NICKNAME);
+                sharedPreferencesService.removeData(SharedPreferencesService.KEY_ENC_ID,
+                        SharedPreferencesService.KEY_TYPE, SharedPreferencesService.KEY_NICKNAME);
 
                 Intent logoutIntent = new Intent(this, LoginActivity.class);
                 logoutIntent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);

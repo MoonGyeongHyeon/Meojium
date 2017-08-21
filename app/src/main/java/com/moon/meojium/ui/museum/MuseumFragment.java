@@ -95,7 +95,7 @@ public class MuseumFragment extends Fragment {
     }
 
     private void requestFavoriteMuseumData() {
-        Call<List<Museum>> call = ((FavoriteDao) dao).getFavoriteMuseumList(SharedPreferencesService.getInstance().getStringData(SharedPreferencesService.KEY_TOKEN),
+        Call<List<Museum>> call = ((FavoriteDao) dao).getFavoriteMuseumList(SharedPreferencesService.getInstance().getStringData(SharedPreferencesService.KEY_ENC_ID),
                 startIndex);
         call.enqueue(new Callback<List<Museum>>() {
             @Override
@@ -113,7 +113,7 @@ public class MuseumFragment extends Fragment {
     }
 
     private void requestStampMuseumData() {
-        Call<List<Museum>> call = ((StampDao) dao).getStampMuseumList(SharedPreferencesService.getInstance().getStringData(SharedPreferencesService.KEY_TOKEN),
+        Call<List<Museum>> call = ((StampDao) dao).getStampMuseumList(SharedPreferencesService.getInstance().getStringData(SharedPreferencesService.KEY_ENC_ID),
                 startIndex);
         call.enqueue(new Callback<List<Museum>>() {
             @Override

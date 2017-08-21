@@ -29,12 +29,14 @@ import retrofit2.Response;
  */
 
 public class NaverLogin implements NaverAPI {
-    public static final String NAVER_TOKEN_TYPE = "Naver";
+    public static final String NAVER_TYPE = "Naver";
     private static final String OAUTH_CLIENT_NAME = "네이버 아이디로 로그인";
 
     private OAuthLogin oAuthLoginInstance;
     private Context context;
     private OAuthLoginHandler oAuthLoginHandler;
+    private String nickname;
+    private String encId;
 
     public NaverLogin(Context context) {
         this.context = context;
@@ -50,13 +52,18 @@ public class NaverLogin implements NaverAPI {
                 if (success) {
                     Log.d("Meojium/NaverLogin", "Naver login is successful");
 
+                    requestUserInfo();
+
                     SharedPreferencesService service = SharedPreferencesService.getInstance();
-                    service.putData(SharedPreferencesService.KEY_TOKEN, oAuthLoginInstance.getAccessToken(context));
-                    service.putData(SharedPreferencesService.KEY_TOKEN_TYPE, NAVER_TOKEN_TYPE);
-                    service.putData(SharedPreferencesService.KEY_NICKNAME, requestUserNickname());
+                    service.putData(SharedPreferencesService.KEY_ENC_ID, encId);
+                    service.putData(SharedPreferencesService.KEY_TYPE, NAVER_TYPE);
+                    service.putData(SharedPreferencesService.KEY_NICKNAME, nickname);
+
+                    Log.d("Meojium/Login", "nickname: " + nickname);
+                    Log.d("Meojium/Login", "encId: " + encId);
 
                     UserDao userDao = UserDao.getInstance();
-                    Call<UpdateResult> call = userDao.addUser(service.getStringData(SharedPreferencesService.KEY_TOKEN),
+                    Call<UpdateResult> call = userDao.addUser(service.getStringData(SharedPreferencesService.KEY_ENC_ID),
                             service.getStringData(SharedPreferencesService.KEY_NICKNAME));
 
                     call.enqueue(new retrofit2.Callback<UpdateResult>() {
@@ -100,12 +107,14 @@ public class NaverLogin implements NaverAPI {
         oAuthLoginInstance.logout(context);
     }
 
-    public String requestUserNickname() {
+    private void requestUserInfo() {
         RequestApiTask task = new RequestApiTask();
-        String nickname = null;
+        String[] result;
 
         try {
-            nickname = task.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR).get();
+            result = task.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR).get();
+            nickname = result[0];
+            encId = result[1];
         } catch (InterruptedException e) {
             Log.d("Meojium/NaverLogin", "InterruptedException is occurred");
             e.printStackTrace();
@@ -113,27 +122,26 @@ public class NaverLogin implements NaverAPI {
             Log.d("Meojium/NaverLogin", "executionException is occurred");
             e.printStackTrace();
         }
-
-        return nickname;
     }
 
-    private class RequestApiTask extends AsyncTask<Void, Void, String> {
+    private class RequestApiTask extends AsyncTask<Void, Void, String[]> {
         @Override
-        protected String doInBackground(Void... params) {
+        protected String[] doInBackground(Void... params) {
             String url = "https://openapi.naver.com/v1/nid/me";
             String at = oAuthLoginInstance.getAccessToken(context);
             String body = oAuthLoginInstance.requestApi(context, at, url);
 
-            String nickname = null;
+            String[] result = new String[2];
 
             try {
                 JSONObject root = new JSONObject(body);
                 JSONObject jo = root.getJSONObject("response");
-                nickname = jo.getString("nickname");
+                result[0] = jo.getString("nickname");
+                result[1] = jo.getString("enc_id");
             } catch (JSONException e) {
                 e.printStackTrace();
             }
-            return nickname;
+            return result;
         }
     }
 

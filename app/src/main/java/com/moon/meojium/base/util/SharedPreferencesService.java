@@ -8,8 +8,8 @@ import android.content.SharedPreferences;
  */
 
 public class SharedPreferencesService {
-    public static final String KEY_TOKEN = "Token";
-    public static final String KEY_TOKEN_TYPE = "TokenType";
+    public static final String KEY_ENC_ID = "EncodingId";
+    public static final String KEY_TYPE = "Type";
     public static final String KEY_NICKNAME = "Nickname";
     private static final String SHARED_PREF_NAME = "Meojium";
 
