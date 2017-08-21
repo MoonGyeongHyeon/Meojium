@@ -1,6 +1,6 @@
 package com.moon.meojium.database.service;
 
-import com.moon.meojium.base.UpdateResult;
+import com.moon.meojium.model.UpdateResult;
 import com.moon.meojium.model.review.Review;
 
 import java.util.List;

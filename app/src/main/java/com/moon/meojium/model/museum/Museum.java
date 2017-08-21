@@ -1,11 +1,8 @@
 package com.moon.meojium.model.museum;
 
 import com.google.gson.annotations.SerializedName;
-import com.moon.meojium.model.story.Story;
 
 import org.parceler.Parcel;
-
-import java.util.List;
 
 /**
  * Created by moon on 2017. 8. 3..
@@ -39,9 +36,6 @@ public class Museum {
     String tel;
     @SerializedName("found_date")
     String foundDate;
-    List<Story> storyList;
-
-    int image;
 
     public int getId() {
         return id;
@@ -145,21 +139,5 @@ public class Museum {
 
     public void setFoundDate(String foundDate) {
         this.foundDate = foundDate;
-    }
-
-    public List<Story> getStoryList() {
-        return storyList;
-    }
-
-    public void setStoryList(List<Story> storyList) {
-        this.storyList = storyList;
-    }
-
-    public int getImage() {
-        return image;
-    }
-
-    public void setImage(int image) {
-        this.image = image;
     }
 }

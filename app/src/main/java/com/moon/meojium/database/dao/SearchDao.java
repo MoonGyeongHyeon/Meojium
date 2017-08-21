@@ -1,7 +1,7 @@
 package com.moon.meojium.database.dao;
 
 import com.moon.meojium.base.BaseRetrofitService;
-import com.moon.meojium.base.UpdateResult;
+import com.moon.meojium.model.UpdateResult;
 import com.moon.meojium.database.service.SearchService;
 import com.moon.meojium.model.museum.Museum;
 import com.moon.meojium.model.searchlog.SearchLog;

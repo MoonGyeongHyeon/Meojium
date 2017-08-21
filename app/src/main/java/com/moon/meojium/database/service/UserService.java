@@ -1,6 +1,6 @@
 package com.moon.meojium.database.service;
 
-import com.moon.meojium.base.UpdateResult;
+import com.moon.meojium.model.UpdateResult;
 
 import retrofit2.Call;
 import retrofit2.http.Field;

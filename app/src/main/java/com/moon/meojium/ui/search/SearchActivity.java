@@ -16,7 +16,7 @@ import android.widget.SearchView;
 import android.widget.TextView;
 
 import com.moon.meojium.R;
-import com.moon.meojium.base.UpdateResult;
+import com.moon.meojium.model.UpdateResult;
 import com.moon.meojium.base.util.SharedPreferencesService;
 import com.moon.meojium.database.dao.SearchDao;
 import com.moon.meojium.model.searchlog.SearchLog;

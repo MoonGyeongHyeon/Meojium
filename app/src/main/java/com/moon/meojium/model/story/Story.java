@@ -4,8 +4,6 @@ import com.google.gson.annotations.SerializedName;
 
 import org.parceler.Parcel;
 
-import java.util.List;
-
 /**
  * Created by moon on 2017. 8. 3..
  */
@@ -16,7 +14,6 @@ public class Story {
     int id;
     @SerializedName("story_title")
     String title;
-    List<StoryContent> contentList;
 
     public int getId() {
         return id;
@@ -32,13 +29,5 @@ public class Story {
 
     public void setTitle(String title) {
         this.title = title;
-    }
-
-    public List<StoryContent> getContentList() {
-        return contentList;
-    }
-
-    public void setContentList(List<StoryContent> contentList) {
-        this.contentList = contentList;
     }
 }

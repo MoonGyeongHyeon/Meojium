@@ -1,4 +1,4 @@
-package com.moon.meojium.base;
+package com.moon.meojium.model;
 
 import com.google.gson.annotations.SerializedName;
 

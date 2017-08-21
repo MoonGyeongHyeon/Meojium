@@ -15,7 +15,7 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.moon.meojium.R;
-import com.moon.meojium.base.UpdateResult;
+import com.moon.meojium.model.UpdateResult;
 import com.moon.meojium.database.dao.ReviewDao;
 import com.moon.meojium.model.review.Review;
 

@@ -7,7 +7,7 @@ import android.os.AsyncTask;
 import android.util.Log;
 
 import com.moon.meojium.base.NaverAPI;
-import com.moon.meojium.base.UpdateResult;
+import com.moon.meojium.model.UpdateResult;
 import com.moon.meojium.base.util.SharedPreferencesService;
 import com.moon.meojium.database.dao.UserDao;
 import com.moon.meojium.ui.home.HomeActivity;

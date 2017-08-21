@@ -24,7 +24,7 @@ import com.moon.meojium.R;
 import com.moon.meojium.base.BaseRetrofitService;
 import com.moon.meojium.base.FrescoImageViewer;
 import com.moon.meojium.base.NaverAPI;
-import com.moon.meojium.base.UpdateResult;
+import com.moon.meojium.model.UpdateResult;
 import com.moon.meojium.base.util.SharedPreferencesService;
 import com.moon.meojium.database.dao.FavoriteDao;
 import com.moon.meojium.database.dao.MuseumDao;
