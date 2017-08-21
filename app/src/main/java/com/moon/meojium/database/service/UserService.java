@@ -15,4 +15,8 @@ public interface UserService {
     @POST("/user/add")
     @FormUrlEncoded
     Call<UpdateResult> addUser(@Field("id") String id, @Field("nickname") String nickname);
+
+    @POST("/user/update")
+    @FormUrlEncoded
+    Call<UpdateResult> updateNickname(@Field("id") String id, @Field("nickname") String nickname);
 }

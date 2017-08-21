@@ -1,5 +1,6 @@
 package com.moon.meojium.ui.home;
 
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
@@ -10,6 +11,7 @@ import android.support.v4.view.GravityCompat;
 import android.support.v4.view.ViewPager;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -18,6 +20,7 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -26,6 +29,8 @@ import com.moon.meojium.R;
 import com.moon.meojium.base.util.SharedPreferencesService;
 import com.moon.meojium.database.dao.MuseumDao;
 import com.moon.meojium.database.dao.TastingDao;
+import com.moon.meojium.database.dao.UserDao;
+import com.moon.meojium.model.UpdateResult;
 import com.moon.meojium.model.museum.Museum;
 import com.moon.meojium.model.tasting.Tasting;
 import com.moon.meojium.ui.interested.InterestedActivity;
@@ -50,7 +55,8 @@ import retrofit2.Response;
  */
 
 public class HomeActivity extends AppCompatActivity
-        implements NavigationView.OnNavigationItemSelectedListener {
+        implements NavigationView.OnNavigationItemSelectedListener,
+            DialogInterface.OnClickListener {
     private static final int TASTING_COUNT = 4;
     @BindView(R.id.toolbar)
     Toolbar toolbar;
@@ -73,7 +79,7 @@ public class HomeActivity extends AppCompatActivity
         startActivity(intent);
     }
 
-    private TextView usernameTextView;
+    private TextView nicknameTextView;
     private BackPressCloseHandler backPressCloseHandler;
     private List<Museum> popularMuseumList;
     private List<Museum> historyMuseumList;
@@ -81,6 +87,7 @@ public class HomeActivity extends AppCompatActivity
     private SharedPreferencesService sharedPreferencesService;
     private MuseumDao museumDao;
     private TastingDao tastingDao;
+    private UserDao userDao;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -89,8 +96,10 @@ public class HomeActivity extends AppCompatActivity
         ButterKnife.bind(this);
 
         backPressCloseHandler = new BackPressCloseHandler(this);
+
         museumDao = MuseumDao.getInstance();
         tastingDao = TastingDao.getInstance();
+        userDao = UserDao.getInstance();
 
         requestPopularMuseumData();
         requestHistoryMuseumData();
@@ -225,10 +234,64 @@ public class HomeActivity extends AppCompatActivity
         navigationView.setNavigationItemSelectedListener(this);
 
         View header = navigationView.getHeaderView(0);
-        usernameTextView = header.findViewById(R.id.textview_navigation_username);
+        nicknameTextView = header.findViewById(R.id.textview_navigation_nickname);
 
-        usernameTextView.setText(String.format(getResources().getString(R.string.navigation_username),
+        nicknameTextView.setText(String.format(getResources().getString(R.string.navigation_nickname),
                 sharedPreferencesService.getStringData(SharedPreferencesService.KEY_NICKNAME)));
+
+        ImageView imageView = header.findViewById(R.id.imageview_navigation_change_nickname);
+        imageView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                final EditText editText = new EditText(HomeActivity.this);
+                editText.setText(sharedPreferencesService.getStringData(SharedPreferencesService.KEY_NICKNAME));
+                new AlertDialog.Builder(HomeActivity.this)
+                        .setTitle("닉네임 변경")
+                        .setView(editText)
+                        .setPositiveButton("확인", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialogInterface, int i) {
+                                if (editText.getText().toString().trim().length() == 0) {
+                                    Toasty.info(HomeActivity.this, "닉네임을 입력해주세요.").show();
+                                } else {
+                                    final String nickname = editText.getText().toString();
+                                    Call<UpdateResult> call = userDao.updateNickname(sharedPreferencesService.getStringData(SharedPreferencesService.KEY_ENC_ID),
+                                            nickname);
+                                    call.enqueue(new Callback<UpdateResult>() {
+                                        @Override
+                                        public void onResponse(Call<UpdateResult> call, Response<UpdateResult> response) {
+                                            UpdateResult result = response.body();
+
+                                            if (result.getCode() == UpdateResult.RESULT_OK) {
+                                                Log.d("Meojium/Home", "Success Updating Nickname");
+                                                sharedPreferencesService.putData(SharedPreferencesService.KEY_NICKNAME,
+                                                        nickname);
+                                                nicknameTextView.setText(String.format(getResources().getString(R.string.navigation_nickname),
+                                                        nickname));
+                                            } else {
+                                                Log.d("Meojium/Home", "Fail Updating Nickname");
+                                                Toasty.info(HomeActivity.this, "서버 연결에 실패했습니다").show();
+                                            }
+                                        }
+
+                                        @Override
+                                        public void onFailure(Call<UpdateResult> call, Throwable t) {
+                                            Toasty.info(HomeActivity.this, "서버 연결에 실패했습니다").show();
+                                        }
+                                    });
+                                }
+
+                            }
+                        })
+                        .setNegativeButton("취소", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialogInterface, int i) {
+                            }
+                        })
+                        .create()
+                        .show();
+            }
+        });
     }
 
     private void initNearbyImageView() {
@@ -276,8 +339,6 @@ public class HomeActivity extends AppCompatActivity
                 Intent interestedIntent = new Intent(this, InterestedActivity.class);
                 startActivity(interestedIntent);
                 break;
-            case R.id.navigation_setting:
-                break;
             case R.id.navigation_logout:
                 Log.d("Meojium/Home", "Try Logout");
 
@@ -307,5 +368,10 @@ public class HomeActivity extends AppCompatActivity
         drawerLayout.closeDrawers();
 
         return true;
+    }
+
+    @Override
+    public void onClick(DialogInterface dialogInterface, int i) {
+
     }
 }

@@ -37,4 +37,8 @@ public class UserDao extends BaseRetrofitService {
     public Call<UpdateResult> addUser(String id, String nickname) {
         return service.addUser(id, nickname);
     }
+
+    public Call<UpdateResult> updateNickname(String id, String nickname) {
+        return service.updateNickname(id, nickname);
+    }
 }

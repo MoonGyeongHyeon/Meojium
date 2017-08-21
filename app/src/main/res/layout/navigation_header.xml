@@ -11,12 +11,31 @@
         android:scaleType="center"
         android:src="@drawable/ic_museum" />
 
-    <TextView
-        android:id="@+id/textview_navigation_username"
+    <FrameLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:gravity="center"
-        android:textSize="@dimen/big_text_size"
-        tools:text="@string/navigation_username" />
+        android:orientation="horizontal">
+
+        <TextView
+            android:id="@+id/textview_navigation_nickname"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:gravity="center"
+            android:textSize="@dimen/large_text_size"
+            tools:text="@string/navigation_nickname" />
+
+        <ImageView
+            android:id="@+id/imageview_navigation_change_nickname"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:layout_gravity="end"
+            android:padding="8dp"
+            android:layout_marginBottom="16dp"
+            android:src="@drawable/ic_change_nickname"
+            android:clickable="true"
+            android:background="@drawable/ripple_button_click"/>
+
+    </FrameLayout>
 
 </LinearLayout>
