@@ -12,8 +12,10 @@ import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
 import com.moon.meojium.R;
+import com.moon.meojium.base.BaseRetrofitService;
 import com.moon.meojium.model.museum.Museum;
 import com.moon.meojium.model.story.Story;
+import com.moon.meojium.model.tasting.Tasting;
 import com.moon.meojium.ui.detail.DetailActivity;
 
 import org.parceler.Parcels;
@@ -28,10 +30,10 @@ import butterknife.ButterKnife;
  */
 
 public class TastingRecyclerViewAdapter extends RecyclerView.Adapter<TastingRecyclerViewAdapter.ViewHolder> {
-    private List<Museum> museumList;
+    private List<Tasting> museumList;
     private Context context;
 
-    public TastingRecyclerViewAdapter(List<Museum> museumList, Context context) {
+    public TastingRecyclerViewAdapter(List<Tasting> museumList, Context context) {
         this.museumList = museumList;
         this.context = context;
     }
@@ -68,18 +70,23 @@ public class TastingRecyclerViewAdapter extends RecyclerView.Adapter<TastingRecy
             ButterKnife.bind(this, itemView);
         }
 
-        public void bindView(final Museum museum) {
-            Story story = museum.getStoryList().get(0);
+        public void bindView(final Tasting tasting) {
+            final Museum museum = tasting.getMuseum();
+            final Story story = new Story();
+            story.setId(tasting.getId());
+            story.setTitle(tasting.getTitle());
+
             nameTextView.setText(museum.getName());
             storyTitleTextView.setText(story.getTitle());
             Glide.with(context)
-                    .load(museum.getImage())
+                    .load(BaseRetrofitService.IMAGE_LOAD_URL + museum.getImagePath())
                     .into(thumbImageView);
             container.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
                     Intent intent = new Intent(context, DetailActivity.class);
                     intent.putExtra("museum", Parcels.wrap(museum));
+                    intent.putExtra("story", Parcels.wrap(story));
                     intent.putExtra("cascade", true);
                     context.startActivity(intent);
                 }

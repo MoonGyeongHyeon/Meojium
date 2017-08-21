@@ -11,7 +11,6 @@ import com.moon.meojium.base.BaseRetrofitService;
 import com.moon.meojium.base.FrescoImageViewer;
 import com.moon.meojium.base.ImageOverlayView;
 import com.moon.meojium.database.dao.StoryContentDao;
-import com.moon.meojium.model.museum.Museum;
 import com.moon.meojium.model.story.Story;
 import com.moon.meojium.model.story.StoryContent;
 import com.stfalcon.frescoimageviewer.ImageViewer;
@@ -46,12 +45,7 @@ public class StoryActivity extends AppCompatActivity
         Intent intent = getIntent();
 
         try {
-            if (intent.getBooleanExtra("cascade", false)) {
-                Museum museum = Parcels.unwrap(intent.getParcelableExtra("museum"));
-                story = museum.getStoryList().get(0);
-            } else {
-                story = Parcels.unwrap(intent.getParcelableExtra("story"));
-            }
+            story = Parcels.unwrap(intent.getParcelableExtra("story"));
 
             Log.d("Meojium/Story", "Story id: " + story.getId());
             Log.d("Meojium/Story", "Story id: " + story.getTitle());

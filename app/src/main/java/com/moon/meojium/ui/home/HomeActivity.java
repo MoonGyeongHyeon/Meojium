@@ -25,8 +25,9 @@ import com.bumptech.glide.Glide;
 import com.moon.meojium.R;
 import com.moon.meojium.base.util.SharedPreferencesService;
 import com.moon.meojium.database.dao.MuseumDao;
+import com.moon.meojium.database.dao.TastingDao;
 import com.moon.meojium.model.museum.Museum;
-import com.moon.meojium.model.story.Story;
+import com.moon.meojium.model.tasting.Tasting;
 import com.moon.meojium.ui.interested.InterestedActivity;
 import com.moon.meojium.ui.login.LoginActivity;
 import com.moon.meojium.ui.login.naver.NaverLogin;
@@ -50,6 +51,7 @@ import retrofit2.Response;
 
 public class HomeActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
+    private static final int TASTING_COUNT = 4;
     @BindView(R.id.toolbar)
     Toolbar toolbar;
     @BindView(R.id.drawerlayout)
@@ -75,9 +77,10 @@ public class HomeActivity extends AppCompatActivity
     private BackPressCloseHandler backPressCloseHandler;
     private List<Museum> popularMuseumList;
     private List<Museum> historyMuseumList;
-    private List<Museum> tastingMuseumList;
+    private List<Tasting> tastingMuseumList;
     private SharedPreferencesService sharedPreferencesService;
     private MuseumDao museumDao;
+    private TastingDao tastingDao;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -87,18 +90,17 @@ public class HomeActivity extends AppCompatActivity
 
         backPressCloseHandler = new BackPressCloseHandler(this);
         museumDao = MuseumDao.getInstance();
+        tastingDao = TastingDao.getInstance();
 
         requestPopularMuseumData();
         requestHistoryMuseumData();
+        requestTastingMuseumData();
 
         initToastyConfig();
         initSharedPreferences();
         initToolbar();
         initDrawerLayout();
         initNearbyImageView();
-
-        createTastingMuseumDummyData();
-        initTastingMuseumRecyclerView();
     }
 
     private void requestPopularMuseumData() {
@@ -151,6 +153,54 @@ public class HomeActivity extends AppCompatActivity
         historyMuseumViewPager.setPageMargin(32);
     }
 
+    private void requestTastingMuseumData() {
+        Call<List<Tasting>> call = tastingDao.getTastingMuseumList();
+        call.enqueue(new Callback<List<Tasting>>() {
+            @Override
+            public void onResponse(Call<List<Tasting>> call, Response<List<Tasting>> response) {
+                List<Tasting> list = response.body();
+                tastingMuseumList = new ArrayList<>();
+                boolean flag;
+
+                for (Tasting baseTasting : list) {
+                    flag = true;
+
+                    for (Tasting tasting : tastingMuseumList) {
+                        if (baseTasting.getMuseum().getId() == tasting.getMuseum().getId()) {
+                            flag = false;
+                            break;
+                        }
+                    }
+
+                    if (flag) {
+                        tastingMuseumList.add(baseTasting);
+                    }
+
+                    if (tastingMuseumList.size() == TASTING_COUNT) {
+                        break;
+                    }
+                }
+
+                initTastingMuseumRecyclerView();
+            }
+
+            @Override
+            public void onFailure(Call<List<Tasting>> call, Throwable t) {
+                Toasty.info(HomeActivity.this, "서버 연결에 실패했습니다").show();
+            }
+        });
+    }
+
+    private void initTastingMuseumRecyclerView() {
+        TastingRecyclerViewAdapter adapter = new TastingRecyclerViewAdapter(tastingMuseumList, this);
+        tastingRecyclerView.setAdapter(adapter);
+
+        RecyclerView.LayoutManager manager = new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false);
+        tastingRecyclerView.setLayoutManager(manager);
+
+        tastingRecyclerView.setNestedScrollingEnabled(false);
+    }
+
     private void initToastyConfig() {
         Toasty.Config config = Toasty.Config.getInstance();
         config.setInfoColor(ContextCompat.getColor(this, R.color.colorPrimary)).apply();
@@ -185,65 +235,6 @@ public class HomeActivity extends AppCompatActivity
         Glide.with(this)
                 .load(R.drawable.img_nearby_museum)
                 .into(nearbyImageView);
-    }
-
-    private void createTastingMuseumDummyData() {
-        tastingMuseumList = new ArrayList<>();
-
-        Museum museum = new Museum();
-        museum.setId(1111);
-        museum.setName("맛보기 독립기념관");
-        museum.setImage(R.drawable.img_dokrip);
-        museum.setAddress("충청남도 공주시 금벽로 990");
-
-        Story story = new Story();
-        story.setId(1111);
-        story.setTitle("군인 휴가");
-        List<Story> storyList = new ArrayList<>();
-        storyList.add(story);
-        museum.setStoryList(storyList);
-
-        tastingMuseumList.add(museum);
-
-        museum = new Museum();
-        museum.setId(2222);
-        museum.setName("맛보기 석장리 박물관2");
-        museum.setImage(R.drawable.img_seokjangni);
-        museum.setAddress("충청남도 공주시 금벽로 990");
-
-        story = new Story();
-        story.setId(2222);
-        story.setTitle("알쓸신잡 6회 - 선사인의 불");
-        storyList = new ArrayList<>();
-        storyList.add(story);
-        museum.setStoryList(storyList);
-
-        tastingMuseumList.add(museum);
-
-        museum = new Museum();
-        museum.setId(3333);
-        museum.setName("맛보기 석장리 박물관3");
-        museum.setImage(R.drawable.img_seokjangni);
-        museum.setAddress("충청남도 공주시 금벽로 990");
-
-        story = new Story();
-        story.setId(3333);
-        story.setTitle("파른 손보기 선생 기념관");
-        storyList = new ArrayList<>();
-        storyList.add(story);
-        museum.setStoryList(storyList);
-
-        tastingMuseumList.add(museum);
-    }
-
-    private void initTastingMuseumRecyclerView() {
-        TastingRecyclerViewAdapter adapter = new TastingRecyclerViewAdapter(tastingMuseumList, this);
-        tastingRecyclerView.setAdapter(adapter);
-
-        RecyclerView.LayoutManager manager = new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false);
-        tastingRecyclerView.setLayoutManager(manager);
-
-        tastingRecyclerView.setNestedScrollingEnabled(false);
     }
 
     @Override

@@ -274,8 +274,7 @@ public class DetailActivity extends AppCompatActivity
 
             if (intent.getBooleanExtra("cascade", false)) {
                 Intent cascadeIntent = new Intent(this, StoryActivity.class);
-                cascadeIntent.putExtra("museum", Parcels.wrap(museum));
-                cascadeIntent.putExtra("cascade", true);
+                cascadeIntent.putExtra("story", intent.getParcelableExtra("story"));
                 startActivity(cascadeIntent);
             }
 

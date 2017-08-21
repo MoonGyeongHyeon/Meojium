@@ -69,6 +69,21 @@
             android:background="@color/lineColor" />
 
         <TextView
+            android:id="@+id/textview_home_history_label"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_margin="16dp"
+            android:text="@string/home_tasting"
+            android:textSize="@dimen/large_text_size" />
+
+        <android.support.v7.widget.RecyclerView
+            android:id="@+id/recyclerview_home_tasting"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            app:layoutManager="LinearLayoutManager" />
+
+
+        <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_margin="16dp"
@@ -98,19 +113,6 @@
             android:layout_height="@dimen/line_height"
             android:background="@color/lineColor" />
 
-        <TextView
-            android:id="@+id/textview_home_history_label"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_margin="16dp"
-            android:text="@string/home_tasting"
-            android:textSize="@dimen/large_text_size" />
-
-        <android.support.v7.widget.RecyclerView
-            android:id="@+id/recyclerview_home_tasting"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            app:layoutManager="LinearLayoutManager" />
 
     </LinearLayout>
 
