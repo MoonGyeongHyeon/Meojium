@@ -1,11 +1,7 @@
 package com.moon.meojium.ui.story;
 
-import android.content.Intent;
-import android.os.Bundle;
-import android.support.annotation.Nullable;
-import android.support.v7.app.AppCompatActivity;
+import android.content.Context;
 import android.util.Log;
-import android.view.MenuItem;
 
 import com.moon.meojium.base.BaseRetrofitService;
 import com.moon.meojium.base.FrescoImageViewer;
@@ -14,8 +10,6 @@ import com.moon.meojium.database.dao.StoryContentDao;
 import com.moon.meojium.model.story.Story;
 import com.moon.meojium.model.story.StoryContent;
 import com.stfalcon.frescoimageviewer.ImageViewer;
-
-import org.parceler.Parcels;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -29,34 +23,25 @@ import retrofit2.Response;
  * Created by moon on 2017. 8. 9..
  */
 
-public class StoryActivity extends AppCompatActivity
-        implements ImageViewer.OnDismissListener,
-        FrescoImageViewer {
+public class StoryPicker implements FrescoImageViewer {
     private Story story;
     private List<StoryContent> storyContentList;
     private List<String> imageUrlList, contentList;
     private ImageOverlayView overlayView;
     private StoryContentDao storyContentDao;
+    private Context context;
 
-    @Override
-    protected void onCreate(@Nullable Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
+    public StoryPicker(Story story, Context context) {
+        this.story = story;
+        this.context = context;
 
-        Intent intent = getIntent();
-
-        try {
-            story = Parcels.unwrap(intent.getParcelableExtra("story"));
-
-            Log.d("Meojium/Story", "Story id: " + story.getId());
-            Log.d("Meojium/Story", "Story id: " + story.getTitle());
-        } catch (Exception e) {
-            e.printStackTrace();
-            Toasty.info(this, "일시적인 오류가 발생했습니다.").show();
-            onBackPressed();
-        }
+        Log.d("Meojium/Story", "Story id: " + story.getId());
+        Log.d("Meojium/Story", "Story id: " + story.getTitle());
 
         storyContentDao = StoryContentDao.getInstance();
+    }
 
+    public void show() {
         requestStoryContentData();
     }
 
@@ -73,7 +58,7 @@ public class StoryActivity extends AppCompatActivity
 
             @Override
             public void onFailure(Call<List<StoryContent>> call, Throwable t) {
-                Toasty.info(StoryActivity.this, "서버 연결에 실패했습니다").show();
+                Toasty.info(context, "서버 연결에 실패했습니다").show();
             }
         });
     }
@@ -90,13 +75,12 @@ public class StoryActivity extends AppCompatActivity
 
     @Override
     public void showPicker() {
-        ImageViewer.Builder builder = new ImageViewer.Builder<>(this, imageUrlList)
+        ImageViewer.Builder builder = new ImageViewer.Builder<>(context, imageUrlList)
                 .setStartPosition(0);
 
-        overlayView = new ImageOverlayView(this, imageUrlList.size());
+        overlayView = new ImageOverlayView(context, imageUrlList.size());
         builder.setOverlayView(overlayView);
         builder.setImageChangeListener(getImageChangeListener());
-        builder.setOnDismissListener(this);
 
         builder.show();
     }
@@ -109,20 +93,5 @@ public class StoryActivity extends AppCompatActivity
                 overlayView.setPosition(position);
             }
         };
-    }
-
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        switch (item.getItemId()) {
-            case android.R.id.home:
-                onBackPressed();
-                break;
-        }
-        return super.onOptionsItemSelected(item);
-    }
-
-    @Override
-    public void onDismiss() {
-        finish();
     }
 }

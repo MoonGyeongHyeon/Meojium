@@ -34,7 +34,7 @@ import com.moon.meojium.model.review.Review;
 import com.moon.meojium.model.story.Story;
 import com.moon.meojium.ui.reviews.ReviewActivity;
 import com.moon.meojium.ui.reviews.ReviewRecyclerViewAdapter;
-import com.moon.meojium.ui.story.StoryActivity;
+import com.moon.meojium.ui.story.StoryPicker;
 import com.nhn.android.maps.NMapContext;
 import com.nhn.android.maps.NMapView;
 import com.nhn.android.maps.overlay.NMapPOIdata;
@@ -248,9 +248,9 @@ public class DetailActivity extends AppCompatActivity {
             museum = Parcels.unwrap(intent.getParcelableExtra("museum"));
 
             if (intent.getBooleanExtra("cascade", false)) {
-                Intent cascadeIntent = new Intent(this, StoryActivity.class);
-                cascadeIntent.putExtra("story", intent.getParcelableExtra("story"));
-                startActivity(cascadeIntent);
+                Story story = Parcels.unwrap(intent.getParcelableExtra("story"));
+                StoryPicker storyPicker = new StoryPicker(story, this);
+                storyPicker.show();
             }
 
             Log.d("Meojium/Detail", "Museum id: " + museum.getId());
@@ -350,9 +350,8 @@ public class DetailActivity extends AppCompatActivity {
                     public void onClick(View view) {
                         materialSheetFab.hideSheet();
 
-                        Intent intent = new Intent(DetailActivity.this, StoryActivity.class);
-                        intent.putExtra("story", Parcels.wrap(story));
-                        startActivity(intent);
+                        StoryPicker storyPicker = new StoryPicker(story, DetailActivity.this);
+                        storyPicker.show();
                     }
                 });
                 sheetContainer.addView(button);
