@@ -320,8 +320,6 @@ public class HomeActivity extends AppCompatActivity
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
-            case R.id.action_filter:
-                break;
             case R.id.action_search:
                 Intent searchIntent = new Intent(this, SearchActivity.class);
                 searchIntent.addFlags(Intent.FLAG_ACTIVITY_NO_HISTORY);

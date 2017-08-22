@@ -14,8 +14,7 @@
             android:id="@+id/imageview_museum_thumb"
             android:layout_width="match_parent"
             android:layout_height="200dp"
-            android:scaleType="fitXY"
-            tools:src="@drawable/img_seokjangni" />
+            android:scaleType="fitXY" />
 
         <TextView
             android:id="@+id/textview_museum_name"
