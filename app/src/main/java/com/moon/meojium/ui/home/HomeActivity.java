@@ -3,6 +3,7 @@ package com.moon.meojium.ui.home;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
+import android.os.Handler;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.design.widget.NavigationView;
@@ -335,12 +336,24 @@ public class HomeActivity extends AppCompatActivity
             case R.id.navigation_home:
                 break;
             case R.id.navigation_all_museum:
-                Intent intent = new Intent(this, AllMuseumActivity.class);
-                startActivity(intent);
+                Handler allMuseumHandler = new Handler();
+                allMuseumHandler.postDelayed(new Runnable() {
+                    @Override
+                    public void run() {
+                        Intent intent = new Intent(HomeActivity.this, AllMuseumActivity.class);
+                        startActivity(intent);
+                    }
+                }, 200);
                 break;
             case R.id.navigation_interested_museum:
-                Intent interestedIntent = new Intent(this, InterestedActivity.class);
-                startActivity(interestedIntent);
+                Handler interestedMuseumHandler = new Handler();
+                interestedMuseumHandler.postDelayed(new Runnable() {
+                    @Override
+                    public void run() {
+                        Intent interestedIntent = new Intent(HomeActivity.this, InterestedActivity.class);
+                        startActivity(interestedIntent);
+                    }
+                }, 200);
                 break;
             case R.id.navigation_logout:
                 Log.d("Meojium/Home", "Try Logout");
