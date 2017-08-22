@@ -8,15 +8,23 @@ import android.widget.TextView;
 
 import com.moon.meojium.R;
 
+import butterknife.BindView;
+import butterknife.ButterKnife;
+
 /*
  * Created by Alexander Krol (troy379) on 29.08.16.
  */
 public class ImageOverlayView extends RelativeLayout {
+    @BindView(R.id.textview_fresco_content)
+    TextView contentTextView;
+    @BindView(R.id.textview_fresco_page_count)
+    TextView pageCountTextView;
 
-    private TextView contentTextView;
+    private int lastPagePosition;
 
-    public ImageOverlayView(Context context) {
+    public ImageOverlayView(Context context, int lastPagePosition) {
         super(context);
+        this.lastPagePosition = lastPagePosition;
         init();
     }
 
@@ -34,8 +42,21 @@ public class ImageOverlayView extends RelativeLayout {
         contentTextView.setText(content);
     }
 
+    public void setPosition(int position) {
+        pageCountTextView.setText(String.format(getResources().getString(R.string.fresco_page), position + 1, lastPagePosition));
+    }
+
+
     private void init() {
         View view = inflate(getContext(), R.layout.view_image_overlay, this);
-        contentTextView = view.findViewById(R.id.textview_story_content);
+        ButterKnife.bind(this, view);
+    }
+
+    public int getLastPagePosition() {
+        return lastPagePosition;
+    }
+
+    public void setLastPagePosition(int lastPagePosition) {
+        this.lastPagePosition = lastPagePosition;
     }
 }

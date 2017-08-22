@@ -36,4 +36,5 @@
     <string name="nothing_review">작성된 리뷰가 없습니다.</string>
     <string name="nothing_data">데이터가 없습니다.</string>
     <string name="navigation_all_museum">전체 보기</string>
+    <string name="fresco_page" formatted="false">(%d / %d)</string>
 </resources>

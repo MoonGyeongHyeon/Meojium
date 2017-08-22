@@ -3,7 +3,9 @@ package com.moon.meojium.ui.detail;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.support.design.widget.TabLayout;
 import android.support.v4.content.ContextCompat;
+import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -14,23 +16,20 @@ import android.view.MotionEvent;
 import android.view.View;
 import android.widget.Button;
 import android.widget.CheckBox;
-import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
-import com.bumptech.glide.Glide;
 import com.gordonwong.materialsheetfab.MaterialSheetFab;
 import com.moon.meojium.R;
 import com.moon.meojium.base.BaseRetrofitService;
-import com.moon.meojium.base.FrescoImageViewer;
 import com.moon.meojium.base.NaverAPI;
-import com.moon.meojium.model.UpdateResult;
 import com.moon.meojium.base.util.SharedPreferencesService;
 import com.moon.meojium.database.dao.FavoriteDao;
 import com.moon.meojium.database.dao.MuseumDao;
 import com.moon.meojium.database.dao.ReviewDao;
 import com.moon.meojium.database.dao.StampDao;
 import com.moon.meojium.database.dao.StoryDao;
+import com.moon.meojium.model.UpdateResult;
 import com.moon.meojium.model.museum.Museum;
 import com.moon.meojium.model.review.Review;
 import com.moon.meojium.model.story.Story;
@@ -42,7 +41,6 @@ import com.nhn.android.maps.NMapView;
 import com.nhn.android.maps.overlay.NMapPOIdata;
 import com.nhn.android.mapviewer.overlay.NMapOverlayManager;
 import com.nhn.android.mapviewer.overlay.NMapPOIdataOverlay;
-import com.stfalcon.frescoimageviewer.ImageViewer;
 
 import org.parceler.Parcels;
 
@@ -63,13 +61,11 @@ import retrofit2.Response;
  */
 
 public class DetailActivity extends AppCompatActivity
-        implements NaverAPI, FrescoImageViewer {
+        implements NaverAPI {
     public static final int REQUEST_REVIEW_WRITE = 1;
 
     @BindView(R.id.include_detail_toolbar)
     Toolbar toolbar;
-    @BindView(R.id.imageview_detail_thumb)
-    ImageView thumbImageView;
     @BindView(R.id.textview_detail_name)
     TextView nameTextView;
     @BindView(R.id.textview_detail_address)
@@ -108,6 +104,10 @@ public class DetailActivity extends AppCompatActivity
     LinearLayout sheetContainer;
     @BindView(R.id.recyclerview_detail_review)
     RecyclerView reviewRecyclerView;
+    @BindView(R.id.viewpager_detail_thumb)
+    ViewPager thumbViewPager;
+    @BindView(R.id.tablayout_detail_thumb)
+    TabLayout thumbTabLayout;
 
     @OnTouch(R.id.mapview_detail)
     public boolean onTouch(View view, MotionEvent motionEvent) {
@@ -219,29 +219,6 @@ public class DetailActivity extends AppCompatActivity
         }
     }
 
-    @OnClick(R.id.imageview_detail_thumb)
-    public void onClickThumb(View view) {
-        Call<List<String>> call = museumDao.getMuseumImageUrlList(museum.getId());
-        call.enqueue(new Callback<List<String>>() {
-            @Override
-            public void onResponse(Call<List<String>> call, Response<List<String>> response) {
-                List<String> list = response.body();
-                imageUrlList = new ArrayList<>();
-
-                for (String item : list) {
-                    imageUrlList.add(BaseRetrofitService.IMAGE_LOAD_URL + item);
-                }
-
-                showPicker();
-            }
-
-            @Override
-            public void onFailure(Call<List<String>> call, Throwable t) {
-                Toasty.info(DetailActivity.this, "서버 연결에 실패했습니다").show();
-            }
-        });
-    }
-
     @OnClick(R.id.relativelayout_detail_review_container)
     public void onClickReview(View view) {
         Intent intent = new Intent(this, ReviewActivity.class);
@@ -295,6 +272,7 @@ public class DetailActivity extends AppCompatActivity
         requestStoryData();
         requestFavoriteCheckValue();
         requestStampCheckValue();
+        requestThumbImage();
 
         initToolbar();
         initMapView();
@@ -447,6 +425,50 @@ public class DetailActivity extends AppCompatActivity
         });
     }
 
+    private void requestThumbImage() {
+        Call<List<String>> call = museumDao.getMuseumImageUrlList(museum.getId());
+        call.enqueue(new Callback<List<String>>() {
+            @Override
+            public void onResponse(Call<List<String>> call, Response<List<String>> response) {
+                List<String> list = response.body();
+                imageUrlList = new ArrayList<>();
+
+                for (String item : list) {
+                    imageUrlList.add(BaseRetrofitService.IMAGE_LOAD_URL + item);
+                }
+                initThumbViewPager();
+            }
+
+            @Override
+            public void onFailure(Call<List<String>> call, Throwable t) {
+                Toasty.info(DetailActivity.this, "서버 연결에 실패했습니다").show();
+            }
+        });
+    }
+
+    private void initThumbViewPager() {
+        final ThumbViewPagerAdapter adapter = new ThumbViewPagerAdapter(imageUrlList, this);
+        adapter.setViewPager(thumbViewPager);
+        thumbViewPager.setAdapter(adapter);
+        thumbViewPager.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
+            @Override
+            public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
+            }
+
+            @Override
+            public void onPageSelected(int position) {
+                adapter.setCurrentPosition(position);
+            }
+
+            @Override
+            public void onPageScrollStateChanged(int state) {
+            }
+        });
+
+        thumbTabLayout.setupWithViewPager(thumbViewPager);
+        thumbTabLayout.requestDisallowInterceptTouchEvent(false);
+    }
+
     private void initToolbar() {
         toolbar.setTitle(museum.getName());
         setSupportActionBar(toolbar);
@@ -486,10 +508,6 @@ public class DetailActivity extends AppCompatActivity
     }
 
     private void updateMuseumView() {
-        Glide.with(this)
-                .load(BaseRetrofitService.IMAGE_LOAD_URL + museum.getImagePath())
-                .into(thumbImageView);
-
         nameTextView.setText(museum.getName());
         addressTextView.setText(museum.getAddress());
         businessHourTextView.setText(museum.getBusinessHours());
@@ -509,13 +527,6 @@ public class DetailActivity extends AppCompatActivity
                 break;
         }
         return super.onOptionsItemSelected(item);
-    }
-
-    @Override
-    public void showPicker() {
-        new ImageViewer.Builder<>(this, imageUrlList)
-                .setStartPosition(0)
-                .show();
     }
 
     @Override

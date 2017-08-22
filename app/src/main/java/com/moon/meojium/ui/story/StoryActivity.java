@@ -93,7 +93,7 @@ public class StoryActivity extends AppCompatActivity
         ImageViewer.Builder builder = new ImageViewer.Builder<>(this, imageUrlList)
                 .setStartPosition(0);
 
-        overlayView = new ImageOverlayView(this);
+        overlayView = new ImageOverlayView(this, imageUrlList.size());
         builder.setOverlayView(overlayView);
         builder.setImageChangeListener(getImageChangeListener());
         builder.setOnDismissListener(this);
@@ -106,6 +106,7 @@ public class StoryActivity extends AppCompatActivity
             @Override
             public void onImageChange(int position) {
                 overlayView.setContent(contentList.get(position));
+                overlayView.setPosition(position);
             }
         };
     }

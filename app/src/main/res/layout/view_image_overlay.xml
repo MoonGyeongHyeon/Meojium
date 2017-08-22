@@ -4,7 +4,17 @@
     android:orientation="vertical">
 
     <TextView
-        android:id="@+id/textview_story_content"
+        android:id="@+id/textview_fresco_page_count"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentTop="true"
+        android:layout_margin="16dp"
+        android:gravity="center"
+        android:textColor="@android:color/white"
+        android:textSize="@dimen/large_text_size" />
+
+    <TextView
+        android:id="@+id/textview_fresco_content"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_alignParentBottom="true"

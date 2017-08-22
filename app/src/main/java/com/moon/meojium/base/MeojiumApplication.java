@@ -11,7 +11,7 @@ import com.moon.meojium.base.util.SharedPreferencesService;
  * Created by moon on 2017. 8. 12..
  */
 
-public class App extends Application {
+public class MeojiumApplication extends Application {
 
     @Override
     public void onCreate() {
