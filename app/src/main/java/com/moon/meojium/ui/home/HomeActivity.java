@@ -57,8 +57,7 @@ import retrofit2.Response;
  */
 
 public class HomeActivity extends AppCompatActivity
-        implements NavigationView.OnNavigationItemSelectedListener,
-            DialogInterface.OnClickListener {
+        implements NavigationView.OnNavigationItemSelectedListener {
     private static final int TASTING_COUNT = 4;
     @BindView(R.id.toolbar)
     Toolbar toolbar;
@@ -357,27 +356,26 @@ public class HomeActivity extends AppCompatActivity
                 break;
             case R.id.navigation_logout:
                 Log.d("Meojium/Home", "Try Logout");
+                new AlertDialog.Builder(this)
+                        .setTitle("로그아웃")
+                        .setMessage("로그아웃 하시겠습니까?")
+                        .setPositiveButton("확인", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialogInterface, int i) {
+                                logout();
 
-                String type = sharedPreferencesService.getStringData(SharedPreferencesService.KEY_TYPE);
-
-                Log.d("Meojium/Home", SharedPreferencesService.KEY_TYPE + ": " + type);
-                Log.d("Meojium/Home", SharedPreferencesService.KEY_NICKNAME + ": " +
-                        sharedPreferencesService.getStringData(SharedPreferencesService.KEY_NICKNAME));
-
-                switch (type) {
-                    case NaverLogin.NAVER_TYPE:
-                        NaverLogin naverLogin = new NaverLogin(this);
-                        naverLogin.logout();
-                        break;
-                }
-
-                sharedPreferencesService.removeData(SharedPreferencesService.KEY_ENC_ID,
-                        SharedPreferencesService.KEY_TYPE, SharedPreferencesService.KEY_NICKNAME);
-
-                Intent logoutIntent = new Intent(this, LoginActivity.class);
-                logoutIntent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
-                startActivity(logoutIntent);
-
+                                Intent logoutIntent = new Intent(HomeActivity.this, LoginActivity.class);
+                                logoutIntent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
+                                startActivity(logoutIntent);
+                            }
+                        })
+                        .setNegativeButton("취소", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialogInterface, int i) {
+                            }
+                        })
+                        .create()
+                        .show();
                 break;
         }
 
@@ -386,8 +384,21 @@ public class HomeActivity extends AppCompatActivity
         return true;
     }
 
-    @Override
-    public void onClick(DialogInterface dialogInterface, int i) {
+    private void logout() {
+        String type = sharedPreferencesService.getStringData(SharedPreferencesService.KEY_TYPE);
 
+        Log.d("Meojium/Home", SharedPreferencesService.KEY_TYPE + ": " + type);
+        Log.d("Meojium/Home", SharedPreferencesService.KEY_NICKNAME + ": " +
+                sharedPreferencesService.getStringData(SharedPreferencesService.KEY_NICKNAME));
+
+        switch (type) {
+            case NaverLogin.NAVER_TYPE:
+                NaverLogin naverLogin = new NaverLogin(this);
+                naverLogin.logout();
+                break;
+        }
+
+        sharedPreferencesService.removeData(SharedPreferencesService.KEY_ENC_ID,
+                SharedPreferencesService.KEY_TYPE, SharedPreferencesService.KEY_NICKNAME);
     }
 }

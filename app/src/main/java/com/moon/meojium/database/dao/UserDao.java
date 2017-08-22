@@ -1,8 +1,9 @@
 package com.moon.meojium.database.dao;
 
 import com.moon.meojium.base.BaseRetrofitService;
-import com.moon.meojium.model.UpdateResult;
 import com.moon.meojium.database.service.UserService;
+import com.moon.meojium.model.UpdateResult;
+import com.moon.meojium.model.user.User;
 
 import retrofit2.Call;
 
@@ -40,5 +41,9 @@ public class UserDao extends BaseRetrofitService {
 
     public Call<UpdateResult> updateNickname(String id, String nickname) {
         return service.updateNickname(id, nickname);
+    }
+
+    public Call<User> isExistedUser(String id) {
+        return service.isExistedUser(id);
     }
 }

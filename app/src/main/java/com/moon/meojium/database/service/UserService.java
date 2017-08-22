@@ -1,6 +1,7 @@
 package com.moon.meojium.database.service;
 
 import com.moon.meojium.model.UpdateResult;
+import com.moon.meojium.model.user.User;
 
 import retrofit2.Call;
 import retrofit2.http.Field;
@@ -19,4 +20,8 @@ public interface UserService {
     @POST("/user/update")
     @FormUrlEncoded
     Call<UpdateResult> updateNickname(@Field("id") String id, @Field("nickname") String nickname);
+
+    @POST("/user/exist")
+    @FormUrlEncoded
+    Call<User> isExistedUser(@Field("id") String id);
 }

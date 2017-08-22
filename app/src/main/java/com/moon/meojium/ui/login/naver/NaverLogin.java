@@ -7,9 +7,10 @@ import android.os.AsyncTask;
 import android.util.Log;
 
 import com.moon.meojium.base.NaverAPI;
-import com.moon.meojium.model.UpdateResult;
 import com.moon.meojium.base.util.SharedPreferencesService;
 import com.moon.meojium.database.dao.UserDao;
+import com.moon.meojium.model.UpdateResult;
+import com.moon.meojium.model.user.User;
 import com.moon.meojium.ui.home.HomeActivity;
 import com.nhn.android.naverlogin.OAuthLogin;
 import com.nhn.android.naverlogin.OAuthLoginHandler;
@@ -37,10 +38,14 @@ public class NaverLogin implements NaverAPI {
     private OAuthLoginHandler oAuthLoginHandler;
     private String nickname;
     private String encId;
+    private UserDao userDao;
+    private SharedPreferencesService service;
 
     public NaverLogin(Context context) {
         this.context = context;
 
+        userDao = UserDao.getInstance();
+        service = SharedPreferencesService.getInstance();
         oAuthLoginInstance = OAuthLogin.getInstance();
         oAuthLoginInstance.init(context, CLIENT_ID, CLIENT_SECRET, OAUTH_CLIENT_NAME);
     }
@@ -54,39 +59,54 @@ public class NaverLogin implements NaverAPI {
 
                     requestUserInfo();
 
-                    SharedPreferencesService service = SharedPreferencesService.getInstance();
-                    service.putData(SharedPreferencesService.KEY_ENC_ID, encId);
-                    service.putData(SharedPreferencesService.KEY_TYPE, NAVER_TYPE);
-                    service.putData(SharedPreferencesService.KEY_NICKNAME, nickname);
-
-                    Log.d("Meojium/Login", "nickname: " + nickname);
-                    Log.d("Meojium/Login", "encId: " + encId);
-
-                    UserDao userDao = UserDao.getInstance();
-                    Call<UpdateResult> call = userDao.addUser(service.getStringData(SharedPreferencesService.KEY_ENC_ID),
-                            service.getStringData(SharedPreferencesService.KEY_NICKNAME));
-
-                    call.enqueue(new retrofit2.Callback<UpdateResult>() {
+                    Call<User> call = userDao.isExistedUser(encId);
+                    call.enqueue(new retrofit2.Callback<User>() {
                         @Override
-                        public void onResponse(Call<UpdateResult> call, Response<UpdateResult> response) {
-                            UpdateResult result = response.body();
-                            if (result.getCode() == UpdateResult.RESULT_OK) {
-                                Log.d("Meojium/Login", "Success Adding User Info");
+                        public void onResponse(Call<User> call, Response<User> response) {
+                            User user = response.body();
+
+                            if (user != null && user.getNickname() != null) {
+                                Log.d("Meojium/Login", "Exist User");
+
+                                nickname = user.getNickname();
+
+                                Log.d("Meojium/Login", "nickname: " + nickname);
+                                Log.d("Meojium/Login", "encId: " + encId);
+
+                                saveAndStart();
                             } else {
-                                Log.d("Meojium/Login", "Fail Adding User Info");
+                                Log.d("Meojium/Login", "Not Exist User");
+
+                                Call<UpdateResult> call2 = userDao.addUser(encId, nickname);
+
+                                call2.enqueue(new retrofit2.Callback<UpdateResult>() {
+                                    @Override
+                                    public void onResponse(Call<UpdateResult> call, Response<UpdateResult> response) {
+                                        UpdateResult result = response.body();
+
+                                        if (result.getCode() == UpdateResult.RESULT_OK) {
+                                            Log.d("Meojium/Login", "Success Adding User Info");
+
+                                            saveAndStart();
+                                        } else {
+                                            Log.d("Meojium/Login", "Fail Adding User Info");
+                                        }
+                                    }
+
+                                    @Override
+                                    public void onFailure(Call<UpdateResult> call, Throwable t) {
+                                        Log.d("Meojium/Login", "Fail Adding User Info");
+                                    }
+                                });
                             }
+
                         }
 
                         @Override
-                        public void onFailure(Call<UpdateResult> call, Throwable t) {
-                            Log.d("Meojium/Login", "Fail Adding User Info");
+                        public void onFailure(Call<User> call, Throwable t) {
+                            Log.d("Meojium/Login", "Fail Checking User Existed");
                         }
                     });
-
-                    Intent intent = new Intent(context, HomeActivity.class);
-                    intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK);
-                    intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-                    context.startActivity(intent);
 
                 } else {
                     String errorCode = oAuthLoginInstance.getLastErrorCode(context).getCode();
@@ -151,5 +171,16 @@ public class NaverLogin implements NaverAPI {
 
     public void initLoginButton(OAuthLoginButton button) {
         button.setOAuthLoginHandler(oAuthLoginHandler);
+    }
+
+    private void saveAndStart() {
+        service.putData(SharedPreferencesService.KEY_ENC_ID, encId);
+        service.putData(SharedPreferencesService.KEY_TYPE, NAVER_TYPE);
+        service.putData(SharedPreferencesService.KEY_NICKNAME, nickname);
+
+        Intent intent = new Intent(context, HomeActivity.class);
+        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK);
+        intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+        context.startActivity(intent);
     }
 }
