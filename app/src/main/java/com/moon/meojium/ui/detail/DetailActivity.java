@@ -22,7 +22,6 @@ import android.widget.TextView;
 import com.gordonwong.materialsheetfab.MaterialSheetFab;
 import com.moon.meojium.R;
 import com.moon.meojium.base.BaseRetrofitService;
-import com.moon.meojium.base.NaverAPI;
 import com.moon.meojium.base.util.SharedPreferencesService;
 import com.moon.meojium.database.dao.FavoriteDao;
 import com.moon.meojium.database.dao.MuseumDao;
@@ -60,8 +59,7 @@ import retrofit2.Response;
  * Created by moon on 2017. 8. 7..
  */
 
-public class DetailActivity extends AppCompatActivity
-        implements NaverAPI {
+public class DetailActivity extends AppCompatActivity {
     public static final int REQUEST_REVIEW_WRITE = 1;
 
     @BindView(R.id.include_detail_toolbar)
@@ -479,7 +477,7 @@ public class DetailActivity extends AppCompatActivity
         mapContext = new NMapContext(this);
         mapContext.onCreate();
 
-        mapView.setClientId(CLIENT_ID);
+        mapView.setClientId(getResources().getString(R.string.naver_client_id));
         mapView.setClickable(true);
         mapView.setEnabled(true);
         mapView.setFocusable(true);

@@ -6,12 +6,13 @@ import android.content.Intent;
 import android.os.AsyncTask;
 import android.util.Log;
 
-import com.moon.meojium.base.NaverAPI;
+import com.moon.meojium.R;
 import com.moon.meojium.base.util.SharedPreferencesService;
 import com.moon.meojium.database.dao.UserDao;
 import com.moon.meojium.model.UpdateResult;
 import com.moon.meojium.model.user.User;
 import com.moon.meojium.ui.home.HomeActivity;
+import com.moon.meojium.ui.login.LoginType;
 import com.nhn.android.naverlogin.OAuthLogin;
 import com.nhn.android.naverlogin.OAuthLoginHandler;
 import com.nhn.android.naverlogin.data.OAuthLoginState;
@@ -29,8 +30,7 @@ import retrofit2.Response;
  * Created by moon on 2017. 8. 4..
  */
 
-public class NaverLogin implements NaverAPI {
-    public static final String NAVER_TYPE = "Naver";
+public class NaverLogin {
     private static final String OAUTH_CLIENT_NAME = "네이버 아이디로 로그인";
 
     private OAuthLogin oAuthLoginInstance;
@@ -47,7 +47,8 @@ public class NaverLogin implements NaverAPI {
         userDao = UserDao.getInstance();
         service = SharedPreferencesService.getInstance();
         oAuthLoginInstance = OAuthLogin.getInstance();
-        oAuthLoginInstance.init(context, CLIENT_ID, CLIENT_SECRET, OAUTH_CLIENT_NAME);
+        oAuthLoginInstance.init(context, context.getResources().getString(R.string.naver_client_id),
+                context.getResources().getString(R.string.naver_client_secret), OAUTH_CLIENT_NAME);
     }
 
     public void initHandlerListener() {
@@ -66,16 +67,16 @@ public class NaverLogin implements NaverAPI {
                             User user = response.body();
 
                             if (user != null && user.getNickname() != null) {
-                                Log.d("Meojium/Login", "Exist User");
+                                Log.d("Meojium/NaverLogin", "Exist User");
 
                                 nickname = user.getNickname();
 
-                                Log.d("Meojium/Login", "nickname: " + nickname);
-                                Log.d("Meojium/Login", "encId: " + encId);
+                                Log.d("Meojium/NaverLogin", "nickname: " + nickname);
+                                Log.d("Meojium/NaverLogin", "encId: " + encId);
 
                                 saveAndStart();
                             } else {
-                                Log.d("Meojium/Login", "Not Exist User");
+                                Log.d("Meojium/NaverLogin", "Not Exist User");
 
                                 Call<UpdateResult> call2 = userDao.addUser(encId, nickname);
 
@@ -85,17 +86,17 @@ public class NaverLogin implements NaverAPI {
                                         UpdateResult result = response.body();
 
                                         if (result.getCode() == UpdateResult.RESULT_OK) {
-                                            Log.d("Meojium/Login", "Success Adding User Info");
+                                            Log.d("Meojium/NaverLogin", "Success Adding User Info");
 
                                             saveAndStart();
                                         } else {
-                                            Log.d("Meojium/Login", "Fail Adding User Info");
+                                            Log.d("Meojium/NaverLogin", "Fail Adding User Info");
                                         }
                                     }
 
                                     @Override
                                     public void onFailure(Call<UpdateResult> call, Throwable t) {
-                                        Log.d("Meojium/Login", "Fail Adding User Info");
+                                        Log.d("Meojium/NaverLogin", "Fail Adding User Info");
                                     }
                                 });
                             }
@@ -104,7 +105,7 @@ public class NaverLogin implements NaverAPI {
 
                         @Override
                         public void onFailure(Call<User> call, Throwable t) {
-                            Log.d("Meojium/Login", "Fail Checking User Existed");
+                            Log.d("Meojium/NaverLogin", "Fail Checking User Existed");
                         }
                     });
 
@@ -115,6 +116,17 @@ public class NaverLogin implements NaverAPI {
                 }
             }
         };
+    }
+
+    private void saveAndStart() {
+        service.putData(SharedPreferencesService.KEY_ENC_ID, encId);
+        service.putData(SharedPreferencesService.KEY_TYPE, LoginType.NAVER);
+        service.putData(SharedPreferencesService.KEY_NICKNAME, nickname);
+
+        Intent intent = new Intent(context, HomeActivity.class);
+        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK);
+        intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+        context.startActivity(intent);
     }
 
     public void startNaverLoginActivity(Activity activity) {
@@ -171,16 +183,5 @@ public class NaverLogin implements NaverAPI {
 
     public void initLoginButton(OAuthLoginButton button) {
         button.setOAuthLoginHandler(oAuthLoginHandler);
-    }
-
-    private void saveAndStart() {
-        service.putData(SharedPreferencesService.KEY_ENC_ID, encId);
-        service.putData(SharedPreferencesService.KEY_TYPE, NAVER_TYPE);
-        service.putData(SharedPreferencesService.KEY_NICKNAME, nickname);
-
-        Intent intent = new Intent(context, HomeActivity.class);
-        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK);
-        intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-        context.startActivity(intent);
     }
 }

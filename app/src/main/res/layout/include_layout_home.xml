@@ -80,8 +80,14 @@
             android:id="@+id/recyclerview_home_tasting"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:layout_marginBottom="16dp"
             app:layoutManager="LinearLayoutManager" />
 
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/line_height"
+            android:layout_marginBottom="16dp"
+            android:background="@color/lineColor" />
 
         <TextView
             android:layout_width="match_parent"

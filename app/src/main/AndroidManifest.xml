@@ -21,7 +21,14 @@
 
         <meta-data
             android:name="com.google.android.geo.API_KEY"
-            android:value="AIzaSyDdvjCwD6bVOuen70AwDxAV2rQrS-rbXBY" />
+            android:value="@string/google_api_key" />
+
+        <meta-data
+            android:name="com.kakao.sdk.AppKey"
+            android:value="@string/kakao_app_key" />
+        <meta-data
+            android:name="com.kakao.sdk.ClientSecret"
+            android:value="@string/kakao_secret_key"/>
 
         <activity
             android:name="com.nhn.android.naverlogin.ui.OAuthLoginActivity"

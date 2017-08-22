@@ -26,6 +26,8 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
+import com.kakao.usermgmt.UserManagement;
+import com.kakao.usermgmt.callback.LogoutResponseCallback;
 import com.moon.meojium.R;
 import com.moon.meojium.base.util.SharedPreferencesService;
 import com.moon.meojium.database.dao.MuseumDao;
@@ -37,6 +39,7 @@ import com.moon.meojium.model.tasting.Tasting;
 import com.moon.meojium.ui.allmuseum.AllMuseumActivity;
 import com.moon.meojium.ui.interested.InterestedActivity;
 import com.moon.meojium.ui.login.LoginActivity;
+import com.moon.meojium.ui.login.LoginType;
 import com.moon.meojium.ui.login.naver.NaverLogin;
 import com.moon.meojium.ui.nearby.NearbyActivity;
 import com.moon.meojium.ui.search.SearchActivity;
@@ -392,9 +395,17 @@ public class HomeActivity extends AppCompatActivity
                 sharedPreferencesService.getStringData(SharedPreferencesService.KEY_NICKNAME));
 
         switch (type) {
-            case NaverLogin.NAVER_TYPE:
+            case LoginType.NAVER:
                 NaverLogin naverLogin = new NaverLogin(this);
                 naverLogin.logout();
+                break;
+            case LoginType.KAKAO:
+                UserManagement.requestLogout(new LogoutResponseCallback() {
+                    @Override
+                    public void onCompleteLogout() {
+                        Log.d("Meojium/KakaoLogin", "Logout Kakao");
+                    }
+                });
                 break;
         }
 

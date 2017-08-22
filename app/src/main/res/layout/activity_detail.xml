@@ -98,7 +98,9 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_alignTop="@id/textview_detail_address_label"
+                android:layout_marginEnd="32dp"
                 android:layout_marginLeft="32dp"
+                android:layout_marginRight="32dp"
                 android:layout_marginStart="32dp"
                 android:layout_toEndOf="@id/textview_detail_address_label"
                 android:layout_toRightOf="@id/textview_detail_address_label"
@@ -121,6 +123,8 @@
                 android:layout_alignLeft="@id/textview_detail_address"
                 android:layout_alignStart="@id/textview_detail_address"
                 android:layout_alignTop="@id/textview_detail_business_hour_label"
+                android:layout_marginEnd="32dp"
+                android:layout_marginRight="32dp"
                 tools:text="09:00 ~ 18:00" />
 
             <TextView
@@ -140,6 +144,8 @@
                 android:layout_alignLeft="@id/textview_detail_address"
                 android:layout_alignStart="@id/textview_detail_address"
                 android:layout_alignTop="@id/textview_detail_day_off_label"
+                android:layout_marginEnd="32dp"
+                android:layout_marginRight="32dp"
                 tools:text="1월 1일, 설, 추석" />
 
             <TextView
@@ -159,6 +165,8 @@
                 android:layout_alignLeft="@id/textview_detail_address"
                 android:layout_alignStart="@id/textview_detail_address"
                 android:layout_alignTop="@id/textview_detail_fee_label"
+                android:layout_marginEnd="32dp"
+                android:layout_marginRight="32dp"
                 tools:text="성인: 1300, 청소년: 800, 어린이: 600" />
 
             <TextView
@@ -178,6 +186,8 @@
                 android:layout_alignLeft="@id/textview_detail_address"
                 android:layout_alignStart="@id/textview_detail_address"
                 android:layout_alignTop="@id/textview_detail_tel_label"
+                android:layout_marginEnd="32dp"
+                android:layout_marginRight="32dp"
                 tools:text="041-840-8924" />
 
 
@@ -198,6 +208,9 @@
                 android:layout_alignLeft="@id/textview_detail_address"
                 android:layout_alignStart="@id/textview_detail_address"
                 android:layout_alignTop="@id/textview_detail_homepage_label"
+                android:layout_marginEnd="32dp"
+                android:layout_marginRight="32dp"
+                android:autoLink="web"
                 tools:text="http://sjnmuseum.go.kr" />
 
             <TextView
@@ -217,6 +230,8 @@
                 android:layout_alignLeft="@id/textview_detail_address"
                 android:layout_alignStart="@id/textview_detail_address"
                 android:layout_alignTop="@id/textview_detail_found_date_label"
+                android:layout_marginEnd="32dp"
+                android:layout_marginRight="32dp"
                 tools:text="1999-04-03" />
 
             <View
