@@ -47,6 +47,7 @@
         <activity android:name=".ui.search.SearchActivity" />
         <activity android:name=".ui.search.SearchResultActivity" />
         <activity android:name=".ui.reviews.ReviewActivity" />
+        <activity android:name=".ui.allmuseum.AllMuseumActivity" />
     </application>
 
 </manifest>

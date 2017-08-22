@@ -1,4 +1,4 @@
-package com.moon.meojium.base;
+package com.moon.meojium.ui.museum;
 
 import android.content.Context;
 import android.content.Intent;
@@ -10,6 +10,7 @@ import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
 import com.moon.meojium.R;
+import com.moon.meojium.base.BaseRetrofitService;
 import com.moon.meojium.model.museum.Museum;
 import com.moon.meojium.ui.detail.DetailActivity;
 

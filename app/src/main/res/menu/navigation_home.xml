@@ -7,6 +7,13 @@
             android:checked="true"
             android:icon="@drawable/ic_home"
             android:title="@string/navigation_home" />
+
+        <item
+            android:id="@+id/navigation_all_museum"
+            android:checkable="false"
+            android:icon="@drawable/ic_all_museum"
+            android:title="@string/navigation_all_museum" />
+
         <item
             android:id="@+id/navigation_interested_museum"
             android:checkable="false"

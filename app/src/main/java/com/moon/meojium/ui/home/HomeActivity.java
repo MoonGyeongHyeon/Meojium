@@ -33,6 +33,7 @@ import com.moon.meojium.database.dao.UserDao;
 import com.moon.meojium.model.UpdateResult;
 import com.moon.meojium.model.museum.Museum;
 import com.moon.meojium.model.tasting.Tasting;
+import com.moon.meojium.ui.allmuseum.AllMuseumActivity;
 import com.moon.meojium.ui.interested.InterestedActivity;
 import com.moon.meojium.ui.login.LoginActivity;
 import com.moon.meojium.ui.login.naver.NaverLogin;
@@ -334,6 +335,10 @@ public class HomeActivity extends AppCompatActivity
     public boolean onNavigationItemSelected(@NonNull MenuItem item) {
         switch (item.getItemId()) {
             case R.id.navigation_home:
+                break;
+            case R.id.navigation_all_museum:
+                Intent intent = new Intent(this, AllMuseumActivity.class);
+                startActivity(intent);
                 break;
             case R.id.navigation_interested_museum:
                 Intent interestedIntent = new Intent(this, InterestedActivity.class);

@@ -7,12 +7,16 @@ import java.util.List;
 import retrofit2.Call;
 import retrofit2.http.GET;
 import retrofit2.http.Path;
+import retrofit2.http.Query;
 
 /**
  * Created by moon on 2017. 8. 17..
  */
 
 public interface MuseumService {
+    @GET("/museum/list/all")
+    Call<List<Museum>> getAllMuseumList(@Query("start") int start);
+
     @GET("/museum/list/popular")
     Call<List<Museum>> getPopularMuseumList();
 
@@ -21,5 +25,4 @@ public interface MuseumService {
 
     @GET("/museum/{id}/image")
     Call<List<String>> getMuseumImageUrlList(@Path("id") int id);
-
 }

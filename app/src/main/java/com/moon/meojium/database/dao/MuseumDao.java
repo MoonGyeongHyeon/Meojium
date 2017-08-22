@@ -36,6 +36,10 @@ public class MuseumDao extends BaseRetrofitService {
         service = (MuseumService) retrofit.create(type);
     }
 
+    public Call<List<Museum>> getAllMuseumList(int start) {
+        return service.getAllMuseumList(start);
+    }
+
     public Call<List<Museum>> getPopularMuseumList() {
         return service.getPopularMuseumList();
     }
@@ -47,5 +51,4 @@ public class MuseumDao extends BaseRetrofitService {
     public Call<List<String>> getMuseumImageUrlList(int id) {
         return service.getMuseumImageUrlList(id);
     }
-
 }

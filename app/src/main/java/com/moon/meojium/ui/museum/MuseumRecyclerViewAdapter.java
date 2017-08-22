@@ -7,7 +7,6 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.moon.meojium.R;
-import com.moon.meojium.base.MuseumViewHolder;
 import com.moon.meojium.model.museum.Museum;
 
 import java.util.List;
