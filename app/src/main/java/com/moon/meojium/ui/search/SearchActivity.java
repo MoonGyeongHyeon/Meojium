@@ -1,8 +1,11 @@
 package com.moon.meojium.ui.search;
 
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.support.design.widget.FloatingActionButton;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -16,9 +19,9 @@ import android.widget.SearchView;
 import android.widget.TextView;
 
 import com.moon.meojium.R;
-import com.moon.meojium.model.UpdateResult;
 import com.moon.meojium.base.util.SharedPreferencesService;
 import com.moon.meojium.database.dao.SearchDao;
+import com.moon.meojium.model.UpdateResult;
 import com.moon.meojium.model.searchlog.SearchLog;
 
 import java.util.List;
@@ -44,8 +47,11 @@ public class SearchActivity extends AppCompatActivity
     RecyclerView recyclerView;
     @BindView(R.id.textview_search_log_nothing_data)
     TextView nothingDataTextView;
+    @BindView(R.id.fab_search_log_delete)
+    FloatingActionButton fab;
 
     private List<SearchLog> searchLogList;
+    private SearchRecyclerViewAdapter adapter;
     private SearchDao searchDao;
 
     @Override
@@ -60,6 +66,7 @@ public class SearchActivity extends AppCompatActivity
 
         initToolbar();
         initSearchView();
+        initFab();
     }
 
     private void requestSearchLogData() {
@@ -81,7 +88,7 @@ public class SearchActivity extends AppCompatActivity
     }
 
     private void initRecyclerView() {
-        SearchRecyclerViewAdapter adapter = new SearchRecyclerViewAdapter(searchLogList, this);
+        adapter = new SearchRecyclerViewAdapter(searchLogList, this);
         recyclerView.setAdapter(adapter);
         RecyclerView.LayoutManager manager = new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false);
         recyclerView.setLayoutManager(manager);
@@ -107,6 +114,53 @@ public class SearchActivity extends AppCompatActivity
         int magId = getResources().getIdentifier("android:id/search_mag_icon", null, null);
         ImageView magImage = searchView.findViewById(magId);
         magImage.setLayoutParams(new LinearLayout.LayoutParams(0, 0));
+    }
+
+    private void initFab() {
+        fab.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                new AlertDialog.Builder(SearchActivity.this)
+                        .setTitle("검색 기록 삭제")
+                        .setMessage("검색 기록을 삭제하시겠습니까?")
+                        .setPositiveButton("확인", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialogInterface, int i) {
+                                Call<UpdateResult> call = searchDao.deleteSearchLog(
+                                        SharedPreferencesService.getInstance().getStringData(SharedPreferencesService.KEY_ENC_ID));
+                                call.enqueue(new Callback<UpdateResult>() {
+                                    @Override
+                                    public void onResponse(Call<UpdateResult> call, Response<UpdateResult> response) {
+                                        UpdateResult result = response.body();
+
+                                        if (result.getCode() == UpdateResult.RESULT_OK) {
+                                            Log.d("Meojium/Search", "Success Deleting SearchLog");
+                                            searchLogList.clear();
+                                            adapter.notifyDataSetChanged();
+                                            initNothingDataTextView();
+                                        } else {
+                                            Log.d("Meojium/Search", "Fail Deleting SearchLog");
+                                            Toasty.info(SearchActivity.this, "서버 연결에 실패했습니다").show();
+                                        }
+                                    }
+
+                                    @Override
+                                    public void onFailure(Call<UpdateResult> call, Throwable t) {
+                                        Toasty.info(SearchActivity.this, "서버 연결에 실패했습니다").show();
+                                    }
+                                });
+                            }
+                        })
+                        .setNegativeButton("취소", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialogInterface, int i) {
+
+                            }
+                        })
+                        .create()
+                        .show();
+            }
+        });
     }
 
     @Override

@@ -49,4 +49,12 @@ public class SearchDao extends BaseRetrofitService {
     public Call<List<SearchLog>> getSearchLogList(String id) {
         return service.getSearchLogList(id);
     }
+
+    public Call<UpdateResult> deleteSearchLog(String id) {
+        return service.deleteSearchLog(id);
+    }
+
+    public Call<UpdateResult> updateSearchLog(String id, String keyword) {
+        return service.updateSearchLog(id, keyword);
+    }
 }

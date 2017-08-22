@@ -28,4 +28,12 @@ public interface SearchService {
     @POST("/search/list")
     @FormUrlEncoded
     Call<List<SearchLog>> getSearchLogList(@Field("id") String id);
+
+    @POST("/search/delete")
+    @FormUrlEncoded
+    Call<UpdateResult> deleteSearchLog(@Field("id") String id);
+
+    @POST("/search/update")
+    @FormUrlEncoded
+    Call<UpdateResult> updateSearchLog(@Field("id") String id, @Field("keyword") String keyword);
 }

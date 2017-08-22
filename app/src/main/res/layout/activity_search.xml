@@ -41,6 +41,17 @@
             android:textSize="16sp"
             android:textStyle="bold"
             android:visibility="gone" />
+
+        <android.support.design.widget.FloatingActionButton
+            android:id="@+id/fab_search_log_delete"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="end|bottom"
+            android:layout_margin="24dp"
+            android:clickable="true"
+            app:fabSize="normal"
+            android:src="@drawable/ic_delete_search_log" />
+
     </FrameLayout>
 
 </LinearLayout>
