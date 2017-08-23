@@ -427,12 +427,19 @@
                 android:text="@string/detail_map_label"
                 android:textSize="@dimen/big_text_size" />
 
-            <com.nhn.android.maps.NMapView
-                android:id="@+id/mapview_detail"
+            <FrameLayout
+                android:id="@+id/framelayout_detail_map_container"
                 android:layout_width="match_parent"
                 android:layout_height="280dp"
-                android:layout_below="@id/textview_detail_map_label"
-                android:layout_margin="16dp" />
+                android:layout_margin="16dp"
+                android:layout_below="@id/textview_detail_map_label"/>
+
+            <View
+                android:id="@+id/view_detail_transparent"
+                android:layout_width="match_parent"
+                android:layout_height="280dp"
+                android:layout_margin="16dp"
+                android:layout_below="@id/textview_detail_map_label"/>
 
         </RelativeLayout>
 

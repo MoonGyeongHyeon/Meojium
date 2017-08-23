@@ -1,7 +1,10 @@
 package com.moon.meojium.ui.detail;
 
+import android.Manifest;
 import android.content.Intent;
+import android.os.Build;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.design.widget.TabLayout;
 import android.support.v4.content.ContextCompat;
@@ -19,9 +22,16 @@ import android.widget.CheckBox;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
+import com.google.android.gms.maps.CameraUpdateFactory;
+import com.google.android.gms.maps.GoogleMap;
+import com.google.android.gms.maps.MapFragment;
+import com.google.android.gms.maps.OnMapReadyCallback;
+import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.MarkerOptions;
 import com.gordonwong.materialsheetfab.MaterialSheetFab;
 import com.moon.meojium.R;
 import com.moon.meojium.base.BaseRetrofitService;
+import com.moon.meojium.base.util.PermissionChecker;
 import com.moon.meojium.base.util.SharedPreferencesService;
 import com.moon.meojium.database.dao.FavoriteDao;
 import com.moon.meojium.database.dao.MuseumDao;
@@ -35,11 +45,6 @@ import com.moon.meojium.model.story.Story;
 import com.moon.meojium.ui.reviews.ReviewActivity;
 import com.moon.meojium.ui.reviews.ReviewRecyclerViewAdapter;
 import com.moon.meojium.ui.story.StoryPicker;
-import com.nhn.android.maps.NMapContext;
-import com.nhn.android.maps.NMapView;
-import com.nhn.android.maps.overlay.NMapPOIdata;
-import com.nhn.android.mapviewer.overlay.NMapOverlayManager;
-import com.nhn.android.mapviewer.overlay.NMapPOIdataOverlay;
 
 import org.parceler.Parcels;
 
@@ -59,7 +64,8 @@ import retrofit2.Response;
  * Created by moon on 2017. 8. 7..
  */
 
-public class DetailActivity extends AppCompatActivity {
+public class DetailActivity extends AppCompatActivity
+        implements OnMapReadyCallback {
     public static final int REQUEST_REVIEW_WRITE = 1;
 
     @BindView(R.id.include_detail_toolbar)
@@ -90,8 +96,6 @@ public class DetailActivity extends AppCompatActivity {
     TextView nothingReviewTextView;
     @BindView(R.id.textview_detail_review_all)
     TextView reviewAllTextView;
-    @BindView(R.id.mapview_detail)
-    NMapView mapView;
     @BindView(R.id.fab)
     Fab fab;
     @BindView(R.id.fab_sheet)
@@ -107,7 +111,7 @@ public class DetailActivity extends AppCompatActivity {
     @BindView(R.id.tablayout_detail_thumb)
     TabLayout thumbTabLayout;
 
-    @OnTouch(R.id.mapview_detail)
+    @OnTouch(R.id.view_detail_transparent)
     public boolean onTouch(View view, MotionEvent motionEvent) {
         switch (motionEvent.getAction()) {
             case MotionEvent.ACTION_DOWN:
@@ -225,7 +229,6 @@ public class DetailActivity extends AppCompatActivity {
     }
 
     private Museum museum;
-    private NMapContext mapContext;
     private MaterialSheetFab materialSheetFab;
     private MuseumDao museumDao;
     private StoryDao storyDao;
@@ -235,6 +238,8 @@ public class DetailActivity extends AppCompatActivity {
     private List<String> imageUrlList;
     private List<Story> storyList;
     private List<Review> reviewList;
+    private GoogleMap map;
+    private MapFragment mapFragment;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -273,7 +278,7 @@ public class DetailActivity extends AppCompatActivity {
         requestThumbImage();
 
         initToolbar();
-        initMapView();
+        initGoogleMap();
 
         updateMuseumView();
     }
@@ -472,36 +477,60 @@ public class DetailActivity extends AppCompatActivity {
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
     }
 
-    private void initMapView() {
-        mapContext = new NMapContext(this);
-        mapContext.onCreate();
+    private void initGoogleMap() {
+        mapFragment = new MapFragment();
+        mapFragment.getMapAsync(this);
 
-        mapView.setClientId(getResources().getString(R.string.naver_client_id));
-        mapView.setClickable(true);
-        mapView.setEnabled(true);
-        mapView.setFocusable(true);
-        mapView.setFocusableInTouchMode(true);
-
-        mapContext.setupMapView(mapView);
-
-        mapView.getMapController().setZoomLevel(13);
-
-        addMarker();
+        getFragmentManager()
+                .beginTransaction()
+                .replace(R.id.framelayout_detail_map_container, mapFragment)
+                .commit();
     }
 
-    private void addMarker() {
-        NMapViewerResourceProvider provider = new NMapViewerResourceProvider(this);
+    @Override
+    public void onMapReady(final GoogleMap map) {
+        if (Build.VERSION.SDK_INT >= 23) {
+            if (!(PermissionChecker.checkPermission(this, Manifest.permission.ACCESS_FINE_LOCATION)
+                    && PermissionChecker.checkPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION))) {
 
-        NMapPOIdata poIdata = new NMapPOIdata(1, provider, true);
+                requestPermissions(new String[]{Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.ACCESS_COARSE_LOCATION},
+                        PermissionChecker.REQUEST_LOCATION_INFO);
 
-        poIdata.beginPOIdata(1);
-        poIdata.addPOIitem(museum.getLongitude(), museum.getLatitude(), museum.getName(), NMapPOIflagType.PIN, null);
-        poIdata.endPOIdata();
+                return;
+            }
+        }
 
-        NMapOverlayManager manager = new NMapOverlayManager(this, mapView, provider);
+        this.map = map;
 
-        NMapPOIdataOverlay poIdataOverlay = manager.createPOIdataOverlay(poIdata, null);
-        poIdataOverlay.selectPOIitem(0, true);
+        initMuseumLocation();
+    }
+
+    private void initMuseumLocation() {
+        LatLng museumLocation = new LatLng(museum.getLatitude(), museum.getLongitude());
+
+        MarkerOptions markerOptions = new MarkerOptions();
+        markerOptions.position(museumLocation);
+        markerOptions.title("서울");
+        map.addMarker(markerOptions);
+
+        map.moveCamera(CameraUpdateFactory.newLatLng(museumLocation));
+        map.animateCamera(CameraUpdateFactory.zoomTo(15));
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        if (requestCode == PermissionChecker.REQUEST_LOCATION_INFO) {
+            if (PermissionChecker.verifyPermission(grantResults)) {
+                Log.d("Meojium/Nearby", "Grant Permission");
+                initGoogleMap();
+            } else {
+                Log.d("Meojium/Nearby", "Deny Permission");
+                Toasty.info(this, "위치 정보를 얻을 수 없어 지도를 이용할 수 없습니다.").show();
+                onBackPressed();
+            }
+        } else {
+            super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+        }
     }
 
     private void updateMuseumView() {
@@ -524,36 +553,6 @@ public class DetailActivity extends AppCompatActivity {
                 break;
         }
         return super.onOptionsItemSelected(item);
-    }
-
-    @Override
-    protected void onStart() {
-        super.onStart();
-        mapContext.onStart();
-    }
-
-    @Override
-    protected void onResume() {
-        super.onResume();
-        mapContext.onResume();
-    }
-
-    @Override
-    protected void onPause() {
-        super.onPause();
-        mapContext.onPause();
-    }
-
-    @Override
-    protected void onStop() {
-        super.onStop();
-        mapContext.onStop();
-    }
-
-    @Override
-    protected void onDestroy() {
-        super.onDestroy();
-        mapContext.onDestroy();
     }
 
     @Override
