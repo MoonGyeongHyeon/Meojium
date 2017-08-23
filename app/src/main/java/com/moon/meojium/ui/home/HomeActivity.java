@@ -7,7 +7,6 @@ import android.os.Handler;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.design.widget.NavigationView;
-import android.support.v4.content.ContextCompat;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.view.ViewPager;
 import android.support.v4.widget.DrawerLayout;
@@ -21,6 +20,7 @@ import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.MotionEvent;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.ImageView;
@@ -62,7 +62,7 @@ import retrofit2.Response;
 
 public class HomeActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener,
-        SwipeRefreshLayout.OnRefreshListener {
+        SwipeRefreshLayout.OnRefreshListener, View.OnTouchListener {
     private static final int TASTING_COUNT = 4;
     @BindView(R.id.toolbar)
     Toolbar toolbar;
@@ -119,7 +119,6 @@ public class HomeActivity extends AppCompatActivity
         requestHistoryMuseumData();
         requestTastingMuseumData();
 
-        initToastyConfig();
         initSharedPreferences();
         initToolbar();
         initDrawerLayout();
@@ -151,6 +150,7 @@ public class HomeActivity extends AppCompatActivity
         MuseumViewPagerAdapter adapter = new MuseumViewPagerAdapter(getSupportFragmentManager(), popularMuseumList);
         popularMuseumViewPager.setAdapter(adapter);
         popularMuseumViewPager.setPageMargin(32);
+        popularMuseumViewPager.setOnTouchListener(this);
     }
 
     private void requestHistoryMuseumData() {
@@ -177,6 +177,18 @@ public class HomeActivity extends AppCompatActivity
         MuseumViewPagerAdapter adapter = new MuseumViewPagerAdapter(getSupportFragmentManager(), historyMuseumList);
         historyMuseumViewPager.setAdapter(adapter);
         historyMuseumViewPager.setPageMargin(32);
+        historyMuseumViewPager.setOnTouchListener(this);
+    }
+
+    @Override
+    public boolean onTouch(View view, MotionEvent motionEvent) {
+        swipeRefreshLayout.setEnabled(false);
+        switch (motionEvent.getAction()) {
+            case MotionEvent.ACTION_UP:
+                swipeRefreshLayout.setEnabled(true);
+                break;
+        }
+        return false;
     }
 
     private void requestTastingMuseumData() {
@@ -227,11 +239,6 @@ public class HomeActivity extends AppCompatActivity
         tastingRecyclerView.setLayoutManager(manager);
 
         tastingRecyclerView.setNestedScrollingEnabled(false);
-    }
-
-    private void initToastyConfig() {
-        Toasty.Config config = Toasty.Config.getInstance();
-        config.setInfoColor(ContextCompat.getColor(this, R.color.colorPrimary)).apply();
     }
 
     private void initSharedPreferences() {
@@ -325,6 +332,14 @@ public class HomeActivity extends AppCompatActivity
 
     @Override
     public void onRefresh() {
+        historyMuseumList.clear();
+        popularMuseumList.clear();
+        tastingMuseumList.clear();
+
+        requestHistoryMuseumData();
+        requestPopularMuseumData();
+        requestTastingMuseumData();
+
         swipeRefreshLayout.setRefreshing(false);
     }
 

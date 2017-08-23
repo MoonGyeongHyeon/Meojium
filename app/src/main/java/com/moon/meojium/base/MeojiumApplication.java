@@ -2,6 +2,7 @@ package com.moon.meojium.base;
 
 import android.app.Application;
 import android.content.Context;
+import android.support.v4.content.ContextCompat;
 
 import com.facebook.drawee.backends.pipeline.Fresco;
 import com.facebook.imagepipeline.core.ImagePipelineConfig;
@@ -12,7 +13,10 @@ import com.kakao.auth.IApplicationConfig;
 import com.kakao.auth.ISessionConfig;
 import com.kakao.auth.KakaoAdapter;
 import com.kakao.auth.KakaoSDK;
+import com.moon.meojium.R;
 import com.moon.meojium.base.util.SharedPreferencesService;
+
+import es.dmoral.toasty.Toasty;
 
 /**
  * Created by moon on 2017. 8. 12..
@@ -66,6 +70,7 @@ public class MeojiumApplication extends Application {
             };
         }
     }
+
     @Override
     public void onCreate() {
         super.onCreate();
@@ -80,5 +85,7 @@ public class MeojiumApplication extends Application {
         Fresco.initialize(this, config);
         SharedPreferencesService.getInstance().init(this);
         KakaoSDK.init(new KakaoSDKAdapter());
+        Toasty.Config toastyConfig = Toasty.Config.getInstance();
+        toastyConfig.setInfoColor(ContextCompat.getColor(this, R.color.colorPrimary)).apply();
     }
 }
