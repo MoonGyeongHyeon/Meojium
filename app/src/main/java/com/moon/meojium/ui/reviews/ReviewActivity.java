@@ -88,14 +88,14 @@ public class ReviewActivity extends AppCompatActivity {
                         initResultIntent();
                     } else {
                         Log.d("Meojium/Review", "Fail Adding Review");
-                        Toasty.info(ReviewActivity.this, "서버 연결에 실패했습니다").show();
+                        Toasty.info(ReviewActivity.this, getResources().getString(R.string.fail_connection)).show();
                         submitTextView.setClickable(true);
                     }
                 }
 
                 @Override
                 public void onFailure(Call<UpdateResult> call, Throwable t) {
-                    Toasty.info(ReviewActivity.this, "서버 연결에 실패했습니다").show();
+                    Toasty.info(ReviewActivity.this, getResources().getString(R.string.fail_connection)).show();
                 }
             });
         }
@@ -149,7 +149,7 @@ public class ReviewActivity extends AppCompatActivity {
 
             @Override
             public void onFailure(Call<List<Review>> call, Throwable t) {
-                Toasty.info(ReviewActivity.this, "서버 연결에 실패했습니다").show();
+                Toasty.info(ReviewActivity.this, getResources().getString(R.string.fail_connection)).show();
             }
         });
     }

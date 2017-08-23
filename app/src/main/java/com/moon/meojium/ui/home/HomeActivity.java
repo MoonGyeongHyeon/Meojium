@@ -11,6 +11,7 @@ import android.support.v4.content.ContextCompat;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.view.ViewPager;
 import android.support.v4.widget.DrawerLayout;
+import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
@@ -60,7 +61,8 @@ import retrofit2.Response;
  */
 
 public class HomeActivity extends AppCompatActivity
-        implements NavigationView.OnNavigationItemSelectedListener {
+        implements NavigationView.OnNavigationItemSelectedListener,
+        SwipeRefreshLayout.OnRefreshListener {
     private static final int TASTING_COUNT = 4;
     @BindView(R.id.toolbar)
     Toolbar toolbar;
@@ -76,6 +78,14 @@ public class HomeActivity extends AppCompatActivity
     RecyclerView tastingRecyclerView;
     @BindView(R.id.imageview_home_nearby)
     ImageView nearbyImageView;
+    @BindView(R.id.swipe_refresh_home)
+    SwipeRefreshLayout swipeRefreshLayout;
+    @BindView(R.id.textview_home_popular_fail_connection)
+    TextView popularFailConnectionTextView;
+    @BindView(R.id.textview_home_tasting_fail_connection)
+    TextView tastingFailConnectionTextView;
+    @BindView(R.id.textview_home_history_fail_connection)
+    TextView historyFailConnectionTextView;
 
     @OnClick(R.id.imageview_home_nearby)
     public void onClick(View view) {
@@ -114,6 +124,7 @@ public class HomeActivity extends AppCompatActivity
         initToolbar();
         initDrawerLayout();
         initNearbyImageView();
+        initSwipeRefreshLayout();
     }
 
     private void requestPopularMuseumData() {
@@ -124,13 +135,14 @@ public class HomeActivity extends AppCompatActivity
                 Log.d("Meojium/Home", "Success Getting Popular Museum List");
                 popularMuseumList = response.body();
 
+                popularFailConnectionTextView.setVisibility(View.GONE);
                 initPopularMuseumViewPager();
             }
 
             @Override
             public void onFailure(Call<List<Museum>> call, Throwable t) {
-                t.printStackTrace();
-                Toasty.info(HomeActivity.this, "서버 연결에 실패했습니다").show();
+                Toasty.info(HomeActivity.this, getResources().getString(R.string.fail_connection)).show();
+                popularFailConnectionTextView.setVisibility(View.VISIBLE);
             }
         });
     }
@@ -149,13 +161,14 @@ public class HomeActivity extends AppCompatActivity
                 Log.d("Meojium/Home", "Success Getting History Museum List");
                 historyMuseumList = response.body();
 
+                historyFailConnectionTextView.setVisibility(View.GONE);
                 initHistoryMuseumViewPager();
             }
 
             @Override
             public void onFailure(Call<List<Museum>> call, Throwable t) {
-                t.printStackTrace();
-                Toasty.info(HomeActivity.this, "서버 연결에 실패했습니다").show();
+                Toasty.info(HomeActivity.this, getResources().getString(R.string.fail_connection)).show();
+                historyFailConnectionTextView.setVisibility(View.VISIBLE);
             }
         });
     }
@@ -194,12 +207,14 @@ public class HomeActivity extends AppCompatActivity
                     }
                 }
 
+                tastingFailConnectionTextView.setVisibility(View.GONE);
                 initTastingMuseumRecyclerView();
             }
 
             @Override
             public void onFailure(Call<List<Tasting>> call, Throwable t) {
-                Toasty.info(HomeActivity.this, "서버 연결에 실패했습니다").show();
+                Toasty.info(HomeActivity.this, getResources().getString(R.string.fail_connection)).show();
+                tastingFailConnectionTextView.setVisibility(View.VISIBLE);
             }
         });
     }
@@ -274,13 +289,13 @@ public class HomeActivity extends AppCompatActivity
                                                         nickname));
                                             } else {
                                                 Log.d("Meojium/Home", "Fail Updating Nickname");
-                                                Toasty.info(HomeActivity.this, "서버 연결에 실패했습니다").show();
+                                                Toasty.info(HomeActivity.this, getResources().getString(R.string.fail_connection)).show();
                                             }
                                         }
 
                                         @Override
                                         public void onFailure(Call<UpdateResult> call, Throwable t) {
-                                            Toasty.info(HomeActivity.this, "서버 연결에 실패했습니다").show();
+                                            Toasty.info(HomeActivity.this, getResources().getString(R.string.fail_connection)).show();
                                         }
                                     });
                                 }
@@ -302,6 +317,15 @@ public class HomeActivity extends AppCompatActivity
         Glide.with(this)
                 .load(R.drawable.img_nearby_museum)
                 .into(nearbyImageView);
+    }
+
+    private void initSwipeRefreshLayout() {
+        swipeRefreshLayout.setOnRefreshListener(this);
+    }
+
+    @Override
+    public void onRefresh() {
+        swipeRefreshLayout.setRefreshing(false);
     }
 
     @Override

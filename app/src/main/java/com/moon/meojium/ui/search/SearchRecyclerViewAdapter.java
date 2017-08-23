@@ -87,13 +87,13 @@ public class SearchRecyclerViewAdapter extends RecyclerView.Adapter<SearchRecycl
                                 Log.d("Meojium/Search", "Success Updating SearchLog");
                             } else {
                                 Log.d("Meojium/Search", "Fail Updating SearchLog");
-                                Toasty.info(context, "서버 연결에 실패했습니다").show();
+                                Toasty.info(context, context.getResources().getString(R.string.fail_connection)).show();
                             }
                         }
 
                         @Override
                         public void onFailure(Call<UpdateResult> call, Throwable t) {
-                            Toasty.info(context, "서버 연결에 실패했습니다").show();
+                            Toasty.info(context, context.getResources().getString(R.string.fail_connection)).show();
                         }
                     });
 

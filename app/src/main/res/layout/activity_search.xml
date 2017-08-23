@@ -25,6 +25,16 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
+        <TextView
+            android:id="@+id/textview_search_fail_connection"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="32dp"
+            android:gravity="center"
+            android:text="@string/fail_connection"
+            android:textSize="@dimen/large_text_size"
+            android:visibility="gone" />
+
         <android.support.v7.widget.RecyclerView
             android:id="@+id/recyclerview_search_log"
             android:layout_width="match_parent"
@@ -49,8 +59,8 @@
             android:layout_gravity="end|bottom"
             android:layout_margin="24dp"
             android:clickable="true"
-            app:fabSize="normal"
-            android:src="@drawable/ic_delete_search_log" />
+            android:src="@drawable/ic_delete_search_log"
+            app:fabSize="normal" />
 
     </FrameLayout>
 

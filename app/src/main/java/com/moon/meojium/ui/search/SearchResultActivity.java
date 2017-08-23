@@ -9,7 +9,6 @@ import android.util.Log;
 import android.view.MenuItem;
 
 import com.moon.meojium.R;
-import com.moon.meojium.database.dao.SearchDao;
 import com.moon.meojium.ui.museum.MuseumFragment;
 
 import butterknife.BindView;
@@ -25,7 +24,6 @@ public class SearchResultActivity extends AppCompatActivity {
     Toolbar toolbar;
 
     private String keyword;
-    private SearchDao searchDao;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -43,8 +41,6 @@ public class SearchResultActivity extends AppCompatActivity {
             Toasty.info(this, "일시적인 오류가 발생했습니다.").show();
             onBackPressed();
         }
-
-        searchDao = SearchDao.getInstance();
 
         initToolbar();
         initMuseumFragment();

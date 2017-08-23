@@ -42,6 +42,8 @@ public class MuseumFragment extends Fragment {
     RecyclerView recyclerView;
     @BindView(R.id.textview_nothing_data)
     TextView nothingDataTextView;
+    @BindView(R.id.textview_fail_connection)
+    TextView failConnectionTextView;
 
     private List<Museum> museumList;
     private BaseRetrofitService dao;
@@ -120,12 +122,14 @@ public class MuseumFragment extends Fragment {
             public void onResponse(Call<List<Museum>> call, Response<List<Museum>> response) {
                 museumList = response.body();
 
+                failConnectionTextView.setVisibility(View.GONE);
                 checkDataExisted();
             }
 
             @Override
             public void onFailure(Call<List<Museum>> call, Throwable t) {
-                Toasty.info(getContext(), "서버 연결에 실패했습니다").show();
+                Toasty.info(getContext(), getResources().getString(R.string.fail_connection)).show();
+                failConnectionTextView.setVisibility(View.VISIBLE);
             }
         });
     }
@@ -138,12 +142,14 @@ public class MuseumFragment extends Fragment {
             public void onResponse(Call<List<Museum>> call, Response<List<Museum>> response) {
                 museumList = response.body();
 
+                failConnectionTextView.setVisibility(View.GONE);
                 checkDataExisted();
             }
 
             @Override
             public void onFailure(Call<List<Museum>> call, Throwable t) {
-                Toasty.info(getContext(), "서버 연결에 실패했습니다").show();
+                Toasty.info(getContext(), getResources().getString(R.string.fail_connection)).show();
+                failConnectionTextView.setVisibility(View.VISIBLE);
             }
         });
     }
@@ -155,12 +161,14 @@ public class MuseumFragment extends Fragment {
             public void onResponse(Call<List<Museum>> call, Response<List<Museum>> response) {
                 museumList = response.body();
 
+                failConnectionTextView.setVisibility(View.GONE);
                 checkDataExisted();
             }
 
             @Override
             public void onFailure(Call<List<Museum>> call, Throwable t) {
-                Toasty.info(getContext(), "서버 연결에 실패했습니다").show();
+                Toasty.info(getContext(), getResources().getString(R.string.fail_connection)).show();
+                failConnectionTextView.setVisibility(View.VISIBLE);
             }
         });
     }
@@ -172,6 +180,7 @@ public class MuseumFragment extends Fragment {
             public void onResponse(Call<List<Museum>> call, Response<List<Museum>> response) {
                 museumList.addAll(response.body());
 
+                failConnectionTextView.setVisibility(View.GONE);
                 if (!isInitialized) {
                     isInitialized = true;
                     initRecyclerView();
@@ -182,7 +191,8 @@ public class MuseumFragment extends Fragment {
 
             @Override
             public void onFailure(Call<List<Museum>> call, Throwable t) {
-                Toasty.info(getContext(), "서버 연결에 실패했습니다").show();
+                Toasty.info(getContext(), getResources().getString(R.string.fail_connection)).show();
+                failConnectionTextView.setVisibility(View.VISIBLE);
             }
         });
     }

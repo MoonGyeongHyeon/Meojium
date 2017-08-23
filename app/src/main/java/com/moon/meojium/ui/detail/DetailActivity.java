@@ -139,13 +139,13 @@ public class DetailActivity extends AppCompatActivity
                         favoriteCheckBox.setChecked(false);
                     } else {
                         Log.d("Meojium/Detail", "Fail Deleting Favorite Museum");
-                        Toasty.info(DetailActivity.this, "서버 연결에 실패했습니다").show();
+                        Toasty.info(DetailActivity.this, getResources().getString(R.string.fail_connection)).show();
                     }
                 }
 
                 @Override
                 public void onFailure(Call<UpdateResult> call, Throwable t) {
-                    Toasty.info(DetailActivity.this, "서버 연결에 실패했습니다").show();
+                    Toasty.info(DetailActivity.this, getResources().getString(R.string.fail_connection)).show();
                 }
             });
         } else {
@@ -161,13 +161,13 @@ public class DetailActivity extends AppCompatActivity
                         favoriteCheckBox.setChecked(true);
                     } else {
                         Log.d("Meojium/Detail", "Fail Adding Favorite Museum");
-                        Toasty.info(DetailActivity.this, "서버 연결에 실패했습니다").show();
+                        Toasty.info(DetailActivity.this, getResources().getString(R.string.fail_connection)).show();
                     }
                 }
 
                 @Override
                 public void onFailure(Call<UpdateResult> call, Throwable t) {
-                    Toasty.info(DetailActivity.this, "서버 연결에 실패했습니다").show();
+                    Toasty.info(DetailActivity.this, getResources().getString(R.string.fail_connection)).show();
                 }
             });
         }
@@ -187,13 +187,13 @@ public class DetailActivity extends AppCompatActivity
                         stampCheckBox.setChecked(false);
                     } else {
                         Log.d("Meojium/Detail", "Fail Deleting Stamp Museum");
-                        Toasty.info(DetailActivity.this, "서버 연결에 실패했습니다").show();
+                        Toasty.info(DetailActivity.this, getResources().getString(R.string.fail_connection)).show();
                     }
                 }
 
                 @Override
                 public void onFailure(Call<UpdateResult> call, Throwable t) {
-                    Toasty.info(DetailActivity.this, "서버 연결에 실패했습니다").show();
+                    Toasty.info(DetailActivity.this, getResources().getString(R.string.fail_connection)).show();
                 }
             });
         } else {
@@ -209,13 +209,13 @@ public class DetailActivity extends AppCompatActivity
                         stampCheckBox.setChecked(true);
                     } else {
                         Log.d("Meojium/Detail", "Fail Adding Stamp Museum");
-                        Toasty.info(DetailActivity.this, "서버 연결에 실패했습니다").show();
+                        Toasty.info(DetailActivity.this, getResources().getString(R.string.fail_connection)).show();
                     }
                 }
 
                 @Override
                 public void onFailure(Call<UpdateResult> call, Throwable t) {
-                    Toasty.info(DetailActivity.this, "서버 연결에 실패했습니다").show();
+                    Toasty.info(DetailActivity.this, getResources().getString(R.string.fail_connection)).show();
                 }
             });
         }
@@ -304,7 +304,7 @@ public class DetailActivity extends AppCompatActivity
 
             @Override
             public void onFailure(Call<List<Review>> call, Throwable t) {
-                Toasty.info(DetailActivity.this, "서버 연결에 실패했습니다").show();
+                Toasty.info(DetailActivity.this, getResources().getString(R.string.fail_connection)).show();
             }
         });
     }
@@ -332,7 +332,7 @@ public class DetailActivity extends AppCompatActivity
 
             @Override
             public void onFailure(Call<List<Story>> call, Throwable t) {
-                Toasty.info(DetailActivity.this, "서버 연결에 실패했습니다").show();
+                Toasty.info(DetailActivity.this, getResources().getString(R.string.fail_connection)).show();
             }
         });
     }
@@ -387,13 +387,13 @@ public class DetailActivity extends AppCompatActivity
                     }
                 } else {
                     Log.d("Meojium/Detail", "Fail Checking Favorite Value");
-                    Toasty.info(DetailActivity.this, "서버 연결에 실패했습니다").show();
+                    Toasty.info(DetailActivity.this, getResources().getString(R.string.fail_connection)).show();
                 }
             }
 
             @Override
             public void onFailure(Call<UpdateResult> call, Throwable t) {
-                Toasty.info(DetailActivity.this, "서버 연결에 실패했습니다").show();
+                Toasty.info(DetailActivity.this, getResources().getString(R.string.fail_connection)).show();
             }
         });
     }
@@ -416,13 +416,13 @@ public class DetailActivity extends AppCompatActivity
                     }
                 } else {
                     Log.d("Meojium/Detail", "Fail Checking Stamp Value");
-                    Toasty.info(DetailActivity.this, "서버 연결에 실패했습니다").show();
+                    Toasty.info(DetailActivity.this, getResources().getString(R.string.fail_connection)).show();
                 }
             }
 
             @Override
             public void onFailure(Call<UpdateResult> call, Throwable t) {
-                Toasty.info(DetailActivity.this, "서버 연결에 실패했습니다").show();
+                Toasty.info(DetailActivity.this, getResources().getString(R.string.fail_connection)).show();
             }
         });
     }
@@ -443,7 +443,7 @@ public class DetailActivity extends AppCompatActivity
 
             @Override
             public void onFailure(Call<List<String>> call, Throwable t) {
-                Toasty.info(DetailActivity.this, "서버 연결에 실패했습니다").show();
+                Toasty.info(DetailActivity.this, getResources().getString(R.string.fail_connection)).show();
             }
         });
     }

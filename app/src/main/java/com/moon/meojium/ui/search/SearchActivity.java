@@ -49,6 +49,8 @@ public class SearchActivity extends AppCompatActivity
     TextView nothingDataTextView;
     @BindView(R.id.fab_search_log_delete)
     FloatingActionButton fab;
+    @BindView(R.id.textview_search_fail_connection)
+    TextView failConnectionTextView;
 
     private List<SearchLog> searchLogList;
     private SearchRecyclerViewAdapter adapter;
@@ -76,6 +78,8 @@ public class SearchActivity extends AppCompatActivity
             public void onResponse(Call<List<SearchLog>> call, Response<List<SearchLog>> response) {
                 searchLogList = response.body();
 
+                failConnectionTextView.setVisibility(View.GONE);
+
                 initRecyclerView();
                 initNothingDataTextView();
             }
@@ -83,6 +87,7 @@ public class SearchActivity extends AppCompatActivity
             @Override
             public void onFailure(Call<List<SearchLog>> call, Throwable t) {
                 Toasty.info(SearchActivity.this, "서버 연결에 실패했습니다").show();
+                failConnectionTextView.setVisibility(View.VISIBLE);
             }
         });
     }
@@ -140,13 +145,13 @@ public class SearchActivity extends AppCompatActivity
                                             initNothingDataTextView();
                                         } else {
                                             Log.d("Meojium/Search", "Fail Deleting SearchLog");
-                                            Toasty.info(SearchActivity.this, "서버 연결에 실패했습니다").show();
+                                            Toasty.info(SearchActivity.this, getResources().getString(R.string.fail_connection)).show();
                                         }
                                     }
 
                                     @Override
                                     public void onFailure(Call<UpdateResult> call, Throwable t) {
-                                        Toasty.info(SearchActivity.this, "서버 연결에 실패했습니다").show();
+                                        Toasty.info(SearchActivity.this, getResources().getString(R.string.fail_connection)).show();
                                     }
                                 });
                             }
@@ -186,13 +191,13 @@ public class SearchActivity extends AppCompatActivity
                     Log.d("Meojium/Search", "Success Adding SearchLog");
                 } else {
                     Log.d("Meojium/Search", "Fail Adding SearchLog");
-                    Toasty.info(SearchActivity.this, "서버 연결에 실패했습니다").show();
+                    Toasty.info(SearchActivity.this, getResources().getString(R.string.fail_connection)).show();
                 }
             }
 
             @Override
             public void onFailure(Call<UpdateResult> call, Throwable t) {
-                Toasty.info(SearchActivity.this, "서버 연결에 실패했습니다").show();
+                Toasty.info(SearchActivity.this, getResources().getString(R.string.fail_connection)).show();
             }
         });
         Intent intent = new Intent(this, SearchResultActivity.class);

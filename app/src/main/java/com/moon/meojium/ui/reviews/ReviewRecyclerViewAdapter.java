@@ -116,13 +116,13 @@ public class ReviewRecyclerViewAdapter extends RecyclerView.Adapter<ReviewRecycl
                                             setUpdated(true);
                                         } else {
                                             Log.d("Meojium/Review", "Fail Deleting Review");
-                                            Toasty.info(context, "서버 연결에 실패했습니다").show();
+                                            Toasty.info(context, context.getResources().getString(R.string.fail_connection)).show();
                                         }
                                     }
 
                                     @Override
                                     public void onFailure(Call<UpdateResult> call, Throwable t) {
-                                        Toasty.info(context, "서버 연결에 실패했습니다").show();
+                                        Toasty.info(context, context.getResources().getString(R.string.fail_connection)).show();
                                     }
                                 });
                             }

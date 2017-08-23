@@ -1,125 +1,167 @@
 <?xml version="1.0" encoding="utf-8"?>
-<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    android:orientation="vertical">
 
-    <LinearLayout
+    <include layout="@layout/toolbar" />
+
+    <android.support.v4.widget.SwipeRefreshLayout
+        android:id="@+id/swipe_refresh_home"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="vertical">
+        android:layout_height="wrap_content">
 
-        <include layout="@layout/toolbar" />
-
-        <TextView
+        <ScrollView
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_margin="16dp"
-            android:text="@string/home_popular"
-            android:textSize="@dimen/large_text_size" />
+            android:layout_height="wrap_content">
 
-        <android.support.design.widget.CoordinatorLayout
-            android:layout_width="match_parent"
-            android:layout_height="match_parent">
-
-            <android.support.v4.view.ViewPager
-                android:id="@+id/viewpager_home_popular_museum"
+            <LinearLayout
                 android:layout_width="match_parent"
-                android:layout_height="280dp"
-                android:clipToPadding="false"
-                android:overScrollMode="never"
-                android:paddingBottom="16dp"
-                android:paddingEnd="16dp"
-                android:paddingLeft="16dp"
-                android:paddingRight="16dp"
-                android:paddingStart="16dp" />
+                android:layout_height="wrap_content"
+                android:orientation="vertical">
 
-        </android.support.design.widget.CoordinatorLayout>
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_margin="16dp"
+                    android:text="@string/home_popular"
+                    android:textSize="@dimen/large_text_size" />
 
-        <View
-            android:layout_width="match_parent"
-            android:layout_height="@dimen/line_height"
-            android:layout_marginBottom="16dp"
-            android:background="@color/lineColor" />
+                <android.support.design.widget.CoordinatorLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent">
 
-        <FrameLayout
-            android:layout_width="match_parent"
-            android:layout_height="160dp">
+                    <android.support.v4.view.ViewPager
+                        android:id="@+id/viewpager_home_popular_museum"
+                        android:layout_width="match_parent"
+                        android:layout_height="280dp"
+                        android:clipToPadding="false"
+                        android:overScrollMode="never"
+                        android:paddingBottom="16dp"
+                        android:paddingEnd="16dp"
+                        android:paddingLeft="16dp"
+                        android:paddingRight="16dp"
+                        android:paddingStart="16dp" />
 
-            <ImageView
-                android:id="@+id/imageview_home_nearby"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:scaleType="fitXY" />
+                    <TextView
+                        android:id="@+id/textview_home_popular_fail_connection"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center"
+                        android:gravity="center"
+                        android:text="@string/fail_connection"
+                        android:textSize="@dimen/large_text_size"
+                        android:visibility="gone" />
 
-            <TextView
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:gravity="center"
-                android:text="@string/home_nearby"
-                android:textColor="@android:color/white"
-                android:textSize="@dimen/big_text_size" />
+                </android.support.design.widget.CoordinatorLayout>
 
-        </FrameLayout>
+                <View
+                    android:layout_width="match_parent"
+                    android:layout_height="@dimen/line_height"
+                    android:layout_marginBottom="16dp"
+                    android:background="@color/lineColor" />
 
-        <View
-            android:layout_width="match_parent"
-            android:layout_height="@dimen/line_height"
-            android:layout_marginTop="16dp"
-            android:background="@color/lineColor" />
+                <FrameLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="160dp">
 
-        <TextView
-            android:id="@+id/textview_home_history_label"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_margin="16dp"
-            android:text="@string/home_tasting"
-            android:textSize="@dimen/large_text_size" />
+                    <ImageView
+                        android:id="@+id/imageview_home_nearby"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:scaleType="fitXY" />
 
-        <android.support.v7.widget.RecyclerView
-            android:id="@+id/recyclerview_home_tasting"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginBottom="16dp"
-            app:layoutManager="LinearLayoutManager" />
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:gravity="center"
+                        android:text="@string/home_nearby"
+                        android:textColor="@android:color/white"
+                        android:textSize="@dimen/big_text_size" />
 
-        <View
-            android:layout_width="match_parent"
-            android:layout_height="@dimen/line_height"
-            android:layout_marginBottom="16dp"
-            android:background="@color/lineColor" />
+                </FrameLayout>
 
-        <TextView
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_margin="16dp"
-            android:text="@string/home_history"
-            android:textSize="@dimen/large_text_size" />
+                <View
+                    android:layout_width="match_parent"
+                    android:layout_height="@dimen/line_height"
+                    android:layout_marginTop="16dp"
+                    android:background="@color/lineColor" />
 
-        <android.support.design.widget.CoordinatorLayout
-            android:layout_width="match_parent"
-            android:layout_height="match_parent">
+                <TextView
+                    android:id="@+id/textview_home_history_label"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_margin="16dp"
+                    android:text="@string/home_tasting"
+                    android:textSize="@dimen/large_text_size" />
 
-            <android.support.v4.view.ViewPager
-                android:id="@+id/viewpager_home_history_museum"
-                android:layout_width="match_parent"
-                android:layout_height="280dp"
-                android:clipToPadding="false"
-                android:overScrollMode="never"
-                android:paddingBottom="16dp"
-                android:paddingEnd="16dp"
-                android:paddingLeft="16dp"
-                android:paddingRight="16dp"
-                android:paddingStart="16dp" />
+                <android.support.v7.widget.RecyclerView
+                    android:id="@+id/recyclerview_home_tasting"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="16dp"
+                    app:layoutManager="LinearLayoutManager" />
 
-        </android.support.design.widget.CoordinatorLayout>
+                <TextView
+                    android:id="@+id/textview_home_tasting_fail_connection"
+                    android:layout_width="match_parent"
+                    android:layout_height="200dp"
+                    android:layout_gravity="center"
+                    android:gravity="center"
+                    android:text="@string/fail_connection"
+                    android:textSize="@dimen/large_text_size"
+                    android:visibility="gone" />
 
-        <View
-            android:layout_width="match_parent"
-            android:layout_height="@dimen/line_height"
-            android:background="@color/lineColor" />
+                <View
+                    android:layout_width="match_parent"
+                    android:layout_height="@dimen/line_height"
+                    android:layout_marginBottom="16dp"
+                    android:background="@color/lineColor" />
 
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_margin="16dp"
+                    android:text="@string/home_history"
+                    android:textSize="@dimen/large_text_size" />
 
-    </LinearLayout>
+                <android.support.design.widget.CoordinatorLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent">
 
-</ScrollView>
+                    <android.support.v4.view.ViewPager
+                        android:id="@+id/viewpager_home_history_museum"
+                        android:layout_width="match_parent"
+                        android:layout_height="280dp"
+                        android:clipToPadding="false"
+                        android:overScrollMode="never"
+                        android:paddingBottom="16dp"
+                        android:paddingEnd="16dp"
+                        android:paddingLeft="16dp"
+                        android:paddingRight="16dp"
+                        android:paddingStart="16dp" />
+
+                    <TextView
+                        android:id="@+id/textview_home_history_fail_connection"
+                        android:layout_width="match_parent"
+                        android:layout_height="200dp"
+                        android:layout_gravity="center"
+                        android:gravity="center"
+                        android:text="@string/fail_connection"
+                        android:textSize="@dimen/large_text_size"
+                        android:visibility="gone" />
+
+                </android.support.design.widget.CoordinatorLayout>
+
+                <View
+                    android:layout_width="match_parent"
+                    android:layout_height="@dimen/line_height"
+                    android:background="@color/lineColor" />
+
+            </LinearLayout>
+
+        </ScrollView>
+    </android.support.v4.widget.SwipeRefreshLayout>
+
+</LinearLayout>

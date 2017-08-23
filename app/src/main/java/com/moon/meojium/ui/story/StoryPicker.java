@@ -3,6 +3,7 @@ package com.moon.meojium.ui.story;
 import android.content.Context;
 import android.util.Log;
 
+import com.moon.meojium.R;
 import com.moon.meojium.base.BaseRetrofitService;
 import com.moon.meojium.base.FrescoImageViewer;
 import com.moon.meojium.base.ImageOverlayView;
@@ -58,7 +59,7 @@ public class StoryPicker implements FrescoImageViewer {
 
             @Override
             public void onFailure(Call<List<StoryContent>> call, Throwable t) {
-                Toasty.info(context, "서버 연결에 실패했습니다").show();
+                Toasty.info(context, context.getResources().getString(R.string.fail_connection)).show();
             }
         });
     }
