@@ -92,7 +92,7 @@ public class ReviewRecyclerViewAdapter extends RecyclerView.Adapter<ReviewRecycl
             registeredDateTextView.setText(review.getRegisteredDate());
             if (review.isWriter()) {
                 removeImageView.setVisibility(View.VISIBLE);
-                container.setBackground(ContextCompat.getDrawable(context, R.drawable.ripple_button_click));
+                container.setBackground(ContextCompat.getDrawable(context, R.drawable.ripple_rectangle_click));
                 container.setClickable(true);
 
                 final AlertDialog dialog = new AlertDialog.Builder(context)

@@ -360,7 +360,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_below="@id/detail_next_line4"
-                android:background="@drawable/ripple_button_click"
+                android:background="@drawable/ripple_rectangle_click"
                 android:paddingBottom="16dp"
                 android:paddingTop="16dp">
 

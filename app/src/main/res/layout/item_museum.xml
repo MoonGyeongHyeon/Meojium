@@ -8,7 +8,8 @@
     <RelativeLayout
         android:id="@+id/relativelayout_museum_container"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content">
+        android:layout_height="wrap_content"
+        android:background="@drawable/ripple_rectangle_click">
 
         <ImageView
             android:id="@+id/imageview_museum_thumb"
@@ -36,8 +37,8 @@
             android:layout_marginLeft="8dp"
             android:layout_marginRight="8dp"
             android:layout_marginStart="8dp"
-            android:textSize="@dimen/small_text_size"
             android:textColor="@color/darkGray"
+            android:textSize="@dimen/small_text_size"
             tools:text="충청남도 공주시 금벽로 990" />
 
     </RelativeLayout>

@@ -4,7 +4,7 @@
     android:id="@+id/relativelayout_search_log_container"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:background="@drawable/ripple_button_click"
+    android:background="@drawable/ripple_rectangle_click"
     android:padding="16dp">
 
     <ImageView
