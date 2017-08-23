@@ -1,41 +1,117 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:orientation="vertical">
+    android:background="@color/colorPrimary"
+    android:orientation="vertical"
+    android:padding="16dp">
 
     <ImageView
-        android:layout_width="match_parent"
-        android:layout_height="180dp"
-        android:scaleType="center"
-        android:src="@drawable/ic_museum" />
+        android:id="@+id/imageview_navigation_meojium"
+        android:layout_width="48dp"
+        android:layout_height="48dp"
+        android:scaleType="fitXY"
+        android:src="@drawable/ic_museum"
+        android:tint="@android:color/white" />
 
-    <FrameLayout
+    <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="horizontal">
+        android:layout_marginLeft="16dp"
+        android:layout_marginStart="16dp"
+        android:layout_toEndOf="@id/imageview_navigation_meojium"
+        android:layout_toRightOf="@id/imageview_navigation_meojium"
+        android:orientation="horizontal"
+        android:weightSum="100">
 
         <TextView
             android:id="@+id/textview_navigation_nickname"
-            android:layout_width="match_parent"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_gravity="center"
-            android:gravity="center"
+            android:layout_weight="76"
+            android:textColor="@android:color/white"
             android:textSize="@dimen/large_text_size"
             tools:text="@string/navigation_nickname" />
 
         <ImageView
             android:id="@+id/imageview_navigation_change_nickname"
-            android:layout_width="40dp"
+            android:layout_width="0dp"
             android:layout_height="40dp"
             android:layout_gravity="end"
-            android:padding="8dp"
             android:layout_marginBottom="16dp"
-            android:src="@drawable/ic_change_nickname"
+            android:layout_weight="24"
+            android:background="@drawable/ripple_navigation_click"
             android:clickable="true"
-            android:background="@drawable/ripple_button_click"/>
+            android:padding="8dp"
+            android:src="@drawable/ic_change_nickname" />
 
-    </FrameLayout>
+    </LinearLayout>
 
-</LinearLayout>
+    <TextView
+        android:id="@+id/textview_navigation_registered_date_label"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignLeft="@id/imageview_navigation_meojium"
+        android:layout_alignStart="@id/imageview_navigation_meojium"
+        android:layout_below="@id/imageview_navigation_meojium"
+        android:layout_marginTop="16dp"
+        android:text="@string/navigation_registered_date_label"
+        android:textColor="@android:color/white" />
+
+    <TextView
+        android:id="@+id/textview_navigation_registered_date"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignBottom="@id/textview_navigation_registered_date_label"
+        android:layout_marginLeft="8dp"
+        android:layout_marginStart="8dp"
+        android:layout_toEndOf="@id/textview_navigation_registered_date_label"
+        android:layout_toRightOf="@id/textview_navigation_registered_date_label"
+        android:textColor="@android:color/white" />
+
+    <TextView
+        android:id="@+id/textview_navigation_favorite_label"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignLeft="@id/textview_navigation_registered_date_label"
+        android:layout_alignStart="@id/textview_navigation_registered_date_label"
+        android:layout_below="@id/textview_navigation_registered_date_label"
+        android:layout_marginTop="8dp"
+        android:text="@string/navigation_favorite_label"
+        android:textColor="@android:color/white" />
+
+    <TextView
+        android:id="@+id/textview_navigation_favorite"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignBottom="@id/textview_navigation_favorite_label"
+        android:layout_marginLeft="8dp"
+        android:layout_marginStart="8dp"
+        android:layout_toEndOf="@id/textview_navigation_favorite_label"
+        android:layout_toRightOf="@id/textview_navigation_favorite_label"
+        android:textColor="@android:color/white" />
+
+    <TextView
+        android:id="@+id/textview_navigation_stamp_label"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignLeft="@id/textview_navigation_registered_date_label"
+        android:layout_alignStart="@id/textview_navigation_registered_date_label"
+        android:layout_below="@id/textview_navigation_favorite_label"
+        android:layout_marginTop="8dp"
+        android:text="@string/navigation_stamp_label"
+        android:textColor="@android:color/white" />
+
+    <TextView
+        android:id="@+id/textview_navigation_stamp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignBottom="@id/textview_navigation_stamp_label"
+        android:layout_marginLeft="8dp"
+        android:layout_marginStart="8dp"
+        android:layout_toEndOf="@id/textview_navigation_stamp_label"
+        android:layout_toRightOf="@id/textview_navigation_stamp_label"
+        android:textColor="@android:color/white" />
+
+</RelativeLayout>

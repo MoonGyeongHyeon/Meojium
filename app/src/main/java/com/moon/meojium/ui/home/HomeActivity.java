@@ -37,6 +37,7 @@ import com.moon.meojium.database.dao.UserDao;
 import com.moon.meojium.model.UpdateResult;
 import com.moon.meojium.model.museum.Museum;
 import com.moon.meojium.model.tasting.Tasting;
+import com.moon.meojium.model.user.Info;
 import com.moon.meojium.ui.allmuseum.AllMuseumActivity;
 import com.moon.meojium.ui.interested.InterestedActivity;
 import com.moon.meojium.ui.login.LoginActivity;
@@ -94,6 +95,9 @@ public class HomeActivity extends AppCompatActivity
     }
 
     private TextView nicknameTextView;
+    private TextView registeredDateTextView;
+    private TextView favoriteTextView;
+    private TextView stampTextView;
     private BackPressCloseHandler backPressCloseHandler;
     private List<Museum> popularMuseumList;
     private List<Museum> historyMuseumList;
@@ -102,6 +106,9 @@ public class HomeActivity extends AppCompatActivity
     private MuseumDao museumDao;
     private TastingDao tastingDao;
     private UserDao userDao;
+    private MuseumViewPagerAdapter popularAdapter;
+    private MuseumViewPagerAdapter historyAdapter;
+    private TastingRecyclerViewAdapter tastingAdapter;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -115,152 +122,36 @@ public class HomeActivity extends AppCompatActivity
         tastingDao = TastingDao.getInstance();
         userDao = UserDao.getInstance();
 
+        sharedPreferencesService = SharedPreferencesService.getInstance();
+
+        initNavigationView();
+
         requestPopularMuseumData();
         requestHistoryMuseumData();
         requestTastingMuseumData();
 
-        initSharedPreferences();
         initToolbar();
         initDrawerLayout();
         initNearbyImageView();
         initSwipeRefreshLayout();
     }
 
-    private void requestPopularMuseumData() {
-        Call<List<Museum>> call = museumDao.getPopularMuseumList();
-        call.enqueue(new Callback<List<Museum>>() {
-            @Override
-            public void onResponse(Call<List<Museum>> call, Response<List<Museum>> response) {
-                Log.d("Meojium/Home", "Success Getting Popular Museum List");
-                popularMuseumList = response.body();
-
-                popularFailConnectionTextView.setVisibility(View.GONE);
-                initPopularMuseumViewPager();
-            }
-
-            @Override
-            public void onFailure(Call<List<Museum>> call, Throwable t) {
-                Toasty.info(HomeActivity.this, getResources().getString(R.string.fail_connection)).show();
-                popularFailConnectionTextView.setVisibility(View.VISIBLE);
-            }
-        });
-    }
-
-    private void initPopularMuseumViewPager() {
-        MuseumViewPagerAdapter adapter = new MuseumViewPagerAdapter(getSupportFragmentManager(), popularMuseumList);
-        popularMuseumViewPager.setAdapter(adapter);
-        popularMuseumViewPager.setPageMargin(32);
-        popularMuseumViewPager.setOnTouchListener(this);
-    }
-
-    private void requestHistoryMuseumData() {
-        Call<List<Museum>> call = museumDao.getHistoryMuseumList();
-        call.enqueue(new Callback<List<Museum>>() {
-            @Override
-            public void onResponse(Call<List<Museum>> call, Response<List<Museum>> response) {
-                Log.d("Meojium/Home", "Success Getting History Museum List");
-                historyMuseumList = response.body();
-
-                historyFailConnectionTextView.setVisibility(View.GONE);
-                initHistoryMuseumViewPager();
-            }
-
-            @Override
-            public void onFailure(Call<List<Museum>> call, Throwable t) {
-                Toasty.info(HomeActivity.this, getResources().getString(R.string.fail_connection)).show();
-                historyFailConnectionTextView.setVisibility(View.VISIBLE);
-            }
-        });
-    }
-
-    private void initHistoryMuseumViewPager() {
-        MuseumViewPagerAdapter adapter = new MuseumViewPagerAdapter(getSupportFragmentManager(), historyMuseumList);
-        historyMuseumViewPager.setAdapter(adapter);
-        historyMuseumViewPager.setPageMargin(32);
-        historyMuseumViewPager.setOnTouchListener(this);
-    }
-
     @Override
-    public boolean onTouch(View view, MotionEvent motionEvent) {
-        swipeRefreshLayout.setEnabled(false);
-        switch (motionEvent.getAction()) {
-            case MotionEvent.ACTION_UP:
-                swipeRefreshLayout.setEnabled(true);
-                break;
-        }
-        return false;
+    protected void onResume() {
+        super.onResume();
+
+        requestUserInfo();
     }
 
-    private void requestTastingMuseumData() {
-        Call<List<Tasting>> call = tastingDao.getTastingMuseumList();
-        call.enqueue(new Callback<List<Tasting>>() {
-            @Override
-            public void onResponse(Call<List<Tasting>> call, Response<List<Tasting>> response) {
-                List<Tasting> list = response.body();
-                tastingMuseumList = new ArrayList<>();
-                boolean flag;
-
-                for (Tasting baseTasting : list) {
-                    flag = true;
-
-                    for (Tasting tasting : tastingMuseumList) {
-                        if (baseTasting.getMuseum().getId() == tasting.getMuseum().getId()) {
-                            flag = false;
-                            break;
-                        }
-                    }
-
-                    if (flag) {
-                        tastingMuseumList.add(baseTasting);
-                    }
-
-                    if (tastingMuseumList.size() == TASTING_COUNT) {
-                        break;
-                    }
-                }
-
-                tastingFailConnectionTextView.setVisibility(View.GONE);
-                initTastingMuseumRecyclerView();
-            }
-
-            @Override
-            public void onFailure(Call<List<Tasting>> call, Throwable t) {
-                Toasty.info(HomeActivity.this, getResources().getString(R.string.fail_connection)).show();
-                tastingFailConnectionTextView.setVisibility(View.VISIBLE);
-            }
-        });
-    }
-
-    private void initTastingMuseumRecyclerView() {
-        TastingRecyclerViewAdapter adapter = new TastingRecyclerViewAdapter(tastingMuseumList, this);
-        tastingRecyclerView.setAdapter(adapter);
-
-        RecyclerView.LayoutManager manager = new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false);
-        tastingRecyclerView.setLayoutManager(manager);
-
-        tastingRecyclerView.setNestedScrollingEnabled(false);
-    }
-
-    private void initSharedPreferences() {
-        sharedPreferencesService = SharedPreferencesService.getInstance();
-    }
-
-    private void initToolbar() {
-        toolbar.setTitle("머지엄");
-        setSupportActionBar(toolbar);
-    }
-
-    private void initDrawerLayout() {
-        ActionBarDrawerToggle toggle =
-                new ActionBarDrawerToggle(this, drawerLayout, toolbar, R.string.drawer_open, R.string.drawer_close);
-
-        drawerLayout.addDrawerListener(toggle);
-        toggle.syncState();
+    private void initNavigationView() {
 
         navigationView.setNavigationItemSelectedListener(this);
 
         View header = navigationView.getHeaderView(0);
         nicknameTextView = header.findViewById(R.id.textview_navigation_nickname);
+        registeredDateTextView = header.findViewById(R.id.textview_navigation_registered_date);
+        favoriteTextView = header.findViewById(R.id.textview_navigation_favorite);
+        stampTextView = header.findViewById(R.id.textview_navigation_stamp);
 
         nicknameTextView.setText(String.format(getResources().getString(R.string.navigation_nickname),
                 sharedPreferencesService.getStringData(SharedPreferencesService.KEY_NICKNAME)));
@@ -320,6 +211,158 @@ public class HomeActivity extends AppCompatActivity
         });
     }
 
+    private void requestPopularMuseumData() {
+        Call<List<Museum>> call = museumDao.getPopularMuseumList();
+        call.enqueue(new Callback<List<Museum>>() {
+            @Override
+            public void onResponse(Call<List<Museum>> call, Response<List<Museum>> response) {
+                Log.d("Meojium/Home", "Success Getting Popular Museum List");
+                popularMuseumList = response.body();
+
+                popularFailConnectionTextView.setVisibility(View.GONE);
+                initPopularMuseumViewPager();
+            }
+
+            @Override
+            public void onFailure(Call<List<Museum>> call, Throwable t) {
+                Toasty.info(HomeActivity.this, getResources().getString(R.string.fail_connection)).show();
+                popularFailConnectionTextView.setVisibility(View.VISIBLE);
+            }
+        });
+    }
+
+    private void initPopularMuseumViewPager() {
+        popularAdapter = new MuseumViewPagerAdapter(getSupportFragmentManager(), popularMuseumList);
+        popularMuseumViewPager.setAdapter(popularAdapter);
+        popularMuseumViewPager.setPageMargin(32);
+        popularMuseumViewPager.setOnTouchListener(this);
+    }
+
+    private void requestHistoryMuseumData() {
+        Call<List<Museum>> call = museumDao.getHistoryMuseumList();
+        call.enqueue(new Callback<List<Museum>>() {
+            @Override
+            public void onResponse(Call<List<Museum>> call, Response<List<Museum>> response) {
+                Log.d("Meojium/Home", "Success Getting History Museum List");
+                historyMuseumList = response.body();
+
+                historyFailConnectionTextView.setVisibility(View.GONE);
+                initHistoryMuseumViewPager();
+            }
+
+            @Override
+            public void onFailure(Call<List<Museum>> call, Throwable t) {
+                Toasty.info(HomeActivity.this, getResources().getString(R.string.fail_connection)).show();
+                historyFailConnectionTextView.setVisibility(View.VISIBLE);
+            }
+        });
+    }
+
+    private void initHistoryMuseumViewPager() {
+        historyAdapter = new MuseumViewPagerAdapter(getSupportFragmentManager(), historyMuseumList);
+        historyMuseumViewPager.setAdapter(historyAdapter);
+        historyMuseumViewPager.setPageMargin(32);
+        historyMuseumViewPager.setOnTouchListener(this);
+    }
+
+    @Override
+    public boolean onTouch(View view, MotionEvent motionEvent) {
+        switch (motionEvent.getAction()) {
+            case MotionEvent.ACTION_MOVE:
+                swipeRefreshLayout.setEnabled(false);
+                break;
+            case MotionEvent.ACTION_UP:
+                swipeRefreshLayout.setEnabled(true);
+                break;
+        }
+        return false;
+    }
+
+    private void requestTastingMuseumData() {
+        Call<List<Tasting>> call = tastingDao.getTastingMuseumList();
+        call.enqueue(new Callback<List<Tasting>>() {
+            @Override
+            public void onResponse(Call<List<Tasting>> call, Response<List<Tasting>> response) {
+                List<Tasting> list = response.body();
+                tastingMuseumList = new ArrayList<>();
+                boolean flag;
+
+                for (Tasting baseTasting : list) {
+                    flag = true;
+
+                    for (Tasting tasting : tastingMuseumList) {
+                        if (baseTasting.getMuseum().getId() == tasting.getMuseum().getId()) {
+                            flag = false;
+                            break;
+                        }
+                    }
+
+                    if (flag) {
+                        tastingMuseumList.add(baseTasting);
+                    }
+
+                    if (tastingMuseumList.size() == TASTING_COUNT) {
+                        break;
+                    }
+                }
+
+                tastingFailConnectionTextView.setVisibility(View.GONE);
+                initTastingMuseumRecyclerView();
+            }
+
+            @Override
+            public void onFailure(Call<List<Tasting>> call, Throwable t) {
+                Toasty.info(HomeActivity.this, getResources().getString(R.string.fail_connection)).show();
+                tastingFailConnectionTextView.setVisibility(View.VISIBLE);
+            }
+        });
+    }
+
+    private void initTastingMuseumRecyclerView() {
+        tastingAdapter = new TastingRecyclerViewAdapter(tastingMuseumList, this);
+        tastingRecyclerView.setAdapter(tastingAdapter);
+
+        RecyclerView.LayoutManager manager = new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false);
+        tastingRecyclerView.setLayoutManager(manager);
+
+        tastingRecyclerView.setNestedScrollingEnabled(false);
+    }
+
+    private void requestUserInfo() {
+        Call<Info> call = userDao.getUserInfo(sharedPreferencesService.getStringData(SharedPreferencesService.KEY_ENC_ID));
+        call.enqueue(new Callback<Info>() {
+            @Override
+            public void onResponse(Call<Info> call, Response<Info> response) {
+                Log.d("Meojium/Home", "Success Getting User Info");
+
+                Info info = response.body();
+
+                registeredDateTextView.setText(info.getRegisteredDate());
+                favoriteTextView.setText(String.valueOf(info.getFavoriteCount()));
+                stampTextView.setText(String.valueOf(info.getStampCount()));
+            }
+
+            @Override
+            public void onFailure(Call<Info> call, Throwable t) {
+                Log.d("Meojium/Home", "Fail Getting User Info");
+                Toasty.info(HomeActivity.this, getResources().getString(R.string.fail_connection)).show();
+            }
+        });
+    }
+
+    private void initToolbar() {
+        toolbar.setTitle("머지엄");
+        setSupportActionBar(toolbar);
+    }
+
+    private void initDrawerLayout() {
+        ActionBarDrawerToggle toggle =
+                new ActionBarDrawerToggle(this, drawerLayout, toolbar, R.string.drawer_open, R.string.drawer_close);
+
+        drawerLayout.addDrawerListener(toggle);
+        toggle.syncState();
+    }
+
     private void initNearbyImageView() {
         Glide.with(this)
                 .load(R.drawable.img_nearby_museum)
@@ -332,9 +375,16 @@ public class HomeActivity extends AppCompatActivity
 
     @Override
     public void onRefresh() {
-        historyMuseumList.clear();
-        popularMuseumList.clear();
-        tastingMuseumList.clear();
+        if (historyMuseumList != null) {
+            historyMuseumList.clear();
+        }
+        if (popularMuseumList != null) {
+            popularMuseumList.clear();
+        }
+        if (tastingMuseumList != null) {
+            tastingMuseumList.clear();
+            tastingAdapter.notifyDataSetChanged();
+        }
 
         requestHistoryMuseumData();
         requestPopularMuseumData();

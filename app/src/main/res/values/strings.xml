@@ -45,4 +45,8 @@
     <string name="navigation_all_museum">전체 보기</string>
     <string name="fresco_page" formatted="false">(%d / %d)</string>
     <string name="fail_connection">서버 연결에 실패했습니다.</string>
+    <string name="navigation_registered_date_label">가입일자: </string>
+    <string name="navigation_stamp_label">스탬프 갯수: </string>
+    <string name="navigation_favorite_label">찜목록 갯수: </string>
+
 </resources>

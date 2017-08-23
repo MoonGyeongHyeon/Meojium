@@ -1,6 +1,7 @@
 package com.moon.meojium.database.service;
 
 import com.moon.meojium.model.UpdateResult;
+import com.moon.meojium.model.user.Info;
 import com.moon.meojium.model.user.User;
 
 import retrofit2.Call;
@@ -24,4 +25,8 @@ public interface UserService {
     @POST("/user/exist")
     @FormUrlEncoded
     Call<User> isExistedUser(@Field("id") String id);
+
+    @POST("/user/info")
+    @FormUrlEncoded
+    Call<Info> getUserInfo(@Field("id") String id);
 }
