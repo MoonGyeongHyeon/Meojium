@@ -55,6 +55,7 @@ public class ThumbViewPagerAdapter extends PagerAdapter
 
         Glide.with(container.getContext())
                 .load(imageUrlList.get(position))
+                .placeholder(R.drawable.img_placeholder)
                 .into(imageView);
 
         container.addView(view);

@@ -71,6 +71,7 @@ public class AreaRecyclerViewAdapter extends RecyclerView.Adapter<AreaRecyclerVi
         public void bindView(final Museum museum) {
             Glide.with(context)
                     .load(BaseRetrofitService.IMAGE_LOAD_URL + museum.getImagePath())
+                    .placeholder(R.drawable.img_placeholder)
                     .into(thumbImageView);
             nameTextView.setText(museum.getName());
             addressTextView.setText(museum.getAddress());

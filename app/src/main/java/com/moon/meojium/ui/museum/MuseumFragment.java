@@ -35,7 +35,7 @@ import retrofit2.Response;
  */
 
 public class MuseumFragment extends Fragment {
-    private static final int MAX_DATA_COUNT = 40;
+    private static final int MAX_DATA_COUNT = 68;
     private static final int GETTING_DATA_COUNT = 10;
 
     @BindView(R.id.recyclerview_museum)

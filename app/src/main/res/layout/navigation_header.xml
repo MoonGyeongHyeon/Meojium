@@ -29,7 +29,7 @@
             android:id="@+id/textview_navigation_nickname"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_weight="76"
+            android:layout_weight="80"
             android:textColor="@android:color/white"
             android:textSize="@dimen/large_text_size"
             tools:text="@string/navigation_nickname" />
@@ -37,13 +37,15 @@
         <ImageView
             android:id="@+id/imageview_navigation_change_nickname"
             android:layout_width="0dp"
-            android:layout_height="40dp"
+            android:layout_height="32dp"
             android:layout_gravity="end"
-            android:layout_marginBottom="16dp"
-            android:layout_weight="24"
+            android:layout_marginTop="4dp"
+            android:layout_weight="20"
             android:background="@drawable/ripple_navigation_click"
             android:clickable="true"
-            android:padding="8dp"
+            android:paddingBottom="8dp"
+            android:paddingLeft="8dp"
+            android:paddingStart="8dp"
             android:src="@drawable/ic_change_nickname" />
 
     </LinearLayout>

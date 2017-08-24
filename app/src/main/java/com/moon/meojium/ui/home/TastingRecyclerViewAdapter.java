@@ -80,6 +80,7 @@ public class TastingRecyclerViewAdapter extends RecyclerView.Adapter<TastingRecy
             storyTitleTextView.setText(story.getTitle());
             Glide.with(context)
                     .load(BaseRetrofitService.IMAGE_LOAD_URL + museum.getImagePath())
+                    .placeholder(R.drawable.img_placeholder)
                     .into(thumbImageView);
             container.setOnClickListener(new View.OnClickListener() {
                 @Override

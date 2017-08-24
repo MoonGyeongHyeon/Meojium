@@ -408,6 +408,7 @@ public class HomeActivity extends AppCompatActivity
     private void initNearbyImageView() {
         Glide.with(this)
                 .load(R.drawable.img_nearby_museum)
+                .placeholder(R.drawable.img_placeholder)
                 .into(nearbyImageView);
     }
 

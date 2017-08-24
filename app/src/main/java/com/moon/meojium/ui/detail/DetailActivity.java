@@ -1,10 +1,7 @@
 package com.moon.meojium.ui.detail;
 
-import android.Manifest;
 import android.content.Intent;
-import android.os.Build;
 import android.os.Bundle;
-import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.design.widget.TabLayout;
 import android.support.v4.content.ContextCompat;
@@ -31,7 +28,6 @@ import com.google.android.gms.maps.model.MarkerOptions;
 import com.gordonwong.materialsheetfab.MaterialSheetFab;
 import com.moon.meojium.R;
 import com.moon.meojium.base.BaseRetrofitService;
-import com.moon.meojium.base.util.PermissionChecker;
 import com.moon.meojium.base.util.SharedPreferencesService;
 import com.moon.meojium.database.dao.FavoriteDao;
 import com.moon.meojium.database.dao.MuseumDao;
@@ -262,7 +258,7 @@ public class DetailActivity extends AppCompatActivity
         } catch (Exception e) {
             e.printStackTrace();
             Toasty.info(this, "일시적인 오류가 발생했습니다.").show();
-            onBackPressed();
+            finish();
         }
 
         museumDao = MuseumDao.getInstance();
@@ -489,17 +485,6 @@ public class DetailActivity extends AppCompatActivity
 
     @Override
     public void onMapReady(final GoogleMap map) {
-        if (Build.VERSION.SDK_INT >= 23) {
-            if (!(PermissionChecker.checkPermission(this, Manifest.permission.ACCESS_FINE_LOCATION)
-                    && PermissionChecker.checkPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION))) {
-
-                requestPermissions(new String[]{Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.ACCESS_COARSE_LOCATION},
-                        PermissionChecker.REQUEST_LOCATION_INFO);
-
-                return;
-            }
-        }
-
         this.map = map;
 
         initMuseumLocation();
@@ -515,22 +500,6 @@ public class DetailActivity extends AppCompatActivity
 
         map.moveCamera(CameraUpdateFactory.newLatLng(museumLocation));
         map.animateCamera(CameraUpdateFactory.zoomTo(15));
-    }
-
-    @Override
-    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
-        if (requestCode == PermissionChecker.REQUEST_LOCATION_INFO) {
-            if (PermissionChecker.verifyPermission(grantResults)) {
-                Log.d("Meojium/Nearby", "Grant Permission");
-                initGoogleMap();
-            } else {
-                Log.d("Meojium/Nearby", "Deny Permission");
-                Toasty.info(this, "위치 정보를 얻을 수 없어 지도를 이용할 수 없습니다.").show();
-                onBackPressed();
-            }
-        } else {
-            super.onRequestPermissionsResult(requestCode, permissions, grantResults);
-        }
     }
 
     private void updateMuseumView() {

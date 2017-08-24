@@ -75,6 +75,7 @@ public class MuseumViewPagerFragment extends Fragment {
     private void updateView() {
         Glide.with(this)
                 .load(BaseRetrofitService.IMAGE_LOAD_URL + museum.getImagePath())
+                .placeholder(R.drawable.img_placeholder)
                 .into(thumbImageView);
         nameTextView.setText(museum.getName());
         addressTextView.setText(museum.getAddress());

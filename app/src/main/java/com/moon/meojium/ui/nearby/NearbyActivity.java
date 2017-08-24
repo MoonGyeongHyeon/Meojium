@@ -130,7 +130,7 @@ public class NearbyActivity extends AppCompatActivity
             } else {
                 Log.d("Meojium/Nearby", "Deny Permission");
                 Toasty.info(this, "위치 정보를 얻을 수 없어 지도를 이용할 수 없습니다.").show();
-                onBackPressed();
+                finish();
             }
         } else {
             super.onRequestPermissionsResult(requestCode, permissions, grantResults);
