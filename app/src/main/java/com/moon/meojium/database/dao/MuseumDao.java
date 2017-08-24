@@ -51,4 +51,8 @@ public class MuseumDao extends BaseRetrofitService {
     public Call<List<String>> getMuseumImageUrlList(int id) {
         return service.getMuseumImageUrlList(id);
     }
+
+    public Call<List<Museum>> getNearbyMuseumList(double latitude, double longitude, double distance) {
+        return service.getNearbyMuseumList(latitude,longitude, distance);
+    }
 }

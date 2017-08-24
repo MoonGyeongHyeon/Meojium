@@ -2,6 +2,7 @@
     <string name="app_name">머지엄</string>
 
     <string name="google_api_key">AIzaSyDdvjCwD6bVOuen70AwDxAV2rQrS-rbXBY</string>
+    <string name="google_web_api_key">AIzaSyCQOzKrbBNvfx2fqV0ruC0wB8Q89ReRsFo</string>
     <string name="kakao_app_key">9f10b53292402f572c6933ec02762d8a</string>
     <string name="kakao_secret_key">DRverf7i0wj7xqNfGr55miAAzGWdSUZo</string>
     <string name="naver_client_id">zp_U6QNm3sWr4V1O7Xa5</string>

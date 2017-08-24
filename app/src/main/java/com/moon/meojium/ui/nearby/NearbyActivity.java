@@ -2,11 +2,13 @@ package com.moon.meojium.ui.nearby;
 
 import android.Manifest;
 import android.content.Context;
+import android.content.Intent;
 import android.location.LocationManager;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
@@ -16,47 +18,56 @@ import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.MapFragment;
 import com.google.android.gms.maps.OnMapReadyCallback;
+import com.google.android.gms.maps.model.BitmapDescriptorFactory;
+import com.google.android.gms.maps.model.CircleOptions;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.moon.meojium.R;
 import com.moon.meojium.base.util.PermissionChecker;
+import com.moon.meojium.database.dao.MuseumDao;
+import com.moon.meojium.model.museum.Museum;
+import com.moon.meojium.ui.detail.DetailActivity;
 
-import java.util.ArrayList;
-import java.util.HashSet;
+import org.parceler.Parcels;
+
 import java.util.List;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import es.dmoral.toasty.Toasty;
-import noman.googleplaces.NRPlaces;
-import noman.googleplaces.Place;
-import noman.googleplaces.PlaceType;
-import noman.googleplaces.PlacesException;
-import noman.googleplaces.PlacesListener;
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
 
 /**
  * Created by moon on 2017. 8. 11..
  */
 
 public class NearbyActivity extends AppCompatActivity
-        implements OnMapReadyCallback, PlacesListener,
-        GoogleMap.OnMyLocationButtonClickListener {
+        implements OnMapReadyCallback,
+        GoogleMap.OnMyLocationButtonClickListener,
+        GoogleMap.OnInfoWindowClickListener,
+        GoogleMap.OnMarkerDragListener {
+    private static final double NEARBY_DISTANCE = 20;
 
     @BindView(R.id.toolbar)
     Toolbar toolbar;
 
     private LocationManager locationManager;
     private LatLng currentPosition;
-    private List<Marker> previous_marker = null;
+    private List<Museum> nearbyMuseumList;
     private GoogleMap map;
     private MapFragment mapFragment;
+    private MuseumDao museumDao;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_nearby);
         ButterKnife.bind(this);
+
+        museumDao = MuseumDao.getInstance();
 
         initToolbar();
         initGoogleMap();
@@ -91,13 +102,14 @@ public class NearbyActivity extends AppCompatActivity
             }
         }
 
-        this.map = map;
-
-        previous_marker = new ArrayList<>();
         locationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
 
         map.setMyLocationEnabled(true);
         map.setOnMyLocationButtonClickListener(this);
+        map.setOnInfoWindowClickListener(this);
+        map.setOnMarkerDragListener(this);
+
+        this.map = map;
 
         initDefaultLocation();
     }
@@ -105,13 +117,8 @@ public class NearbyActivity extends AppCompatActivity
     private void initDefaultLocation() {
         LatLng SEOUL = new LatLng(37.56, 126.97);
 
-        MarkerOptions markerOptions = new MarkerOptions();
-        markerOptions.position(SEOUL);
-        markerOptions.title("서울");
-        map.addMarker(markerOptions);
-
         map.moveCamera(CameraUpdateFactory.newLatLng(SEOUL));
-        map.animateCamera(CameraUpdateFactory.zoomTo(12));
+        map.animateCamera(CameraUpdateFactory.zoomTo(10));
     }
 
     @Override
@@ -141,81 +148,112 @@ public class NearbyActivity extends AppCompatActivity
     }
 
     @Override
-    public void onPlacesFailure(PlacesException e) {
-
-    }
-
-    @Override
-    public void onPlacesStart() {
-
-    }
-
-    @Override
-    public void onPlacesSuccess(final List<Place> places) {
-        runOnUiThread(new Runnable() {
-            @Override
-            public void run() {
-                for (noman.googleplaces.Place place : places) {
-
-                    LatLng latLng
-                            = new LatLng(place.getLatitude()
-                            , place.getLongitude());
-
-                    MarkerOptions markerOptions = new MarkerOptions();
-                    markerOptions.position(latLng);
-                    markerOptions.title(place.getName());
-                    markerOptions.snippet(place.getVicinity());
-                    Marker item = map.addMarker(markerOptions);
-                    previous_marker.add(item);
-
-                }
-
-                HashSet<Marker> hashSet = new HashSet<>();
-                hashSet.addAll(previous_marker);
-                previous_marker.clear();
-                previous_marker.addAll(hashSet);
-            }
-        });
-    }
-
-    @Override
-    public void onPlacesFinished() {
-
-    }
-
-    @Override
     public boolean onMyLocationButtonClick() {
         if (!locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER)) {
             Toasty.info(NearbyActivity.this, "위치 정보를 얻을 수 없습니다.").show();
         } else {
+            map.clear();
+
             try {
                 currentPosition = new LatLng(map.getMyLocation().getLatitude(), map.getMyLocation().getLongitude());
                 Log.d("Meojium/Nearby", "Latitude: " + String.valueOf(currentPosition.latitude) +
                         ", Longitude: " + String.valueOf(currentPosition.longitude));
 
-                showPlaceInformation(currentPosition);
+                requestNearbyMuseumData();
+                addNearbyCircle();
+
             } catch (Exception e) {
                 e.printStackTrace();
-                Toasty.info(NearbyActivity.this, "일시적인 오류가 발생했습니다.").show();
+                Toasty.info(NearbyActivity.this, "잠시 후 다시 시도해주세요.").show();
             }
         }
 
         return false;
     }
 
-    public void showPlaceInformation(LatLng location) {
+    private void requestNearbyMuseumData() {
+        Call<List<Museum>> call = museumDao.getNearbyMuseumList(currentPosition.latitude, currentPosition.longitude, NEARBY_DISTANCE);
+        call.enqueue(new Callback<List<Museum>>() {
+            @Override
+            public void onResponse(Call<List<Museum>> call, Response<List<Museum>> response) {
+                nearbyMuseumList = response.body();
+                Toasty.info(NearbyActivity.this, "반경 " + NEARBY_DISTANCE + "km 내에 위치한 박물관을 검색합니다.").show();
+
+                addCurrentPositionMarker();
+                addNearbyMuseumMarker();
+            }
+
+            @Override
+            public void onFailure(Call<List<Museum>> call, Throwable t) {
+                Toasty.info(NearbyActivity.this, getResources().getString(R.string.fail_connection)).show();
+            }
+        });
+    }
+
+    private void addCurrentPositionMarker() {
+        MarkerOptions markerOptions = new MarkerOptions();
+        markerOptions.position(currentPosition);
+        markerOptions.draggable(true);
+        markerOptions.title("현재 위치");
+        markerOptions.icon(BitmapDescriptorFactory.defaultMarker(98f));
+        map.addMarker(markerOptions);
+    }
+
+    private void addNearbyMuseumMarker() {
+        for (Museum museum : nearbyMuseumList) {
+            LatLng latLng
+                    = new LatLng(museum.getLatitude()
+                    , museum.getLongitude());
+
+            MarkerOptions markerOptions = new MarkerOptions();
+            markerOptions.position(latLng);
+            markerOptions.title(museum.getName());
+            markerOptions.snippet(museum.getAddress());
+            map.addMarker(markerOptions);
+        }
+    }
+
+    private void addNearbyCircle() {
+        CircleOptions circleOptions = new CircleOptions().center(currentPosition)
+                .radius(NEARBY_DISTANCE * 1000)
+                .strokeWidth(0f)
+                .fillColor(ContextCompat.getColor(this, R.color.colorPrimaryLightOpacity));
+
+        map.addCircle(circleOptions);
+    }
+
+    @Override
+    public void onInfoWindowClick(Marker marker) {
+        Museum sendMuseum = null;
+        for (Museum museum : nearbyMuseumList) {
+            if (!museum.getName().equals(marker.getTitle())) {
+                continue;
+            }
+            sendMuseum = museum;
+        }
+
+        Intent intent = new Intent(this, DetailActivity.class);
+        intent.putExtra("museum", Parcels.wrap(sendMuseum));
+        startActivity(intent);
+    }
+
+    @Override
+    public void onMarkerDragEnd(Marker marker) {
+        currentPosition = marker.getPosition();
         map.clear();
 
-        if (previous_marker != null)
-            previous_marker.clear();
-
-        new NRPlaces.Builder()
-                .listener(this)
-                .key("AIzaSyA8sYpTd16DAZezlKE0H8ykf6DrL5nPM-w")
-                .latlng(location.latitude, location.longitude)
-                .radius(10000)
-                .type(PlaceType.MUSEUM)
-                .build()
-                .execute();
+        requestNearbyMuseumData();
+        addNearbyCircle();
     }
+
+    @Override
+    public void onMarkerDragStart(Marker marker) {
+
+    }
+
+    @Override
+    public void onMarkerDrag(Marker marker) {
+
+    }
+
 }

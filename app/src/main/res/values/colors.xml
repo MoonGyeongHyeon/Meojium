@@ -5,10 +5,12 @@
     <color name="colorAccent">#FF6D00</color>
 
     <color name="colorPrimaryOpacity">#6643A047</color>
+    <color name="colorPrimaryLightOpacity">#3343A047</color>
 
     <color name="colorAccentLight">#aaff6d00</color>
     <color name="whiteLight">#aaffffff</color>
     <color name="lineColor">#dfdfdf</color>
 
     <color name="darkGray">#888888</color>
+    <color name="lightGray">#dddddd</color>
 </resources>
