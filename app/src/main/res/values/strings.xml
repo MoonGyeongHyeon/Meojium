@@ -49,5 +49,6 @@
     <string name="navigation_registered_date_label">가입일자: </string>
     <string name="navigation_stamp_label">스탬프 갯수: </string>
     <string name="navigation_favorite_label">찜목록 갯수: </string>
+    <string name="home_area">규모가 큰 박물관</string>
 
 </resources>

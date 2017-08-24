@@ -157,6 +157,31 @@
                     android:layout_height="@dimen/line_height"
                     android:background="@color/lineColor" />
 
+                <TextView
+                    android:id="@+id/textview_home_area_label"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_margin="16dp"
+                    android:text="@string/home_area"
+                    android:textSize="@dimen/large_text_size" />
+
+                <android.support.v7.widget.RecyclerView
+                    android:id="@+id/recyclerview_home_area"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="16dp"
+                    app:layoutManager="GridLayoutManager" />
+
+                <TextView
+                    android:id="@+id/textview_home_area_fail_connection"
+                    android:layout_width="match_parent"
+                    android:layout_height="200dp"
+                    android:layout_gravity="center"
+                    android:gravity="center"
+                    android:text="@string/fail_connection"
+                    android:textSize="@dimen/large_text_size"
+                    android:visibility="gone" />
+
             </LinearLayout>
 
         </ScrollView>

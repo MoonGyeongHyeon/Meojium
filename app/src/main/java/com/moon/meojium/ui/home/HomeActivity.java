@@ -14,6 +14,7 @@ import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
@@ -87,6 +88,10 @@ public class HomeActivity extends AppCompatActivity
     TextView tastingFailConnectionTextView;
     @BindView(R.id.textview_home_history_fail_connection)
     TextView historyFailConnectionTextView;
+    @BindView(R.id.recyclerview_home_area)
+    RecyclerView areaRecyclerView;
+    @BindView(R.id.textview_home_area_fail_connection)
+    TextView areaFailConnectionTextView;
 
     @OnClick(R.id.imageview_home_nearby)
     public void onClick(View view) {
@@ -102,13 +107,13 @@ public class HomeActivity extends AppCompatActivity
     private List<Museum> popularMuseumList;
     private List<Museum> historyMuseumList;
     private List<Tasting> tastingMuseumList;
+    private List<Museum> areaMuseumList;
     private SharedPreferencesService sharedPreferencesService;
     private MuseumDao museumDao;
     private TastingDao tastingDao;
     private UserDao userDao;
-    private MuseumViewPagerAdapter popularAdapter;
-    private MuseumViewPagerAdapter historyAdapter;
     private TastingRecyclerViewAdapter tastingAdapter;
+    private AreaRecyclerViewAdapter areaAdapter;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -129,6 +134,7 @@ public class HomeActivity extends AppCompatActivity
         requestPopularMuseumData();
         requestHistoryMuseumData();
         requestTastingMuseumData();
+        requestAreaMuseumData();
 
         initToolbar();
         initDrawerLayout();
@@ -232,7 +238,7 @@ public class HomeActivity extends AppCompatActivity
     }
 
     private void initPopularMuseumViewPager() {
-        popularAdapter = new MuseumViewPagerAdapter(getSupportFragmentManager(), popularMuseumList);
+        MuseumViewPagerAdapter popularAdapter = new MuseumViewPagerAdapter(getSupportFragmentManager(), popularMuseumList);
         popularMuseumViewPager.setAdapter(popularAdapter);
         popularMuseumViewPager.setPageMargin(32);
         popularMuseumViewPager.setOnTouchListener(this);
@@ -259,7 +265,7 @@ public class HomeActivity extends AppCompatActivity
     }
 
     private void initHistoryMuseumViewPager() {
-        historyAdapter = new MuseumViewPagerAdapter(getSupportFragmentManager(), historyMuseumList);
+        MuseumViewPagerAdapter historyAdapter = new MuseumViewPagerAdapter(getSupportFragmentManager(), historyMuseumList);
         historyMuseumViewPager.setAdapter(historyAdapter);
         historyMuseumViewPager.setPageMargin(32);
         historyMuseumViewPager.setOnTouchListener(this);
@@ -284,27 +290,9 @@ public class HomeActivity extends AppCompatActivity
             @Override
             public void onResponse(Call<List<Tasting>> call, Response<List<Tasting>> response) {
                 List<Tasting> list = response.body();
+
                 tastingMuseumList = new ArrayList<>();
-                boolean flag;
-
-                for (Tasting baseTasting : list) {
-                    flag = true;
-
-                    for (Tasting tasting : tastingMuseumList) {
-                        if (baseTasting.getMuseum().getId() == tasting.getMuseum().getId()) {
-                            flag = false;
-                            break;
-                        }
-                    }
-
-                    if (flag) {
-                        tastingMuseumList.add(baseTasting);
-                    }
-
-                    if (tastingMuseumList.size() == TASTING_COUNT) {
-                        break;
-                    }
-                }
+                handleDuplicatedMuseum(list);
 
                 tastingFailConnectionTextView.setVisibility(View.GONE);
                 initTastingMuseumRecyclerView();
@@ -318,6 +306,29 @@ public class HomeActivity extends AppCompatActivity
         });
     }
 
+    private void handleDuplicatedMuseum(List<Tasting> target) {
+        boolean flag;
+
+        for (Tasting baseTasting : target) {
+            flag = true;
+
+            for (Tasting tasting : tastingMuseumList) {
+                if (baseTasting.getMuseum().getId() == tasting.getMuseum().getId()) {
+                    flag = false;
+                    break;
+                }
+            }
+
+            if (flag) {
+                tastingMuseumList.add(baseTasting);
+            }
+
+            if (tastingMuseumList.size() == TASTING_COUNT) {
+                break;
+            }
+        }
+    }
+
     private void initTastingMuseumRecyclerView() {
         tastingAdapter = new TastingRecyclerViewAdapter(tastingMuseumList, this);
         tastingRecyclerView.setAdapter(tastingAdapter);
@@ -326,6 +337,37 @@ public class HomeActivity extends AppCompatActivity
         tastingRecyclerView.setLayoutManager(manager);
 
         tastingRecyclerView.setNestedScrollingEnabled(false);
+    }
+
+    private void requestAreaMuseumData() {
+        Call<List<Museum>> call = museumDao.getAreaMuseumList();
+        call.enqueue(new Callback<List<Museum>>() {
+            @Override
+            public void onResponse(Call<List<Museum>> call, Response<List<Museum>> response) {
+                Log.d("Meojium/Home", "Success Getting AreaMuseum");
+                areaMuseumList = response.body();
+
+                areaFailConnectionTextView.setVisibility(View.GONE);
+                initAreaMuseumRecyclerView();
+            }
+
+            @Override
+            public void onFailure(Call<List<Museum>> call, Throwable t) {
+                Log.d("Meojium/Home", "Fail Getting AreaMuseum");
+                Toasty.info(HomeActivity.this, getResources().getString(R.string.fail_connection)).show();
+                areaFailConnectionTextView.setVisibility(View.VISIBLE);
+            }
+        });
+    }
+
+    private void initAreaMuseumRecyclerView() {
+        areaAdapter = new AreaRecyclerViewAdapter(areaMuseumList, this);
+        areaRecyclerView.setAdapter(areaAdapter);
+
+        RecyclerView.LayoutManager manager = new GridLayoutManager(this, 2, LinearLayoutManager.VERTICAL, false);
+        areaRecyclerView.setLayoutManager(manager);
+
+        areaRecyclerView.setNestedScrollingEnabled(false);
     }
 
     private void requestUserInfo() {
@@ -385,10 +427,16 @@ public class HomeActivity extends AppCompatActivity
             tastingMuseumList.clear();
             tastingAdapter.notifyDataSetChanged();
         }
+        if (areaMuseumList != null) {
+            areaMuseumList.clear();
+            areaAdapter.notifyDataSetChanged();
+        }
 
         requestHistoryMuseumData();
         requestPopularMuseumData();
         requestTastingMuseumData();
+        requestAreaMuseumData();
+        requestUserInfo();
 
         swipeRefreshLayout.setRefreshing(false);
     }

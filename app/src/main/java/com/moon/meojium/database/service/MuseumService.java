@@ -26,6 +26,9 @@ public interface MuseumService {
     @GET("/museum/{id}/image")
     Call<List<String>> getMuseumImageUrlList(@Path("id") int id);
 
-    @GET("/museum/nearby")
+    @GET("/museum/list/nearby")
     Call<List<Museum>> getNearbyMuseumList(@Query("latitude") double latitude, @Query("longitude") double longitude, @Query("distance") double distance);
+
+    @GET("/museum/list/area")
+    Call<List<Museum>> getAreaMuseumList();
 }
