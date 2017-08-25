@@ -14,13 +14,11 @@ import android.widget.EditText;
 import android.widget.TextView;
 
 import com.moon.meojium.R;
-import com.moon.meojium.model.UpdateResult;
 import com.moon.meojium.base.util.SharedPreferencesService;
 import com.moon.meojium.database.dao.ReviewDao;
+import com.moon.meojium.model.UpdateResult;
 import com.moon.meojium.model.museum.Museum;
 import com.moon.meojium.model.review.Review;
-
-import org.parceler.Parcels;
 
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
@@ -58,7 +56,7 @@ public class ReviewActivity extends AppCompatActivity {
             final String content = contentEditText.getText().toString();
             final SharedPreferencesService sharedPreferencesService = SharedPreferencesService.getInstance();
             Call<UpdateResult> call = reviewDao.writeReview(sharedPreferencesService.getStringData(SharedPreferencesService.KEY_ENC_ID),
-                    content, museum.getId());
+                    content, id);
             call.enqueue(new Callback<UpdateResult>() {
                 @Override
                 public void onResponse(Call<UpdateResult> call, Response<UpdateResult> response) {
@@ -102,6 +100,7 @@ public class ReviewActivity extends AppCompatActivity {
     }
 
     private List<Review> reviewList;
+    private int id;
     private Museum museum;
     private ReviewDao reviewDao;
     private int startIndex = 0;
@@ -116,7 +115,7 @@ public class ReviewActivity extends AppCompatActivity {
         Intent intent = getIntent();
 
         try {
-            museum = Parcels.unwrap(intent.getParcelableExtra("museum"));
+            id = intent.getIntExtra("id", -1);
         } catch (Exception e) {
             e.printStackTrace();
             Toasty.info(this, getResources().getString(R.string.info_message)).show();
@@ -131,7 +130,7 @@ public class ReviewActivity extends AppCompatActivity {
     }
 
     private void requestReviewData() {
-        Call<List<Review>> call = reviewDao.getReviewList(museum.getId(), startIndex);
+        Call<List<Review>> call = reviewDao.getReviewList(id, startIndex);
         call.enqueue(new Callback<List<Review>>() {
             @Override
             public void onResponse(Call<List<Review>> call, Response<List<Review>> response) {

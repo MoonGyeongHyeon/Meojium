@@ -37,7 +37,7 @@ public class MuseumViewPagerFragment extends Fragment {
     @OnClick(R.id.relativelayout_museum_container)
     public void onClick(View view) {
         Intent intent = new Intent(getContext(), DetailActivity.class);
-        intent.putExtra("museum", Parcels.wrap(museum));
+        intent.putExtra("id", museum.getId());
         startActivity(intent);
     }
 

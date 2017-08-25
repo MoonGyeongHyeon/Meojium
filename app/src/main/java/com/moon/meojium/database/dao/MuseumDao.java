@@ -40,6 +40,10 @@ public class MuseumDao extends BaseRetrofitService {
         return service.getAllMuseumList(start);
     }
 
+    public Call<Museum> getMuseum(int id) {
+        return service.getMuseum(id);
+    }
+
     public Call<List<Museum>> getPopularMuseumList() {
         return service.getPopularMuseumList();
     }

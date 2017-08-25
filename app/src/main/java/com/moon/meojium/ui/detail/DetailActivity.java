@@ -124,7 +124,7 @@ public class DetailActivity extends AppCompatActivity
     public void onClickFavorite(View view) {
         if (favoriteCheckBox.isChecked()) {
             Call<UpdateResult> call = favoriteDao.deleteFavoriteMuseum(SharedPreferencesService.getInstance().getStringData(SharedPreferencesService.KEY_ENC_ID),
-                    museum.getId());
+                    id);
             call.enqueue(new Callback<UpdateResult>() {
                 @Override
                 public void onResponse(Call<UpdateResult> call, Response<UpdateResult> response) {
@@ -146,7 +146,7 @@ public class DetailActivity extends AppCompatActivity
             });
         } else {
             Call<UpdateResult> call = favoriteDao.addFavoriteMuseum(SharedPreferencesService.getInstance().getStringData(SharedPreferencesService.KEY_ENC_ID),
-                    museum.getId());
+                    id);
             call.enqueue(new Callback<UpdateResult>() {
                 @Override
                 public void onResponse(Call<UpdateResult> call, Response<UpdateResult> response) {
@@ -173,7 +173,7 @@ public class DetailActivity extends AppCompatActivity
     public void onClickStamp(View view) {
         if (stampCheckBox.isChecked()) {
             Call<UpdateResult> call = stampDao.deleteStampMuseum(SharedPreferencesService.getInstance().getStringData(SharedPreferencesService.KEY_ENC_ID),
-                    museum.getId());
+                    id);
             call.enqueue(new Callback<UpdateResult>() {
                 @Override
                 public void onResponse(Call<UpdateResult> call, Response<UpdateResult> response) {
@@ -194,7 +194,7 @@ public class DetailActivity extends AppCompatActivity
             });
         } else {
             Call<UpdateResult> call = stampDao.addStampMuseum(SharedPreferencesService.getInstance().getStringData(SharedPreferencesService.KEY_ENC_ID),
-                    museum.getId());
+                    id);
             call.enqueue(new Callback<UpdateResult>() {
                 @Override
                 public void onResponse(Call<UpdateResult> call, Response<UpdateResult> response) {
@@ -220,10 +220,11 @@ public class DetailActivity extends AppCompatActivity
     @OnClick(R.id.relativelayout_detail_review_container)
     public void onClickReview(View view) {
         Intent intent = new Intent(this, ReviewActivity.class);
-        intent.putExtra("museum", Parcels.wrap(museum));
+        intent.putExtra("id", museum.getId());
         startActivityForResult(intent, REQUEST_REVIEW_WRITE);
     }
 
+    private int id;
     private Museum museum;
     private MaterialSheetFab materialSheetFab;
     private MuseumDao museumDao;
@@ -246,7 +247,7 @@ public class DetailActivity extends AppCompatActivity
         Intent intent = getIntent();
 
         try {
-            museum = Parcels.unwrap(intent.getParcelableExtra("museum"));
+            id = intent.getIntExtra("id", -1);
 
             if (intent.getBooleanExtra("cascade", false)) {
                 Story story = Parcels.unwrap(intent.getParcelableExtra("story"));
@@ -254,7 +255,7 @@ public class DetailActivity extends AppCompatActivity
                 storyPicker.show();
             }
 
-            Log.d("Meojium/Detail", "Museum id: " + museum.getId());
+            Log.d("Meojium/Detail", "Museum id: " + id);
         } catch (Exception e) {
             e.printStackTrace();
             Toasty.info(this, "일시적인 오류가 발생했습니다.").show();
@@ -267,20 +268,37 @@ public class DetailActivity extends AppCompatActivity
         favoriteDao = FavoriteDao.getInstance();
         stampDao = StampDao.getInstance();
 
+        requestMuseumData();
         requestReviewData();
         requestStoryData();
         requestFavoriteCheckValue();
         requestStampCheckValue();
         requestThumbImage();
 
-        initToolbar();
-        initGoogleMap();
+        initFloatingActionButton();
+    }
 
-        updateMuseumView();
+    private void requestMuseumData() {
+        Call<Museum> call = museumDao.getMuseum(id);
+        call.enqueue(new Callback<Museum>() {
+            @Override
+            public void onResponse(Call<Museum> call, Response<Museum> response) {
+                museum = response.body();
+
+                initToolbar();
+                updateMuseumView();
+                initGoogleMap();
+            }
+
+            @Override
+            public void onFailure(Call<Museum> call, Throwable t) {
+                Toasty.info(DetailActivity.this, getResources().getString(R.string.fail_connection)).show();
+            }
+        });
     }
 
     private void requestReviewData() {
-        Call<List<Review>> call = reviewDao.getReviewList(museum.getId());
+        Call<List<Review>> call = reviewDao.getReviewList(id);
         call.enqueue(new Callback<List<Review>>() {
             @Override
             public void onResponse(Call<List<Review>> call, Response<List<Review>> response) {
@@ -300,6 +318,7 @@ public class DetailActivity extends AppCompatActivity
 
             @Override
             public void onFailure(Call<List<Review>> call, Throwable t) {
+                t.printStackTrace();
                 Toasty.info(DetailActivity.this, getResources().getString(R.string.fail_connection)).show();
             }
         });
@@ -317,17 +336,18 @@ public class DetailActivity extends AppCompatActivity
     }
 
     private void requestStoryData() {
-        Call<List<Story>> call = storyDao.getStoryTitleList(museum.getId());
+        Call<List<Story>> call = storyDao.getStoryTitleList(id);
         call.enqueue(new Callback<List<Story>>() {
             @Override
             public void onResponse(Call<List<Story>> call, Response<List<Story>> response) {
                 storyList = response.body();
 
-                initFloatingActionButton();
+                addButtonToSheet();
             }
 
             @Override
             public void onFailure(Call<List<Story>> call, Throwable t) {
+                t.printStackTrace();
                 Toasty.info(DetailActivity.this, getResources().getString(R.string.fail_connection)).show();
             }
         });
@@ -336,8 +356,6 @@ public class DetailActivity extends AppCompatActivity
     private void initFloatingActionButton() {
         materialSheetFab = new MaterialSheetFab<>(fab, sheetView, overlayView,
                 android.R.color.white, R.color.colorAccent);
-
-        addButtonToSheet();
     }
 
     private void addButtonToSheet() {
@@ -367,7 +385,7 @@ public class DetailActivity extends AppCompatActivity
 
     private void requestFavoriteCheckValue() {
         Call<UpdateResult> call = favoriteDao.isCheckedMuseum(SharedPreferencesService.getInstance().getStringData(SharedPreferencesService.KEY_ENC_ID),
-                museum.getId());
+                id);
         call.enqueue(new Callback<UpdateResult>() {
             @Override
             public void onResponse(Call<UpdateResult> call, Response<UpdateResult> response) {
@@ -389,6 +407,7 @@ public class DetailActivity extends AppCompatActivity
 
             @Override
             public void onFailure(Call<UpdateResult> call, Throwable t) {
+                t.printStackTrace();
                 Toasty.info(DetailActivity.this, getResources().getString(R.string.fail_connection)).show();
             }
         });
@@ -396,7 +415,7 @@ public class DetailActivity extends AppCompatActivity
 
     private void requestStampCheckValue() {
         Call<UpdateResult> call = stampDao.isCheckedMuseum(SharedPreferencesService.getInstance().getStringData(SharedPreferencesService.KEY_ENC_ID),
-                museum.getId());
+                id);
         call.enqueue(new Callback<UpdateResult>() {
             @Override
             public void onResponse(Call<UpdateResult> call, Response<UpdateResult> response) {
@@ -418,13 +437,14 @@ public class DetailActivity extends AppCompatActivity
 
             @Override
             public void onFailure(Call<UpdateResult> call, Throwable t) {
+                t.printStackTrace();
                 Toasty.info(DetailActivity.this, getResources().getString(R.string.fail_connection)).show();
             }
         });
     }
 
     private void requestThumbImage() {
-        Call<List<String>> call = museumDao.getMuseumImageUrlList(museum.getId());
+        Call<List<String>> call = museumDao.getMuseumImageUrlList(id);
         call.enqueue(new Callback<List<String>>() {
             @Override
             public void onResponse(Call<List<String>> call, Response<List<String>> response) {
@@ -439,6 +459,7 @@ public class DetailActivity extends AppCompatActivity
 
             @Override
             public void onFailure(Call<List<String>> call, Throwable t) {
+                t.printStackTrace();
                 Toasty.info(DetailActivity.this, getResources().getString(R.string.fail_connection)).show();
             }
         });
@@ -495,7 +516,7 @@ public class DetailActivity extends AppCompatActivity
 
         MarkerOptions markerOptions = new MarkerOptions();
         markerOptions.position(museumLocation);
-        markerOptions.title("서울");
+        markerOptions.title(museum.getName());
         map.addMarker(markerOptions);
 
         map.moveCamera(CameraUpdateFactory.newLatLng(museumLocation));

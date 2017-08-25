@@ -14,8 +14,6 @@ import com.moon.meojium.base.BaseRetrofitService;
 import com.moon.meojium.model.museum.Museum;
 import com.moon.meojium.ui.detail.DetailActivity;
 
-import org.parceler.Parcels;
-
 import butterknife.BindView;
 import butterknife.ButterKnife;
 
@@ -52,7 +50,7 @@ public class MuseumViewHolder extends RecyclerView.ViewHolder {
             @Override
             public void onClick(View view) {
                 Intent intent = new Intent(context, DetailActivity.class);
-                intent.putExtra("museum", Parcels.wrap(museum));
+                intent.putExtra("id", museum.getId());
                 context.startActivity(intent);
             }
         });

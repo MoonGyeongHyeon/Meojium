@@ -86,7 +86,7 @@ public class TastingRecyclerViewAdapter extends RecyclerView.Adapter<TastingRecy
                 @Override
                 public void onClick(View view) {
                     Intent intent = new Intent(context, DetailActivity.class);
-                    intent.putExtra("museum", Parcels.wrap(museum));
+                    intent.putExtra("id", museum.getId());
                     intent.putExtra("story", Parcels.wrap(story));
                     intent.putExtra("cascade", true);
                     context.startActivity(intent);

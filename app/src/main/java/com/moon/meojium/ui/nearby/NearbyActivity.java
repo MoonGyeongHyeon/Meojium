@@ -29,8 +29,6 @@ import com.moon.meojium.database.dao.MuseumDao;
 import com.moon.meojium.model.museum.Museum;
 import com.moon.meojium.ui.detail.DetailActivity;
 
-import org.parceler.Parcels;
-
 import java.util.List;
 
 import butterknife.BindView;
@@ -233,7 +231,7 @@ public class NearbyActivity extends AppCompatActivity
         }
 
         Intent intent = new Intent(this, DetailActivity.class);
-        intent.putExtra("museum", Parcels.wrap(sendMuseum));
+        intent.putExtra("id", sendMuseum.getId());
         startActivity(intent);
     }
 

@@ -14,6 +14,9 @@ import retrofit2.http.Query;
  */
 
 public interface MuseumService {
+    @GET("/museum/{id}")
+    Call<Museum> getMuseum(@Path("id") int id);
+
     @GET("/museum/list/all")
     Call<List<Museum>> getAllMuseumList(@Query("start") int start);
 
