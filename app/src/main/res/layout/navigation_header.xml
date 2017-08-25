@@ -5,7 +5,10 @@
     android:layout_height="wrap_content"
     android:background="@color/colorPrimary"
     android:orientation="vertical"
-    android:padding="16dp">
+    android:paddingBottom="16dp"
+    android:paddingLeft="16dp"
+    android:paddingStart="16dp"
+    android:paddingTop="16dp">
 
     <ImageView
         android:id="@+id/imageview_navigation_meojium"
@@ -29,7 +32,7 @@
             android:id="@+id/textview_navigation_nickname"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_weight="80"
+            android:layout_weight="84"
             android:textColor="@android:color/white"
             android:textSize="@dimen/large_text_size"
             tools:text="@string/navigation_nickname" />
@@ -40,12 +43,12 @@
             android:layout_height="32dp"
             android:layout_gravity="end"
             android:layout_marginTop="4dp"
-            android:layout_weight="20"
+            android:layout_weight="16"
+            android:padding="4dp"
             android:background="@drawable/ripple_navigation_click"
             android:clickable="true"
-            android:paddingBottom="8dp"
-            android:paddingLeft="8dp"
-            android:paddingStart="8dp"
+            android:layout_marginRight="8dp"
+            android:layout_marginEnd="8dp"
             android:src="@drawable/ic_change_nickname" />
 
     </LinearLayout>

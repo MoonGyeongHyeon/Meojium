@@ -46,7 +46,8 @@ public class NearbyActivity extends AppCompatActivity
         implements OnMapReadyCallback,
         GoogleMap.OnMyLocationButtonClickListener,
         GoogleMap.OnInfoWindowClickListener,
-        GoogleMap.OnMarkerDragListener {
+        GoogleMap.OnMarkerDragListener,
+        GoogleMap.OnMapClickListener {
     private static final double NEARBY_DISTANCE = 20;
 
     @BindView(R.id.toolbar)
@@ -106,6 +107,7 @@ public class NearbyActivity extends AppCompatActivity
         map.setOnMyLocationButtonClickListener(this);
         map.setOnInfoWindowClickListener(this);
         map.setOnMarkerDragListener(this);
+        map.setOnMapClickListener(this);
 
         this.map = map;
 
@@ -158,7 +160,6 @@ public class NearbyActivity extends AppCompatActivity
                         ", Longitude: " + String.valueOf(currentPosition.longitude));
 
                 requestNearbyMuseumData();
-                addNearbyCircle();
 
             } catch (Exception e) {
                 e.printStackTrace();
@@ -179,6 +180,7 @@ public class NearbyActivity extends AppCompatActivity
 
                 addCurrentPositionMarker();
                 addNearbyMuseumMarker();
+                addNearbyCircle();
             }
 
             @Override
@@ -192,7 +194,7 @@ public class NearbyActivity extends AppCompatActivity
         MarkerOptions markerOptions = new MarkerOptions();
         markerOptions.position(currentPosition);
         markerOptions.draggable(true);
-        markerOptions.title("현재 위치");
+        markerOptions.title("기준");
         markerOptions.icon(BitmapDescriptorFactory.defaultMarker(98f));
         map.addMarker(markerOptions);
     }
@@ -241,7 +243,6 @@ public class NearbyActivity extends AppCompatActivity
         map.clear();
 
         requestNearbyMuseumData();
-        addNearbyCircle();
     }
 
     @Override
@@ -254,4 +255,11 @@ public class NearbyActivity extends AppCompatActivity
 
     }
 
+    @Override
+    public void onMapClick(LatLng latLng) {
+        currentPosition = latLng;
+        map.clear();
+
+        requestNearbyMuseumData();
+    }
 }

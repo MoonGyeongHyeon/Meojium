@@ -47,6 +47,7 @@ import com.moon.meojium.ui.login.naver.NaverLogin;
 import com.moon.meojium.ui.nearby.NearbyActivity;
 import com.moon.meojium.ui.search.SearchActivity;
 
+import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -174,8 +175,18 @@ public class HomeActivity extends AppCompatActivity
                         .setPositiveButton("확인", new DialogInterface.OnClickListener() {
                             @Override
                             public void onClick(DialogInterface dialogInterface, int i) {
-                                if (editText.getText().toString().trim().length() == 0) {
+                                int len;
+                                try {
+                                    len = editText.getText().toString().trim().getBytes("MS949").length;
+                                } catch (UnsupportedEncodingException e) {
+                                    e.printStackTrace();
+                                    len = 100;
+                                }
+                                Log.d("Test", "" + len);
+                                if (len == 0) {
                                     Toasty.info(HomeActivity.this, "닉네임을 입력해주세요.").show();
+                                } else if (len > 15) {
+                                    Toasty.info(HomeActivity.this, "닉네임은 한글 7자, 알파벳 15자까지 가능합니다.").show();
                                 } else {
                                     final String nickname = editText.getText().toString();
                                     Call<UpdateResult> call = userDao.updateNickname(sharedPreferencesService.getStringData(SharedPreferencesService.KEY_ENC_ID),
