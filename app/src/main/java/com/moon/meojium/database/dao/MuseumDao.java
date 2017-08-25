@@ -36,8 +36,8 @@ public class MuseumDao extends BaseRetrofitService {
         service = (MuseumService) retrofit.create(type);
     }
 
-    public Call<List<Museum>> getAllMuseumList(int start) {
-        return service.getAllMuseumList(start);
+    public Call<List<Museum>> getAllMuseumList(int start, int orderBy) {
+        return service.getAllMuseumList(start, orderBy);
     }
 
     public Call<Museum> getMuseum(int id) {

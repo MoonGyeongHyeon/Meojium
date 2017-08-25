@@ -35,6 +35,9 @@ import retrofit2.Response;
  */
 
 public class MuseumFragment extends Fragment {
+    public static final int ORDER_BY_POPULAR = 101;
+    public static final int ORDER_BY_HISTORY = 102;
+    public static final int ORDER_BY_AREA = 103;
     private static final int MAX_DATA_COUNT = 68;
     private static final int GETTING_DATA_COUNT = 10;
 
@@ -52,6 +55,7 @@ public class MuseumFragment extends Fragment {
     private int startIndex;
     private boolean isInitialized;
     private MuseumRecyclerViewAdapter adapter;
+    private int orderBy;
 
     public static Fragment newInstance(String category) {
         Fragment fragment = new MuseumFragment();
@@ -67,6 +71,16 @@ public class MuseumFragment extends Fragment {
         Bundle bundle = new Bundle();
         bundle.putString("category", category);
         bundle.putString("keyword", keyword);
+        fragment.setArguments(bundle);
+
+        return fragment;
+    }
+
+    public static Fragment newInstance(String category, int orderBy) {
+        Fragment fragment = new MuseumFragment();
+        Bundle bundle = new Bundle();
+        bundle.putString("category", category);
+        bundle.putInt("orderBy", orderBy);
         fragment.setArguments(bundle);
 
         return fragment;
@@ -108,6 +122,7 @@ public class MuseumFragment extends Fragment {
 
             case "전체 보기":
                 dao = MuseumDao.getInstance();
+                orderBy = bundle.getInt("orderBy");
                 requestAllMuseumData();
                 setRecyclerViewScrollListener();
                 break;
@@ -174,7 +189,7 @@ public class MuseumFragment extends Fragment {
     }
 
     private void requestAllMuseumData() {
-        Call<List<Museum>> call = ((MuseumDao) dao).getAllMuseumList(startIndex);
+        Call<List<Museum>> call = ((MuseumDao) dao).getAllMuseumList(startIndex, orderBy);
         call.enqueue(new Callback<List<Museum>>() {
             @Override
             public void onResponse(Call<List<Museum>> call, Response<List<Museum>> response) {

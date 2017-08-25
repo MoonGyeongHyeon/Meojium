@@ -18,7 +18,7 @@ public interface MuseumService {
     Call<Museum> getMuseum(@Path("id") int id);
 
     @GET("/museum/list/all")
-    Call<List<Museum>> getAllMuseumList(@Query("start") int start);
+    Call<List<Museum>> getAllMuseumList(@Query("start") int start, @Query("order_by") int orderBy);
 
     @GET("/museum/list/popular")
     Call<List<Museum>> getPopularMuseumList();
