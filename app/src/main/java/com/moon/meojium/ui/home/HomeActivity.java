@@ -28,6 +28,9 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
+import com.google.android.gms.auth.api.Auth;
+import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
+import com.google.android.gms.common.api.GoogleApiClient;
 import com.kakao.usermgmt.UserManagement;
 import com.kakao.usermgmt.callback.LogoutResponseCallback;
 import com.moon.meojium.R;
@@ -115,6 +118,7 @@ public class HomeActivity extends AppCompatActivity
     private UserDao userDao;
     private TastingRecyclerViewAdapter tastingAdapter;
     private AreaRecyclerViewAdapter areaAdapter;
+    private GoogleApiClient googleApiClient;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -130,6 +134,8 @@ public class HomeActivity extends AppCompatActivity
 
         sharedPreferencesService = SharedPreferencesService.getInstance();
 
+
+        initGoogleLogout();
         initNavigationView();
 
         requestPopularMuseumData();
@@ -148,6 +154,17 @@ public class HomeActivity extends AppCompatActivity
         super.onResume();
 
         requestUserInfo();
+    }
+
+    private void initGoogleLogout() {
+        GoogleSignInOptions gso = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
+                .requestIdToken(getString(R.string.google_web_api))
+                .requestEmail()
+                .build();
+
+        googleApiClient = new GoogleApiClient.Builder(this)
+                .addApi(Auth.GOOGLE_SIGN_IN_API, gso)
+                .build();
     }
 
     private void initNavigationView() {
@@ -556,9 +573,30 @@ public class HomeActivity extends AppCompatActivity
                     }
                 });
                 break;
+            case LoginType.GOOGLE:
+                signOut();
+                break;
         }
 
         sharedPreferencesService.removeData(SharedPreferencesService.KEY_ENC_ID,
                 SharedPreferencesService.KEY_TYPE, SharedPreferencesService.KEY_NICKNAME);
+    }
+
+    private void signOut() {
+        googleApiClient.connect();
+        googleApiClient.registerConnectionCallbacks(new GoogleApiClient.ConnectionCallbacks() {
+            @Override
+            public void onConnected(@Nullable Bundle bundle) {
+                if (googleApiClient.isConnected()) {
+                    Auth.GoogleSignInApi.signOut(googleApiClient);
+                    Log.d("Meojium/GoogleLogin", "Logout Google");
+                }
+            }
+
+            @Override
+            public void onConnectionSuspended(int i) {
+                Log.d("Meojium/Login", "Suspend Google Logout Connection");
+            }
+        });
     }
 }

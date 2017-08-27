@@ -40,7 +40,7 @@
 
     <TextView
         android:id="@+id/textview_review_content"
-        android:layout_width="wrap_content"
+        android:layout_width="240dp"
         android:layout_height="wrap_content"
         android:layout_alignLeft="@id/textview_review_user_nickname"
         android:layout_alignStart="@id/textview_review_user_nickname"

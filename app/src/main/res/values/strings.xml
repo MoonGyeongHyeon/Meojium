@@ -1,8 +1,8 @@
 <resources>
     <string name="app_name">머지엄</string>
 
-    <string name="google_api_key">AIzaSyDdvjCwD6bVOuen70AwDxAV2rQrS-rbXBY</string>
-    <string name="google_web_api_key">AIzaSyCQOzKrbBNvfx2fqV0ruC0wB8Q89ReRsFo</string>
+    <string name="google_api">AIzaSyDdvjCwD6bVOuen70AwDxAV2rQrS-rbXBY</string>
+    <string name="google_web_api">674402390137-u4hl8731icoc2dur0se20bvt2vsl6rga.apps.googleusercontent.com</string>
     <string name="kakao_app_key">9f10b53292402f572c6933ec02762d8a</string>
     <string name="kakao_secret_key">DRverf7i0wj7xqNfGr55miAAzGWdSUZo</string>
     <string name="naver_client_id">zp_U6QNm3sWr4V1O7Xa5</string>
@@ -32,7 +32,7 @@
     <string name="home_history">역사깊은 박물관</string>
     <string name="home_nearby">주변 박물관 찾아보기</string>
     <string name="home_tasting">박물관 맛보기</string>
-    <string name="navigation_nickname">%s님\n환영합니다!</string>
+    <string name="navigation_nickname">%s님</string>
     <string name="hint_search">검색</string>
     <string name="search_log_nothing_data">최근 검색 기록이 없습니다.</string>
     <string name="review_all">전체 리뷰</string>
@@ -53,5 +53,6 @@
     <string name="order_by_popular">인기 순</string>
     <string name="order_by_history">설립일자 순</string>
     <string name="order_by_area">규모 순</string>
+    <string name="navigation_intro">환영합니다!</string>
 
 </resources>

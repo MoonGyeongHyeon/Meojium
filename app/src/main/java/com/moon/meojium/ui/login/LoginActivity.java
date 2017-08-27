@@ -2,10 +2,18 @@ package com.moon.meojium.ui.login;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.View;
 
+import com.google.android.gms.auth.api.Auth;
+import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
+import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
+import com.google.android.gms.auth.api.signin.GoogleSignInResult;
+import com.google.android.gms.common.ConnectionResult;
+import com.google.android.gms.common.SignInButton;
+import com.google.android.gms.common.api.GoogleApiClient;
 import com.kakao.auth.ISessionCallback;
 import com.kakao.auth.Session;
 import com.kakao.network.ErrorResult;
@@ -25,19 +33,29 @@ import com.nhn.android.naverlogin.ui.view.OAuthLoginButton;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
+import butterknife.OnClick;
 import retrofit2.Call;
 import retrofit2.Response;
 
-public class LoginActivity extends AppCompatActivity {
+public class LoginActivity extends AppCompatActivity
+        implements GoogleApiClient.OnConnectionFailedListener {
     @BindView(R.id.button_login_naver_id)
     OAuthLoginButton oAuthLoginButton;
+    @BindView(R.id.button_login_google_id)
+    SignInButton signInButton;
+
+    @OnClick(R.id.button_login_google_id)
+    public void onClick() {
+        signIn();
+    }
 
     private NaverLogin naverLogin;
     private SessionCallback callback;
     private UserDao userDao;
     private String id, nickname;
     private SharedPreferencesService service;
-
+    private GoogleApiClient googleApiClient;
+    private int RC_SIGN_IN = 1;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -51,9 +69,20 @@ public class LoginActivity extends AppCompatActivity {
         initLoginButton();
     }
 
+    private void handleSignInResult(GoogleSignInResult result) {
+        if (result.isSuccess()) {
+            GoogleSignInAccount acct = result.getSignInAccount();
+            id = acct.getId();
+            nickname = acct.getDisplayName();
+
+            insertUser(LoginType.GOOGLE);
+        }
+    }
+
     private void initLoginButton() {
         initKakaoLogin();
         initNaverLogin();
+        initGoogleLogin();
     }
 
     private void initKakaoLogin() {
@@ -73,6 +102,30 @@ public class LoginActivity extends AppCompatActivity {
                 naverLogin.startNaverLoginActivity(LoginActivity.this);
             }
         });
+    }
+
+    private void initGoogleLogin() {
+        GoogleSignInOptions gso = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
+                .requestIdToken(getString(R.string.google_web_api))
+                .requestEmail()
+                .build();
+
+        googleApiClient = new GoogleApiClient.Builder(this)
+                .enableAutoManage(this /* FragmentActivity */, this /* OnConnectionFailedListener */)
+                .addApi(Auth.GOOGLE_SIGN_IN_API, gso)
+                .build();
+
+        signInButton.setSize(SignInButton.SIZE_WIDE);
+    }
+
+    private void signIn() {
+        Intent signInIntent = Auth.GoogleSignInApi.getSignInIntent(googleApiClient);
+        startActivityForResult(signInIntent, RC_SIGN_IN);
+    }
+
+    @Override
+    public void onConnectionFailed(@NonNull ConnectionResult connectionResult) {
+
     }
 
     private class SessionCallback implements ISessionCallback {
@@ -97,54 +150,7 @@ public class LoginActivity extends AppCompatActivity {
                     id = String.valueOf(result.getId());
                     nickname = result.getNickname();
 
-                    Call<User> call = userDao.isExistedUser(id);
-                    call.enqueue(new retrofit2.Callback<User>() {
-                        @Override
-                        public void onResponse(Call<User> call, Response<User> response) {
-                            User user = response.body();
-
-                            if (user != null && user.getNickname() != null) {
-                                Log.d("Meojium/KakaoLogin", "Exist User");
-
-                                nickname = user.getNickname();
-
-                                Log.d("Meojium/KakaoLogin", "nickname: " + nickname);
-                                Log.d("Meojium/KakaoLogin", "encId: " + id);
-
-                                saveAndStart();
-                            } else {
-                                Log.d("Meojium/KakaoLogin", "Not Exist User");
-
-                                Call<UpdateResult> call2 = userDao.addUser(id, nickname);
-
-                                call2.enqueue(new retrofit2.Callback<UpdateResult>() {
-                                    @Override
-                                    public void onResponse(Call<UpdateResult> call, Response<UpdateResult> response) {
-                                        UpdateResult result = response.body();
-
-                                        if (result.getCode() == UpdateResult.RESULT_OK) {
-                                            Log.d("Meojium/KakaoLogin", "Success Adding User Info");
-
-                                            saveAndStart();
-                                        } else {
-                                            Log.d("Meojium/KakaoLogin", "Fail Adding User Info");
-                                        }
-                                    }
-
-                                    @Override
-                                    public void onFailure(Call<UpdateResult> call, Throwable t) {
-                                        Log.d("Meojium/KakaoLogin", "Fail Adding User Info");
-                                    }
-                                });
-                            }
-
-                        }
-
-                        @Override
-                        public void onFailure(Call<User> call, Throwable t) {
-                            Log.d("Meojium/Login", "Fail Checking User Existed");
-                        }
-                    });
+                    insertUser(LoginType.KAKAO);
                 }
             });
         }
@@ -157,9 +163,60 @@ public class LoginActivity extends AppCompatActivity {
         }
     }
 
-    private void saveAndStart() {
+    private void insertUser(final String type) {
+        Call<User> call = userDao.isExistedUser(id);
+        call.enqueue(new retrofit2.Callback<User>() {
+            @Override
+            public void onResponse(Call<User> call, Response<User> response) {
+                User user = response.body();
+
+                if (user != null && user.getNickname() != null) {
+                    Log.d("Meojium/Login", "Exist User");
+
+                    nickname = user.getNickname();
+
+                    Log.d("Meojium/Login", "nickname: " + nickname);
+                    Log.d("Meojium/Login", "id: " + id);
+
+                    saveAndStart(type);
+                } else {
+                    Log.d("Meojium/Login", "Not Exist User");
+
+                    Call<UpdateResult> call2 = userDao.addUser(id, nickname);
+
+                    call2.enqueue(new retrofit2.Callback<UpdateResult>() {
+                        @Override
+                        public void onResponse(Call<UpdateResult> call, Response<UpdateResult> response) {
+                            UpdateResult result = response.body();
+
+                            if (result.getCode() == UpdateResult.RESULT_OK) {
+                                Log.d("Meojium/Login", "Success Adding User Info");
+
+                                saveAndStart(type);
+                            } else {
+                                Log.d("Meojium/Login", "Fail Adding User Info");
+                            }
+                        }
+
+                        @Override
+                        public void onFailure(Call<UpdateResult> call, Throwable t) {
+                            Log.d("Meojium/Login", "Fail Adding User Info");
+                        }
+                    });
+                }
+
+            }
+
+            @Override
+            public void onFailure(Call<User> call, Throwable t) {
+                Log.d("Meojium/Login", "Fail Checking User Existed");
+            }
+        });
+    }
+
+    private void saveAndStart(String type) {
         service.putData(SharedPreferencesService.KEY_ENC_ID, id);
-        service.putData(SharedPreferencesService.KEY_TYPE, LoginType.KAKAO);
+        service.putData(SharedPreferencesService.KEY_TYPE, type);
         service.putData(SharedPreferencesService.KEY_NICKNAME, nickname);
 
         Log.d("Test", "ID: " + id);
@@ -177,6 +234,11 @@ public class LoginActivity extends AppCompatActivity {
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         if (Session.getCurrentSession().handleActivityResult(requestCode, resultCode, data)) {
             return;
+        }
+
+        if (requestCode == RC_SIGN_IN) {
+            GoogleSignInResult result = Auth.GoogleSignInApi.getSignInResultFromIntent(data);
+            handleSignInResult(result);
         }
 
         super.onActivityResult(requestCode, resultCode, data);

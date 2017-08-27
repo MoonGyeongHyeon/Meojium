@@ -14,29 +14,36 @@
         android:textColor="@android:color/white"
         android:textSize="55sp" />
 
-    <Button
+    <com.google.android.gms.common.SignInButton
         android:id="@+id/button_login_google_id"
-        android:layout_width="280dp"
+        android:layout_width="260dp"
         android:layout_height="50dp"
         android:layout_alignParentBottom="true"
         android:layout_centerHorizontal="true"
-        android:layout_marginBottom="40dp"
-        android:text="구글 아이디로 로그인" />
+        android:layout_marginBottom="40dp"/>
 
     <com.kakao.usermgmt.LoginButton
         android:id="@+id/button_login_kakao_id"
-        android:layout_width="280dp"
-        android:layout_height="50dp"
+        android:layout_width="260dp"
+        android:layout_height="47dp"
         android:layout_above="@id/button_login_google_id"
         android:layout_centerHorizontal="true"
+        android:layout_alignLeft="@id/button_login_google_id"
+        android:layout_alignStart="@id/button_login_google_id"
+        android:layout_alignEnd="@id/button_login_google_id"
+        android:layout_alignRight="@id/button_login_google_id"
         android:layout_marginBottom="8dp"
         android:layout_marginTop="8dp" />
 
     <com.nhn.android.naverlogin.ui.view.OAuthLoginButton
         android:id="@+id/button_login_naver_id"
-        android:layout_width="280dp"
-        android:layout_height="50dp"
+        android:layout_width="260dp"
+        android:layout_height="47dp"
         android:layout_above="@id/button_login_kakao_id"
+        android:layout_alignLeft="@id/button_login_google_id"
+        android:layout_alignStart="@id/button_login_google_id"
+        android:layout_alignEnd="@id/button_login_google_id"
+        android:layout_alignRight="@id/button_login_google_id"
         android:layout_centerHorizontal="true" />
 
 </RelativeLayout>

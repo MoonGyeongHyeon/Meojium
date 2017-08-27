@@ -1,0 +1,42 @@
+{
+  "project_info": {
+    "project_number": "674402390137",
+    "firebase_url": "https://meojium.firebaseio.com",
+    "project_id": "meojium",
+    "storage_bucket": "meojium.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:674402390137:android:2d7b88c2ce8b7b7e",
+        "android_client_info": {
+          "package_name": "com.moon.meojium"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "674402390137-u4hl8731icoc2dur0se20bvt2vsl6rga.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyA8rYeRhz7-P9j8jPTbcCoBy7WLEn-LFSM"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 1,
+          "other_platform_oauth_client": []
+        },
+        "ads_service": {
+          "status": 2
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
