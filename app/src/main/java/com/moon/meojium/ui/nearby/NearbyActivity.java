@@ -3,6 +3,7 @@ package com.moon.meojium.ui.nearby;
 import android.Manifest;
 import android.content.Context;
 import android.content.Intent;
+import android.location.Location;
 import android.location.LocationManager;
 import android.os.Build;
 import android.os.Bundle;
@@ -14,6 +15,9 @@ import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.MenuItem;
 
+import com.google.android.gms.common.ConnectionResult;
+import com.google.android.gms.common.api.GoogleApiClient;
+import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.MapFragment;
@@ -47,18 +51,20 @@ public class NearbyActivity extends AppCompatActivity
         GoogleMap.OnMyLocationButtonClickListener,
         GoogleMap.OnInfoWindowClickListener,
         GoogleMap.OnMarkerDragListener,
-        GoogleMap.OnMapClickListener {
+        GoogleMap.OnMapClickListener,
+        GoogleApiClient.ConnectionCallbacks,
+        GoogleApiClient.OnConnectionFailedListener {
     private static final double NEARBY_DISTANCE = 20;
 
     @BindView(R.id.toolbar)
     Toolbar toolbar;
 
-    private LocationManager locationManager;
     private LatLng currentPosition;
     private List<Museum> nearbyMuseumList;
     private GoogleMap map;
     private MapFragment mapFragment;
     private MuseumDao museumDao;
+    private GoogleApiClient googleApiClient;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -79,17 +85,6 @@ public class NearbyActivity extends AppCompatActivity
     }
 
     private void initGoogleMap() {
-        mapFragment = new MapFragment();
-        mapFragment.getMapAsync(this);
-
-        getFragmentManager()
-                .beginTransaction()
-                .replace(R.id.fragment_nearby_map_container, mapFragment)
-                .commit();
-    }
-
-    @Override
-    public void onMapReady(final GoogleMap map) {
         if (Build.VERSION.SDK_INT >= 23) {
             if (!(PermissionChecker.checkPermission(this, Manifest.permission.ACCESS_FINE_LOCATION)
                     && PermissionChecker.checkPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION))) {
@@ -101,24 +96,13 @@ public class NearbyActivity extends AppCompatActivity
             }
         }
 
-        locationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
+        mapFragment = new MapFragment();
+        mapFragment.getMapAsync(this);
 
-        map.setMyLocationEnabled(true);
-        map.setOnMyLocationButtonClickListener(this);
-        map.setOnInfoWindowClickListener(this);
-        map.setOnMarkerDragListener(this);
-        map.setOnMapClickListener(this);
-
-        this.map = map;
-
-        initDefaultLocation();
-    }
-
-    private void initDefaultLocation() {
-        LatLng SEOUL = new LatLng(37.56, 126.97);
-
-        map.moveCamera(CameraUpdateFactory.newLatLng(SEOUL));
-        map.animateCamera(CameraUpdateFactory.zoomTo(10));
+        getFragmentManager()
+                .beginTransaction()
+                .replace(R.id.fragment_nearby_map_container, mapFragment)
+                .commit();
     }
 
     @Override
@@ -138,36 +122,42 @@ public class NearbyActivity extends AppCompatActivity
     }
 
     @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        switch (item.getItemId()) {
-            case android.R.id.home:
-                onBackPressed();
-                break;
-        }
-        return super.onOptionsItemSelected(item);
+    public void onMapReady(final GoogleMap map) {
+        map.setMyLocationEnabled(true);
+        map.setOnMyLocationButtonClickListener(this);
+        map.setOnInfoWindowClickListener(this);
+        map.setOnMarkerDragListener(this);
+        map.setOnMapClickListener(this);
+
+        googleApiClient = new GoogleApiClient.Builder(this)
+                .addApi(LocationServices.API)
+                .addConnectionCallbacks(this)
+                .addOnConnectionFailedListener(this)
+                .build();
+
+        googleApiClient.connect();
+
+        this.map = map;
     }
 
     @Override
     public boolean onMyLocationButtonClick() {
-        if (!locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER)) {
-            Toasty.info(NearbyActivity.this, "위치 정보를 얻을 수 없습니다.").show();
-        } else {
-            map.clear();
+        map.clear();
 
-            try {
-                currentPosition = new LatLng(map.getMyLocation().getLatitude(), map.getMyLocation().getLongitude());
-                Log.d("Meojium/Nearby", "Latitude: " + String.valueOf(currentPosition.latitude) +
-                        ", Longitude: " + String.valueOf(currentPosition.longitude));
+        getDeviceLocation();
 
-                requestNearbyMuseumData();
+        requestNearbyMuseumData();
 
-            } catch (Exception e) {
-                e.printStackTrace();
-                Toasty.info(NearbyActivity.this, "잠시 후 다시 시도해주세요.").show();
-            }
-        }
+        return true;
+    }
 
-        return false;
+    private void getDeviceLocation() {
+        Location location = LocationServices.FusedLocationApi.getLastLocation(googleApiClient);
+
+        currentPosition = new LatLng(location.getLatitude(), location.getLongitude());
+
+        Log.d("Meojium/Nearby", "Latitude: " + String.valueOf(currentPosition.latitude) +
+                ", Longitude: " + String.valueOf(currentPosition.longitude));
     }
 
     private void requestNearbyMuseumData() {
@@ -181,6 +171,7 @@ public class NearbyActivity extends AppCompatActivity
                 addCurrentPositionMarker();
                 addNearbyMuseumMarker();
                 addNearbyCircle();
+                focusMap();
             }
 
             @Override
@@ -222,6 +213,11 @@ public class NearbyActivity extends AppCompatActivity
         map.addCircle(circleOptions);
     }
 
+    private void focusMap() {
+        map.moveCamera(CameraUpdateFactory.newLatLng(currentPosition));
+        map.animateCamera(CameraUpdateFactory.zoomTo(10));
+    }
+
     @Override
     public void onInfoWindowClick(Marker marker) {
         Museum sendMuseum = null;
@@ -261,5 +257,30 @@ public class NearbyActivity extends AppCompatActivity
         map.clear();
 
         requestNearbyMuseumData();
+    }
+
+    @Override
+    public void onConnected(@Nullable Bundle bundle) {
+        getDeviceLocation();
+        requestNearbyMuseumData();
+    }
+
+    @Override
+    public void onConnectionSuspended(int i) {
+    }
+
+    @Override
+    public void onConnectionFailed(@NonNull ConnectionResult connectionResult) {
+        Toasty.info(this, getString(R.string.fail_connection)).show();
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case android.R.id.home:
+                onBackPressed();
+                break;
+        }
+        return super.onOptionsItemSelected(item);
     }
 }
