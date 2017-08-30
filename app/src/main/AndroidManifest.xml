@@ -28,7 +28,7 @@
             android:value="@string/kakao_app_key" />
         <meta-data
             android:name="com.kakao.sdk.ClientSecret"
-            android:value="@string/kakao_secret_key"/>
+            android:value="@string/kakao_secret_key" />
 
         <activity
             android:name="com.nhn.android.naverlogin.ui.OAuthLoginActivity"
@@ -37,7 +37,9 @@
             android:name="com.nhn.android.naverlogin.ui.OAuthLoginInAppBrowserActivity"
             android:label="OAuth2.0 In-app" />
 
-        <activity android:name=".ui.splash.SplashActivity">
+        <activity
+            android:name=".ui.splash.SplashActivity"
+            android:screenOrientation="portrait">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
@@ -45,15 +47,33 @@
             </intent-filter>
         </activity>
 
-        <activity android:name=".ui.login.LoginActivity" />
-        <activity android:name=".ui.home.HomeActivity" />
-        <activity android:name=".ui.detail.DetailActivity" />
-        <activity android:name=".ui.nearby.NearbyActivity" />
-        <activity android:name=".ui.interested.InterestedActivity" />
-        <activity android:name=".ui.search.SearchActivity" />
-        <activity android:name=".ui.search.SearchResultActivity" />
-        <activity android:name=".ui.reviews.ReviewActivity" />
-        <activity android:name=".ui.allmuseum.AllMuseumActivity" />
+        <activity
+            android:name=".ui.login.LoginActivity"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".ui.home.HomeActivity"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".ui.detail.DetailActivity"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".ui.nearby.NearbyActivity"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".ui.interested.InterestedActivity"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".ui.search.SearchActivity"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".ui.search.SearchResultActivity"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".ui.reviews.ReviewActivity"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".ui.allmuseum.AllMuseumActivity"
+            android:screenOrientation="portrait" />
     </application>
 
 </manifest>

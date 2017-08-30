@@ -9,41 +9,69 @@
         android:layout_height="wrap_content"
         android:layout_alignParentTop="true"
         android:layout_centerHorizontal="true"
-        android:layout_marginTop="10dp"
+        android:layout_marginTop="32dp"
         android:text="머지엄"
         android:textColor="@android:color/white"
-        android:textSize="55sp" />
+        android:textSize="35sp"
+        android:textStyle="bold" />
 
-    <com.google.android.gms.common.SignInButton
-        android:id="@+id/button_login_google_id"
-        android:layout_width="260dp"
-        android:layout_height="50dp"
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="200dp"
         android:layout_alignParentBottom="true"
         android:layout_centerHorizontal="true"
-        android:layout_marginBottom="40dp"/>
+        android:layout_margin="16dp"
+        android:orientation="vertical">
 
-    <com.kakao.usermgmt.LoginButton
-        android:id="@+id/button_login_kakao_id"
-        android:layout_width="260dp"
-        android:layout_height="47dp"
-        android:layout_above="@id/button_login_google_id"
-        android:layout_centerHorizontal="true"
-        android:layout_alignLeft="@id/button_login_google_id"
-        android:layout_alignStart="@id/button_login_google_id"
-        android:layout_alignEnd="@id/button_login_google_id"
-        android:layout_alignRight="@id/button_login_google_id"
-        android:layout_marginBottom="8dp"
-        android:layout_marginTop="8dp" />
+        <FrameLayout
+            android:layout_width="280dp"
+            android:layout_height="55dp"
+            android:layout_gravity="center"
+            android:layout_marginBottom="4dp">
 
-    <com.nhn.android.naverlogin.ui.view.OAuthLoginButton
-        android:id="@+id/button_login_naver_id"
-        android:layout_width="260dp"
-        android:layout_height="47dp"
-        android:layout_above="@id/button_login_kakao_id"
-        android:layout_alignLeft="@id/button_login_google_id"
-        android:layout_alignStart="@id/button_login_google_id"
-        android:layout_alignEnd="@id/button_login_google_id"
-        android:layout_alignRight="@id/button_login_google_id"
-        android:layout_centerHorizontal="true" />
+            <com.nhn.android.naverlogin.ui.view.OAuthLoginButton
+                android:id="@+id/button_login_naver_id"
+                android:layout_width="1dp"
+                android:layout_height="1dp" />
+
+            <ImageView
+                android:id="@+id/imageview_login_naver"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:src="@drawable/img_login_naver"
+                android:scaleType="fitXY"
+                android:paddingLeft="3dp"
+                android:paddingStart="3dp"
+                android:paddingEnd="3dp"
+                android:paddingRight="3dp"/>
+
+        </FrameLayout>
+
+        <FrameLayout
+            android:layout_width="280dp"
+            android:layout_height="55dp"
+            android:layout_gravity="center">
+
+            <com.kakao.usermgmt.LoginButton
+                android:id="@+id/button_login_kakao_id"
+                android:layout_width="1dp"
+                android:layout_height="1dp" />
+
+            <ImageView
+                android:id="@+id/imageview_login_kakao"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:src="@drawable/img_login_kakao"
+                android:scaleType="fitXY"/>
+
+        </FrameLayout>
+
+        <com.google.android.gms.common.SignInButton
+            android:id="@+id/button_login_google_id"
+            android:layout_width="280dp"
+            android:layout_height="55dp"
+            android:layout_gravity="center"/>
+
+    </LinearLayout>
 
 </RelativeLayout>

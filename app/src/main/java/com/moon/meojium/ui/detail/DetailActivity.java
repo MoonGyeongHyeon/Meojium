@@ -123,8 +123,8 @@ public class DetailActivity extends AppCompatActivity
     @OnClick(R.id.relativelayout_detail_favorite_container)
     public void onClickFavorite(View view) {
         if (favoriteCheckBox.isChecked()) {
-            Call<UpdateResult> call = favoriteDao.deleteFavoriteMuseum(SharedPreferencesService.getInstance().getStringData(SharedPreferencesService.KEY_ENC_ID),
-                    id);
+            Call<UpdateResult> call = favoriteDao.deleteFavoriteMuseum(
+                    SharedPreferencesService.getInstance().getStringData(SharedPreferencesService.KEY_ENC_ID), id);
             call.enqueue(new Callback<UpdateResult>() {
                 @Override
                 public void onResponse(Call<UpdateResult> call, Response<UpdateResult> response) {
@@ -145,8 +145,8 @@ public class DetailActivity extends AppCompatActivity
                 }
             });
         } else {
-            Call<UpdateResult> call = favoriteDao.addFavoriteMuseum(SharedPreferencesService.getInstance().getStringData(SharedPreferencesService.KEY_ENC_ID),
-                    id);
+            Call<UpdateResult> call = favoriteDao.addFavoriteMuseum(
+                    SharedPreferencesService.getInstance().getStringData(SharedPreferencesService.KEY_ENC_ID), id);
             call.enqueue(new Callback<UpdateResult>() {
                 @Override
                 public void onResponse(Call<UpdateResult> call, Response<UpdateResult> response) {
@@ -172,8 +172,8 @@ public class DetailActivity extends AppCompatActivity
     @OnClick(R.id.relativelayout_detail_stamp_container)
     public void onClickStamp(View view) {
         if (stampCheckBox.isChecked()) {
-            Call<UpdateResult> call = stampDao.deleteStampMuseum(SharedPreferencesService.getInstance().getStringData(SharedPreferencesService.KEY_ENC_ID),
-                    id);
+            Call<UpdateResult> call = stampDao.deleteStampMuseum(
+                    SharedPreferencesService.getInstance().getStringData(SharedPreferencesService.KEY_ENC_ID), id);
             call.enqueue(new Callback<UpdateResult>() {
                 @Override
                 public void onResponse(Call<UpdateResult> call, Response<UpdateResult> response) {
@@ -193,8 +193,8 @@ public class DetailActivity extends AppCompatActivity
                 }
             });
         } else {
-            Call<UpdateResult> call = stampDao.addStampMuseum(SharedPreferencesService.getInstance().getStringData(SharedPreferencesService.KEY_ENC_ID),
-                    id);
+            Call<UpdateResult> call = stampDao.addStampMuseum(
+                    SharedPreferencesService.getInstance().getStringData(SharedPreferencesService.KEY_ENC_ID), id);
             call.enqueue(new Callback<UpdateResult>() {
                 @Override
                 public void onResponse(Call<UpdateResult> call, Response<UpdateResult> response) {
@@ -248,6 +248,10 @@ public class DetailActivity extends AppCompatActivity
 
         try {
             id = intent.getIntExtra("id", -1);
+
+            if (id == -1) {
+                throw new Exception();
+            }
 
             if (intent.getBooleanExtra("cascade", false)) {
                 Story story = Parcels.unwrap(intent.getParcelableExtra("story"));
@@ -384,8 +388,8 @@ public class DetailActivity extends AppCompatActivity
     }
 
     private void requestFavoriteCheckValue() {
-        Call<UpdateResult> call = favoriteDao.isCheckedMuseum(SharedPreferencesService.getInstance().getStringData(SharedPreferencesService.KEY_ENC_ID),
-                id);
+        Call<UpdateResult> call = favoriteDao.isCheckedMuseum(
+                SharedPreferencesService.getInstance().getStringData(SharedPreferencesService.KEY_ENC_ID), id);
         call.enqueue(new Callback<UpdateResult>() {
             @Override
             public void onResponse(Call<UpdateResult> call, Response<UpdateResult> response) {
@@ -414,8 +418,8 @@ public class DetailActivity extends AppCompatActivity
     }
 
     private void requestStampCheckValue() {
-        Call<UpdateResult> call = stampDao.isCheckedMuseum(SharedPreferencesService.getInstance().getStringData(SharedPreferencesService.KEY_ENC_ID),
-                id);
+        Call<UpdateResult> call = stampDao.isCheckedMuseum(
+                SharedPreferencesService.getInstance().getStringData(SharedPreferencesService.KEY_ENC_ID), id);
         call.enqueue(new Callback<UpdateResult>() {
             @Override
             public void onResponse(Call<UpdateResult> call, Response<UpdateResult> response) {

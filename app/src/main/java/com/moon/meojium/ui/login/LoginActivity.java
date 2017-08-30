@@ -6,6 +6,7 @@ import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.View;
+import android.view.WindowManager;
 
 import com.google.android.gms.auth.api.Auth;
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
@@ -17,6 +18,7 @@ import com.google.android.gms.common.api.GoogleApiClient;
 import com.kakao.auth.ISessionCallback;
 import com.kakao.auth.Session;
 import com.kakao.network.ErrorResult;
+import com.kakao.usermgmt.LoginButton;
 import com.kakao.usermgmt.UserManagement;
 import com.kakao.usermgmt.callback.MeResponseCallback;
 import com.kakao.usermgmt.response.model.UserProfile;
@@ -40,9 +42,21 @@ import retrofit2.Response;
 public class LoginActivity extends AppCompatActivity
         implements GoogleApiClient.OnConnectionFailedListener {
     @BindView(R.id.button_login_naver_id)
-    OAuthLoginButton oAuthLoginButton;
+    OAuthLoginButton naverLoginButton;
+    @BindView(R.id.button_login_kakao_id)
+    LoginButton kakaoLoginButton;
     @BindView(R.id.button_login_google_id)
-    SignInButton signInButton;
+    SignInButton googleLoginButton;
+
+    @OnClick(R.id.imageview_login_naver)
+    public void onNaverClick(View view) {
+        naverLoginButton.performClick();
+    }
+
+    @OnClick(R.id.imageview_login_kakao)
+    public void onKakaoClick(View view) {
+        kakaoLoginButton.performClick();
+    }
 
     @OnClick(R.id.button_login_google_id)
     public void onClick() {
@@ -60,6 +74,8 @@ public class LoginActivity extends AppCompatActivity
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN,
+                WindowManager.LayoutParams.FLAG_FULLSCREEN);
         setContentView(R.layout.activity_login);
         ButterKnife.bind(this);
 
@@ -94,9 +110,9 @@ public class LoginActivity extends AppCompatActivity
     private void initNaverLogin() {
         naverLogin = new NaverLogin(this);
         naverLogin.initHandlerListener();
-        naverLogin.initLoginButton(oAuthLoginButton);
+        naverLogin.initLoginButton(naverLoginButton);
 
-        oAuthLoginButton.setOnClickListener(new View.OnClickListener() {
+        naverLoginButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 naverLogin.startNaverLoginActivity(LoginActivity.this);
@@ -115,7 +131,7 @@ public class LoginActivity extends AppCompatActivity
                 .addApi(Auth.GOOGLE_SIGN_IN_API, gso)
                 .build();
 
-        signInButton.setSize(SignInButton.SIZE_WIDE);
+        googleLoginButton.setSize(SignInButton.SIZE_WIDE);
     }
 
     private void signIn() {
