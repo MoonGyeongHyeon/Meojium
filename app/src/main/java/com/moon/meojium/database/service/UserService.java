@@ -29,4 +29,8 @@ public interface UserService {
     @POST("/user/info")
     @FormUrlEncoded
     Call<Info> getUserInfo(@Field("id") String id);
+
+    @POST("/user/close")
+    @FormUrlEncoded
+    Call<UpdateResult> deleteUser(@Field("id") String id);
 }

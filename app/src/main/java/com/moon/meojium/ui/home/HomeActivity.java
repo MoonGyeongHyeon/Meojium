@@ -2,6 +2,7 @@ package com.moon.meojium.ui.home;
 
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.annotation.NonNull;
@@ -18,6 +19,9 @@ import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
+import android.text.SpannableStringBuilder;
+import android.text.Spanned;
+import android.text.style.ForegroundColorSpan;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -546,6 +550,50 @@ public class HomeActivity extends AppCompatActivity
                         .create()
                         .show();
                 break;
+            case R.id.navigation_close_account:
+                Log.d("Meojium/Home", "Try Closing Account");
+
+                String title = "회원 탈퇴";
+                ForegroundColorSpan span = new ForegroundColorSpan(Color.RED);
+                SpannableStringBuilder stringBuilder = new SpannableStringBuilder(title);
+                stringBuilder.setSpan(span, 0, title.length(), Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
+
+                new AlertDialog.Builder(this)
+                        .setTitle(stringBuilder)
+                        .setMessage("찜목록, 스탬프, 리뷰 등 모든 개인정보가 삭제됩니다. 정말 탈퇴하시겠습니까?")
+                        .setPositiveButton("확인", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialogInterface, int i) {
+                                Call <UpdateResult> call = userDao.deleteUser(
+                                        sharedPreferencesService.getStringData(SharedPreferencesService.KEY_ENC_ID));
+                                call.enqueue(new Callback<UpdateResult>() {
+                                    @Override
+                                    public void onResponse(Call<UpdateResult> call, Response<UpdateResult> response) {
+                                        logout();
+
+                                        Intent logoutIntent = new Intent(HomeActivity.this, LoginActivity.class);
+                                        logoutIntent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
+                                        startActivity(logoutIntent);
+                                    }
+
+                                    @Override
+                                    public void onFailure(Call<UpdateResult> call, Throwable t) {
+                                        Toasty.info(HomeActivity.this, getResources().getString(R.string.fail_connection)).show();
+                                    }
+                                });
+
+                            }
+                        })
+                        .setNegativeButton("취소", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialogInterface, int i) {
+                            }
+                        })
+                        .create()
+                        .show();
+
+                break;
+
         }
 
         drawerLayout.closeDrawers();

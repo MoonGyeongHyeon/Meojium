@@ -54,5 +54,6 @@
     <string name="order_by_history">설립일자 순</string>
     <string name="order_by_area">규모 순</string>
     <string name="navigation_intro">환영합니다!</string>
+    <string name="navigation_close_account">회원 탈퇴</string>
 
 </resources>

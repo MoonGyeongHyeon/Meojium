@@ -51,4 +51,8 @@ public class UserDao extends BaseRetrofitService {
     public Call<Info> getUserInfo(String id) {
         return service.getUserInfo(id);
     }
+
+    public Call<UpdateResult> deleteUser(String id) {
+        return service.deleteUser(id);
+    }
 }
