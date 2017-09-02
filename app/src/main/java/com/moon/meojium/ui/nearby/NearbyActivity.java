@@ -1,10 +1,8 @@
 package com.moon.meojium.ui.nearby;
 
 import android.Manifest;
-import android.content.Context;
 import android.content.Intent;
 import android.location.Location;
-import android.location.LocationManager;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
@@ -12,7 +10,6 @@ import android.support.annotation.Nullable;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
-import android.util.Log;
 import android.view.MenuItem;
 
 import com.google.android.gms.common.ConnectionResult;
@@ -28,6 +25,7 @@ import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.moon.meojium.R;
+import com.moon.meojium.base.util.Dlog;
 import com.moon.meojium.base.util.PermissionChecker;
 import com.moon.meojium.database.dao.MuseumDao;
 import com.moon.meojium.model.museum.Museum;
@@ -109,10 +107,10 @@ public class NearbyActivity extends AppCompatActivity
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
         if (requestCode == PermissionChecker.REQUEST_LOCATION_INFO) {
             if (PermissionChecker.verifyPermission(grantResults)) {
-                Log.d("Meojium/Nearby", "Grant Permission");
+                Dlog.d("Grant Permission");
                 initGoogleMap();
             } else {
-                Log.d("Meojium/Nearby", "Deny Permission");
+                Dlog.d("Deny Permission");
                 Toasty.info(this, "위치 정보를 얻을 수 없어 지도를 이용할 수 없습니다.").show();
                 finish();
             }
@@ -156,7 +154,7 @@ public class NearbyActivity extends AppCompatActivity
 
         currentPosition = new LatLng(location.getLatitude(), location.getLongitude());
 
-        Log.d("Meojium/Nearby", "Latitude: " + String.valueOf(currentPosition.latitude) +
+        Dlog.d("Latitude: " + String.valueOf(currentPosition.latitude) +
                 ", Longitude: " + String.valueOf(currentPosition.longitude));
     }
 

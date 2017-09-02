@@ -10,7 +10,6 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
-import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.ImageView;
@@ -19,6 +18,7 @@ import android.widget.SearchView;
 import android.widget.TextView;
 
 import com.moon.meojium.R;
+import com.moon.meojium.base.util.Dlog;
 import com.moon.meojium.base.util.SharedPreferencesService;
 import com.moon.meojium.database.dao.SearchDao;
 import com.moon.meojium.model.UpdateResult;
@@ -139,12 +139,12 @@ public class SearchActivity extends AppCompatActivity
                                         UpdateResult result = response.body();
 
                                         if (result.getCode() == UpdateResult.RESULT_OK) {
-                                            Log.d("Meojium/Search", "Success Deleting SearchLog");
+                                            Dlog.d("Success Deleting SearchLog");
                                             searchLogList.clear();
                                             adapter.notifyDataSetChanged();
                                             initNothingDataTextView();
                                         } else {
-                                            Log.d("Meojium/Search", "Fail Deleting SearchLog");
+                                            Dlog.d("Fail Deleting SearchLog");
                                             Toasty.info(SearchActivity.this, getResources().getString(R.string.fail_connection)).show();
                                         }
                                     }
@@ -188,9 +188,9 @@ public class SearchActivity extends AppCompatActivity
                 UpdateResult result = response.body();
 
                 if (result.getCode() == UpdateResult.RESULT_OK) {
-                    Log.d("Meojium/Search", "Success Adding SearchLog");
+                    Dlog.d("Success Adding SearchLog");
                 } else {
-                    Log.d("Meojium/Search", "Fail Adding SearchLog");
+                    Dlog.d("Fail Adding SearchLog");
                     Toasty.info(SearchActivity.this, getResources().getString(R.string.fail_connection)).show();
                 }
             }

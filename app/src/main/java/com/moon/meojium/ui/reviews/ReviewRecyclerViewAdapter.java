@@ -5,7 +5,6 @@ import android.content.DialogInterface;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
@@ -15,8 +14,9 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.moon.meojium.R;
-import com.moon.meojium.model.UpdateResult;
+import com.moon.meojium.base.util.Dlog;
 import com.moon.meojium.database.dao.ReviewDao;
+import com.moon.meojium.model.UpdateResult;
 import com.moon.meojium.model.review.Review;
 
 import java.util.List;
@@ -108,14 +108,14 @@ public class ReviewRecyclerViewAdapter extends RecyclerView.Adapter<ReviewRecycl
                                         UpdateResult result = response.body();
 
                                         if (result.getCode() == UpdateResult.RESULT_OK) {
-                                            Log.d("Meojium/Review", "Success Deleting Review");
+                                            Dlog.d("Success Deleting Review");
                                             Toasty.info(context, "리뷰를 삭제했습니다.").show();
 
                                             reviewList.remove(getAdapterPosition());
                                             notifyDataSetChanged();
                                             setUpdated(true);
                                         } else {
-                                            Log.d("Meojium/Review", "Fail Deleting Review");
+                                            Dlog.d("Fail Deleting Review");
                                             Toasty.info(context, context.getResources().getString(R.string.fail_connection)).show();
                                         }
                                     }

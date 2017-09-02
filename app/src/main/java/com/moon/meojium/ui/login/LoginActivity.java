@@ -25,6 +25,7 @@ import com.kakao.usermgmt.response.model.UserProfile;
 import com.kakao.util.exception.KakaoException;
 import com.kakao.util.helper.log.Logger;
 import com.moon.meojium.R;
+import com.moon.meojium.base.util.Dlog;
 import com.moon.meojium.base.util.SharedPreferencesService;
 import com.moon.meojium.database.dao.UserDao;
 import com.moon.meojium.model.UpdateResult;
@@ -187,16 +188,16 @@ public class LoginActivity extends AppCompatActivity
                 User user = response.body();
 
                 if (user != null && user.getNickname() != null) {
-                    Log.d("Meojium/Login", "Exist User");
+                    Dlog.d("Exist User");
 
                     nickname = user.getNickname();
 
-                    Log.d("Meojium/Login", "nickname: " + nickname);
-                    Log.d("Meojium/Login", "id: " + id);
+                    Dlog.d("nickname: " + nickname);
+                    Dlog.d("id: " + id);
 
                     saveAndStart(type);
                 } else {
-                    Log.d("Meojium/Login", "Not Exist User");
+                    Dlog.d("Not Exist User");
 
                     Call<UpdateResult> call2 = userDao.addUser(id, nickname);
 
@@ -206,17 +207,17 @@ public class LoginActivity extends AppCompatActivity
                             UpdateResult result = response.body();
 
                             if (result.getCode() == UpdateResult.RESULT_OK) {
-                                Log.d("Meojium/Login", "Success Adding User Info");
+                                Dlog.d("Success Adding User Info");
 
                                 saveAndStart(type);
                             } else {
-                                Log.d("Meojium/Login", "Fail Adding User Info");
+                                Dlog.d("Fail Adding User Info");
                             }
                         }
 
                         @Override
                         public void onFailure(Call<UpdateResult> call, Throwable t) {
-                            Log.d("Meojium/Login", "Fail Adding User Info");
+                            Dlog.d("Fail Adding User Info");
                         }
                     });
                 }
@@ -225,7 +226,7 @@ public class LoginActivity extends AppCompatActivity
 
             @Override
             public void onFailure(Call<User> call, Throwable t) {
-                Log.d("Meojium/Login", "Fail Checking User Existed");
+                Dlog.d("Fail Checking User Existed");
             }
         });
     }
@@ -234,10 +235,6 @@ public class LoginActivity extends AppCompatActivity
         service.putData(SharedPreferencesService.KEY_ENC_ID, id);
         service.putData(SharedPreferencesService.KEY_TYPE, type);
         service.putData(SharedPreferencesService.KEY_NICKNAME, nickname);
-
-        Log.d("Test", "ID: " + id);
-        Log.d("Test", "NICKNAME: " + nickname);
-        Log.d("Test", "TYPE: " + service.getStringData(SharedPreferencesService.KEY_TYPE));
 
         Intent intent = new Intent(this, HomeActivity.class);
         intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK);

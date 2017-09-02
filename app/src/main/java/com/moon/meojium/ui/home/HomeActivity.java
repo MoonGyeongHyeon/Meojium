@@ -22,7 +22,6 @@ import android.support.v7.widget.Toolbar;
 import android.text.SpannableStringBuilder;
 import android.text.Spanned;
 import android.text.style.ForegroundColorSpan;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.MotionEvent;
@@ -38,6 +37,7 @@ import com.google.android.gms.common.api.GoogleApiClient;
 import com.kakao.usermgmt.UserManagement;
 import com.kakao.usermgmt.callback.LogoutResponseCallback;
 import com.moon.meojium.R;
+import com.moon.meojium.base.util.Dlog;
 import com.moon.meojium.base.util.SharedPreferencesService;
 import com.moon.meojium.database.dao.MuseumDao;
 import com.moon.meojium.database.dao.TastingDao;
@@ -203,7 +203,6 @@ public class HomeActivity extends AppCompatActivity
                                     e.printStackTrace();
                                     len = 100;
                                 }
-                                Log.d("Test", "" + len);
                                 if (len == 0) {
                                     Toasty.info(HomeActivity.this, "닉네임을 입력해주세요.").show();
                                 } else if (len > 15) {
@@ -218,13 +217,13 @@ public class HomeActivity extends AppCompatActivity
                                             UpdateResult result = response.body();
 
                                             if (result.getCode() == UpdateResult.RESULT_OK) {
-                                                Log.d("Meojium/Home", "Success Updating Nickname");
+                                                Dlog.d("Success Updating Nickname");
                                                 sharedPreferencesService.putData(SharedPreferencesService.KEY_NICKNAME,
                                                         nickname);
                                                 nicknameTextView.setText(String.format(getResources().getString(R.string.navigation_nickname),
                                                         nickname));
                                             } else {
-                                                Log.d("Meojium/Home", "Fail Updating Nickname");
+                                                Dlog.d("Fail Updating Nickname");
                                                 Toasty.info(HomeActivity.this, getResources().getString(R.string.fail_connection)).show();
                                             }
                                         }
@@ -254,7 +253,7 @@ public class HomeActivity extends AppCompatActivity
         call.enqueue(new Callback<List<Museum>>() {
             @Override
             public void onResponse(Call<List<Museum>> call, Response<List<Museum>> response) {
-                Log.d("Meojium/Home", "Success Getting Popular Museum List");
+                Dlog.d("Success Getting Popular Museum List");
                 popularMuseumList = response.body();
 
                 popularFailConnectionTextView.setVisibility(View.GONE);
@@ -281,7 +280,7 @@ public class HomeActivity extends AppCompatActivity
         call.enqueue(new Callback<List<Museum>>() {
             @Override
             public void onResponse(Call<List<Museum>> call, Response<List<Museum>> response) {
-                Log.d("Meojium/Home", "Success Getting History Museum List");
+                Dlog.d("Success Getting History Museum List");
                 historyMuseumList = response.body();
 
                 historyFailConnectionTextView.setVisibility(View.GONE);
@@ -376,7 +375,7 @@ public class HomeActivity extends AppCompatActivity
         call.enqueue(new Callback<List<Museum>>() {
             @Override
             public void onResponse(Call<List<Museum>> call, Response<List<Museum>> response) {
-                Log.d("Meojium/Home", "Success Getting AreaMuseum");
+                Dlog.d("Success Getting AreaMuseum");
                 areaMuseumList = response.body();
 
                 areaFailConnectionTextView.setVisibility(View.GONE);
@@ -385,7 +384,7 @@ public class HomeActivity extends AppCompatActivity
 
             @Override
             public void onFailure(Call<List<Museum>> call, Throwable t) {
-                Log.d("Meojium/Home", "Fail Getting AreaMuseum");
+                Dlog.d("Fail Getting AreaMuseum");
                 Toasty.info(HomeActivity.this, getResources().getString(R.string.fail_connection)).show();
                 areaFailConnectionTextView.setVisibility(View.VISIBLE);
             }
@@ -407,7 +406,7 @@ public class HomeActivity extends AppCompatActivity
         call.enqueue(new Callback<Info>() {
             @Override
             public void onResponse(Call<Info> call, Response<Info> response) {
-                Log.d("Meojium/Home", "Success Getting User Info");
+                Dlog.d("Success Getting User Info");
 
                 Info info = response.body();
 
@@ -418,7 +417,7 @@ public class HomeActivity extends AppCompatActivity
 
             @Override
             public void onFailure(Call<Info> call, Throwable t) {
-                Log.d("Meojium/Home", "Fail Getting User Info");
+                Dlog.d("Fail Getting User Info");
                 Toasty.info(HomeActivity.this, getResources().getString(R.string.fail_connection)).show();
             }
         });
@@ -528,7 +527,7 @@ public class HomeActivity extends AppCompatActivity
                 }, 200);
                 break;
             case R.id.navigation_logout:
-                Log.d("Meojium/Home", "Try Logout");
+                Dlog.d("Try Logout");
                 new AlertDialog.Builder(this)
                         .setTitle("로그아웃")
                         .setMessage("로그아웃 하시겠습니까?")
@@ -551,7 +550,7 @@ public class HomeActivity extends AppCompatActivity
                         .show();
                 break;
             case R.id.navigation_close_account:
-                Log.d("Meojium/Home", "Try Closing Account");
+                Dlog.d("Try Closing Account");
 
                 String title = "회원 탈퇴";
                 ForegroundColorSpan span = new ForegroundColorSpan(Color.RED);
@@ -604,8 +603,8 @@ public class HomeActivity extends AppCompatActivity
     private void logout() {
         String type = sharedPreferencesService.getStringData(SharedPreferencesService.KEY_TYPE);
 
-        Log.d("Meojium/Home", SharedPreferencesService.KEY_TYPE + ": " + type);
-        Log.d("Meojium/Home", SharedPreferencesService.KEY_NICKNAME + ": " +
+        Dlog.d(SharedPreferencesService.KEY_TYPE + ": " + type);
+        Dlog.d(SharedPreferencesService.KEY_NICKNAME + ": " +
                 sharedPreferencesService.getStringData(SharedPreferencesService.KEY_NICKNAME));
 
         switch (type) {
@@ -617,7 +616,7 @@ public class HomeActivity extends AppCompatActivity
                 UserManagement.requestLogout(new LogoutResponseCallback() {
                     @Override
                     public void onCompleteLogout() {
-                        Log.d("Meojium/KakaoLogin", "Logout Kakao");
+                        Dlog.d("Logout Kakao");
                     }
                 });
                 break;
@@ -637,13 +636,13 @@ public class HomeActivity extends AppCompatActivity
             public void onConnected(@Nullable Bundle bundle) {
                 if (googleApiClient.isConnected()) {
                     Auth.GoogleSignInApi.signOut(googleApiClient);
-                    Log.d("Meojium/GoogleLogin", "Logout Google");
+                    Dlog.d("Logout Google");
                 }
             }
 
             @Override
             public void onConnectionSuspended(int i) {
-                Log.d("Meojium/Login", "Suspend Google Logout Connection");
+                Dlog.d("Suspend Google Logout Connection");
             }
         });
     }

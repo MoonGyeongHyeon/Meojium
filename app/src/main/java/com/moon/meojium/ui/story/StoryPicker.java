@@ -1,10 +1,10 @@
 package com.moon.meojium.ui.story;
 
 import android.content.Context;
-import android.util.Log;
 
 import com.moon.meojium.R;
 import com.moon.meojium.base.BaseRetrofitService;
+import com.moon.meojium.base.util.Dlog;
 import com.moon.meojium.base.FrescoImageViewer;
 import com.moon.meojium.base.ImageOverlayView;
 import com.moon.meojium.database.dao.StoryContentDao;
@@ -36,8 +36,8 @@ public class StoryPicker implements FrescoImageViewer {
         this.story = story;
         this.context = context;
 
-        Log.d("Meojium/Story", "Story id: " + story.getId());
-        Log.d("Meojium/Story", "Story id: " + story.getTitle());
+        Dlog.d("Story id: " + story.getId());
+        Dlog.d("Story id: " + story.getTitle());
 
         storyContentDao = StoryContentDao.getInstance();
     }

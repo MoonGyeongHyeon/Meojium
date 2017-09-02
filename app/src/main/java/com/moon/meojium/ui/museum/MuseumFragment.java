@@ -5,7 +5,6 @@ import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -13,6 +12,7 @@ import android.widget.TextView;
 
 import com.moon.meojium.R;
 import com.moon.meojium.base.BaseRetrofitService;
+import com.moon.meojium.base.util.Dlog;
 import com.moon.meojium.base.util.SharedPreferencesService;
 import com.moon.meojium.database.dao.FavoriteDao;
 import com.moon.meojium.database.dao.MuseumDao;
@@ -240,7 +240,7 @@ public class MuseumFragment extends Fragment {
                     if ((lastPosition + 2) >= (museumList.size() - 1) && startIndex + GETTING_DATA_COUNT == museumList.size()) {
                         if (startIndex + GETTING_DATA_COUNT < MAX_DATA_COUNT) {
                             startIndex = museumList.size();
-                            Log.d("Meojium/MuseumList", "startIndex: " + startIndex);
+                            Dlog.d("startIndex: " + startIndex);
 
                             requestAllMuseumData();
                         }

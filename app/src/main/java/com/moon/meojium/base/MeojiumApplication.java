@@ -2,6 +2,8 @@ package com.moon.meojium.base;
 
 import android.app.Application;
 import android.content.Context;
+import android.content.pm.ApplicationInfo;
+import android.content.pm.PackageManager;
 import android.support.v4.content.ContextCompat;
 
 import com.facebook.drawee.backends.pipeline.Fresco;
@@ -24,6 +26,7 @@ import es.dmoral.toasty.Toasty;
 
 public class MeojiumApplication extends Application {
     private static Context context;
+    public static boolean DEBUG;
 
     public static Context getGlobalApplicationContext() {
         return context;
@@ -87,5 +90,21 @@ public class MeojiumApplication extends Application {
         KakaoSDK.init(new KakaoSDKAdapter());
         Toasty.Config toastyConfig = Toasty.Config.getInstance();
         toastyConfig.setInfoColor(ContextCompat.getColor(this, R.color.colorPrimary)).apply();
+
+        DEBUG = isDebuggable(this);
+    }
+
+    private boolean isDebuggable(Context context) {
+        boolean debuggable = false;
+
+        PackageManager pm = context.getPackageManager();
+        try {
+            ApplicationInfo appinfo = pm.getApplicationInfo(context.getPackageName(), 0);
+            debuggable = (0 != (appinfo.flags & ApplicationInfo.FLAG_DEBUGGABLE));
+        } catch (PackageManager.NameNotFoundException e) {
+        /* debuggable variable will remain false */
+        }
+
+        return debuggable;
     }
 }

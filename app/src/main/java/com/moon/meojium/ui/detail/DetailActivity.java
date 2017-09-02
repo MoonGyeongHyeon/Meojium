@@ -10,7 +10,6 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
-import android.util.Log;
 import android.view.MenuItem;
 import android.view.MotionEvent;
 import android.view.View;
@@ -28,6 +27,7 @@ import com.google.android.gms.maps.model.MarkerOptions;
 import com.gordonwong.materialsheetfab.MaterialSheetFab;
 import com.moon.meojium.R;
 import com.moon.meojium.base.BaseRetrofitService;
+import com.moon.meojium.base.util.Dlog;
 import com.moon.meojium.base.util.SharedPreferencesService;
 import com.moon.meojium.database.dao.FavoriteDao;
 import com.moon.meojium.database.dao.MuseumDao;
@@ -131,10 +131,10 @@ public class DetailActivity extends AppCompatActivity
                     UpdateResult result = response.body();
 
                     if (result.getCode() == UpdateResult.RESULT_OK) {
-                        Log.d("Meojium/Detail", "Success Deleting Favorite Museum");
+                        Dlog.d("Success Deleting Favorite Museum");
                         favoriteCheckBox.setChecked(false);
                     } else {
-                        Log.d("Meojium/Detail", "Fail Deleting Favorite Museum");
+                        Dlog.d("Fail Deleting Favorite Museum");
                         Toasty.info(DetailActivity.this, getResources().getString(R.string.fail_connection)).show();
                     }
                 }
@@ -153,10 +153,10 @@ public class DetailActivity extends AppCompatActivity
                     UpdateResult result = response.body();
 
                     if (result.getCode() == UpdateResult.RESULT_OK) {
-                        Log.d("Meojium/Detail", "Success Adding Favorite Museum");
+                        Dlog.d("Success Adding Favorite Museum");
                         favoriteCheckBox.setChecked(true);
                     } else {
-                        Log.d("Meojium/Detail", "Fail Adding Favorite Museum");
+                        Dlog.d("Fail Adding Favorite Museum");
                         Toasty.info(DetailActivity.this, getResources().getString(R.string.fail_connection)).show();
                     }
                 }
@@ -179,10 +179,10 @@ public class DetailActivity extends AppCompatActivity
                 public void onResponse(Call<UpdateResult> call, Response<UpdateResult> response) {
                     UpdateResult result = response.body();
                     if (result.getCode() == UpdateResult.RESULT_OK) {
-                        Log.d("Meojium/Detail", "Success Deleting Stamp Museum");
+                        Dlog.d("Success Deleting Stamp Museum");
                         stampCheckBox.setChecked(false);
                     } else {
-                        Log.d("Meojium/Detail", "Fail Deleting Stamp Museum");
+                        Dlog.d("Fail Deleting Stamp Museum");
                         Toasty.info(DetailActivity.this, getResources().getString(R.string.fail_connection)).show();
                     }
                 }
@@ -201,10 +201,10 @@ public class DetailActivity extends AppCompatActivity
                     UpdateResult result = response.body();
 
                     if (result.getCode() == UpdateResult.RESULT_OK) {
-                        Log.d("Meojium/Detail", "Success Adding Stamp Museum");
+                        Dlog.d("Success Adding Stamp Museum");
                         stampCheckBox.setChecked(true);
                     } else {
-                        Log.d("Meojium/Detail", "Fail Adding Stamp Museum");
+                        Dlog.d("Fail Adding Stamp Museum");
                         Toasty.info(DetailActivity.this, getResources().getString(R.string.fail_connection)).show();
                     }
                 }
@@ -259,7 +259,7 @@ public class DetailActivity extends AppCompatActivity
                 storyPicker.show();
             }
 
-            Log.d("Meojium/Detail", "Museum id: " + id);
+            Dlog.d("Museum id: " + id);
         } catch (Exception e) {
             e.printStackTrace();
             Toasty.info(this, "일시적인 오류가 발생했습니다.").show();
@@ -396,7 +396,7 @@ public class DetailActivity extends AppCompatActivity
                 UpdateResult result = response.body();
 
                 if (result.getCode() == UpdateResult.RESULT_OK) {
-                    Log.d("Meojium/Detail", "Success Checking Favorite Value");
+                    Dlog.d("Success Checking Favorite Value");
 
                     if (result.getMsg().equals("Empty")) {
                         favoriteCheckBox.setChecked(false);
@@ -404,7 +404,7 @@ public class DetailActivity extends AppCompatActivity
                         favoriteCheckBox.setChecked(true);
                     }
                 } else {
-                    Log.d("Meojium/Detail", "Fail Checking Favorite Value");
+                    Dlog.d("Fail Checking Favorite Value");
                     Toasty.info(DetailActivity.this, getResources().getString(R.string.fail_connection)).show();
                 }
             }
@@ -426,7 +426,7 @@ public class DetailActivity extends AppCompatActivity
                 UpdateResult result = response.body();
 
                 if (result.getCode() == UpdateResult.RESULT_OK) {
-                    Log.d("Meojium/Detail", "Success Checking Stamp Value");
+                    Dlog.d("Success Checking Stamp Value");
 
                     if (result.getMsg().equals("Empty")) {
                         stampCheckBox.setChecked(false);
@@ -434,7 +434,7 @@ public class DetailActivity extends AppCompatActivity
                         stampCheckBox.setChecked(true);
                     }
                 } else {
-                    Log.d("Meojium/Detail", "Fail Checking Stamp Value");
+                    Dlog.d("Fail Checking Stamp Value");
                     Toasty.info(DetailActivity.this, getResources().getString(R.string.fail_connection)).show();
                 }
             }

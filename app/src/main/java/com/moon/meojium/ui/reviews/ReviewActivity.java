@@ -7,13 +7,13 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
-import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.TextView;
 
 import com.moon.meojium.R;
+import com.moon.meojium.base.util.Dlog;
 import com.moon.meojium.base.util.SharedPreferencesService;
 import com.moon.meojium.database.dao.ReviewDao;
 import com.moon.meojium.model.UpdateResult;
@@ -63,7 +63,7 @@ public class ReviewActivity extends AppCompatActivity {
                     UpdateResult result = response.body();
 
                     if (result.getCode() == UpdateResult.RESULT_OK) {
-                        Log.d("Meojium/Review", "Success Adding Review");
+                        Dlog.d("Success Adding Review");
                         Review review = new Review();
                         review.setId(result.getInsertId());
                         review.setNickname(sharedPreferencesService.getStringData(SharedPreferencesService.KEY_NICKNAME));
@@ -85,7 +85,7 @@ public class ReviewActivity extends AppCompatActivity {
 
                         initResultIntent();
                     } else {
-                        Log.d("Meojium/Review", "Fail Adding Review");
+                        Dlog.d("Fail Adding Review");
                         Toasty.info(ReviewActivity.this, getResources().getString(R.string.fail_connection)).show();
                         submitTextView.setClickable(true);
                     }

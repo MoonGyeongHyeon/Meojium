@@ -5,10 +5,10 @@ import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
-import android.util.Log;
 import android.view.MenuItem;
 
 import com.moon.meojium.R;
+import com.moon.meojium.base.util.Dlog;
 import com.moon.meojium.ui.museum.MuseumFragment;
 
 import butterknife.BindView;
@@ -35,7 +35,7 @@ public class SearchResultActivity extends AppCompatActivity {
 
         try {
             keyword = intent.getStringExtra("keyword");
-            Log.d("Meojium/SearchResult", "keyword: " + keyword);
+            Dlog.d("keyword: " + keyword);
         } catch (Exception e) {
             e.printStackTrace();
             Toasty.info(this, "일시적인 오류가 발생했습니다.").show();

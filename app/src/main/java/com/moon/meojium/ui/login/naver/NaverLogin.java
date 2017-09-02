@@ -4,9 +4,9 @@ import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.os.AsyncTask;
-import android.util.Log;
 
 import com.moon.meojium.R;
+import com.moon.meojium.base.util.Dlog;
 import com.moon.meojium.base.util.SharedPreferencesService;
 import com.moon.meojium.database.dao.UserDao;
 import com.moon.meojium.model.UpdateResult;
@@ -56,7 +56,7 @@ public class NaverLogin {
             @Override
             public void run(boolean success) {
                 if (success) {
-                    Log.d("Meojium/NaverLogin", "Naver login is successful");
+                    Dlog.d("Naver login is successful");
 
                     requestUserInfo();
 
@@ -67,16 +67,16 @@ public class NaverLogin {
                             User user = response.body();
 
                             if (user != null && user.getNickname() != null) {
-                                Log.d("Meojium/NaverLogin", "Exist User");
+                                Dlog.d("Exist User");
 
                                 nickname = user.getNickname();
 
-                                Log.d("Meojium/NaverLogin", "nickname: " + nickname);
-                                Log.d("Meojium/NaverLogin", "encId: " + encId);
+                                Dlog.d("nickname: " + nickname);
+                                Dlog.d("encId: " + encId);
 
                                 saveAndStart();
                             } else {
-                                Log.d("Meojium/NaverLogin", "Not Exist User");
+                                Dlog.d("Not Exist User");
 
                                 Call<UpdateResult> call2 = userDao.addUser(encId, nickname);
 
@@ -86,17 +86,17 @@ public class NaverLogin {
                                         UpdateResult result = response.body();
 
                                         if (result.getCode() == UpdateResult.RESULT_OK) {
-                                            Log.d("Meojium/NaverLogin", "Success Adding User Info");
+                                            Dlog.d("Success Adding User Info");
 
                                             saveAndStart();
                                         } else {
-                                            Log.d("Meojium/NaverLogin", "Fail Adding User Info");
+                                            Dlog.d("Fail Adding User Info");
                                         }
                                     }
 
                                     @Override
                                     public void onFailure(Call<UpdateResult> call, Throwable t) {
-                                        Log.d("Meojium/NaverLogin", "Fail Adding User Info");
+                                        Dlog.d("Fail Adding User Info");
                                     }
                                 });
                             }
@@ -105,14 +105,14 @@ public class NaverLogin {
 
                         @Override
                         public void onFailure(Call<User> call, Throwable t) {
-                            Log.d("Meojium/NaverLogin", "Fail Checking User Existed");
+                            Dlog.d("Fail Checking User Existed");
                         }
                     });
 
                 } else {
                     String errorCode = oAuthLoginInstance.getLastErrorCode(context).getCode();
                     String errorDesc = oAuthLoginInstance.getLastErrorDesc(context);
-                    Log.d("Meojium/NaverLogin", "errorCode:" + errorCode + ", errorDesc:" + errorDesc);
+                    Dlog.d("errorCode:" + errorCode + ", errorDesc:" + errorDesc);
                 }
             }
         };
@@ -134,7 +134,7 @@ public class NaverLogin {
     }
 
     public void logout() {
-        Log.d("Meojium/NaverLogin", "Logout Naver");
+        Dlog.d("Logout Naver");
 
         oAuthLoginInstance.logout(context);
     }
@@ -148,10 +148,10 @@ public class NaverLogin {
             nickname = result[0];
             encId = result[1];
         } catch (InterruptedException e) {
-            Log.d("Meojium/NaverLogin", "InterruptedException is occurred");
+            Dlog.d("InterruptedException is occurred");
             e.printStackTrace();
         } catch (ExecutionException e) {
-            Log.d("Meojium/NaverLogin", "executionException is occurred");
+            Dlog.d("executionException is occurred");
             e.printStackTrace();
         }
     }
